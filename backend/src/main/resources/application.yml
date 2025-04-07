@@ -1,0 +1,8 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: five-log-backend
+  profiles:
+    active: dev
+    include: secret
