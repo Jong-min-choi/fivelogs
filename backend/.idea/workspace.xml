@@ -5,13 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ed6788bc-f42f-49ad-ba2c-ca6cfc622b93" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/resources/application-secret.yml.default" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/fiveguyes/fivelogbackend/FiveLogBackendApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fiveguys/fivelogbackend/FiveLogBackendApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/fiveguyes/fivelogbackend/FiveLogBackendApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/fiveguys/fivelogbackend/FiveLogBackendApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,6 +49,10 @@
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.17",
+    "project.structure.side.proportion": "0.204947",
     "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
     "spring.configuration.checksum": "f0b40c2fd7ac95ac12d528e885bbd46c",
     "vue.rearranger.settings.migration": "true"
@@ -91,7 +92,7 @@
       <option name="presentableId" value="Default" />
       <updated>1744011297137</updated>
       <workItem from="1744011298157" duration="364000" />
-      <workItem from="1744011917562" duration="746000" />
+      <workItem from="1744011917562" duration="3439000" />
     </task>
     <servers />
   </component>
