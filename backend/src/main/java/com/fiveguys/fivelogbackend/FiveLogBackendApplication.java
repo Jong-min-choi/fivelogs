@@ -1,4 +1,4 @@
-package com.fiveguyes.fivelogbackend;
+package com.fiveguys.fivelogbackend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
