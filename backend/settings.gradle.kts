@@ -1,1 +1,1 @@
-rootProject.name = "five-log-backend"
+rootProject.name = "backend"
