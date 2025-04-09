@@ -5,11 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ed6788bc-f42f-49ad-ba2c-ca6cfc622b93" name="Changes" comment="">
+<<<<<<< HEAD
       <change afterPath="$PROJECT_DIR$/src/main/java/com/fiveguys/fivelogbackend/domain/post/post/comments/entity/Command.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/fiveguys/fivelogbackend/domain/post/post/command/entity/Command.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/fiveguys/fivelogbackend/domain/post/post/role/entity/Role.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fiveguys/fivelogbackend/domain/post/post/role/entity/Role.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/fiveguys/fivelogbackend/domain/post/post/user/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fiveguys/fivelogbackend/domain/post/post/user/entity/User.java" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/fiveguys/fivelogbackend/domain/post/post/command/entity/Command.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fiveguys/fivelogbackend/domain/post/post/comment/entity/Comment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/.gitignore" afterDir="false" />
+>>>>>>> 046e1459cde984c3297e8720e29ab784c97e1450
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,6 +87,17 @@
   }
 }</component>
   <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="backend" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="backend" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
     <configuration name="FiveLogBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="backend.main" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.fiveguys.fivelogbackend.FiveLogBackendApplication" />
