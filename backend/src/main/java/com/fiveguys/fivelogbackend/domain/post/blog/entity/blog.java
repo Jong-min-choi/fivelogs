@@ -1,9 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.post.blog.entity;
 
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -24,7 +21,7 @@ import java.time.LocalDateTime;
 public class blog {
     @Id
     private Long id;
-
+    @Column(nullable = false)
     private String title;
     @CreatedDate
     private LocalDateTime createdDate;
