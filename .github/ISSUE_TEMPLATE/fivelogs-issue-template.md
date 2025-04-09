@@ -1,7 +1,7 @@
 ---
 name: fivelogs issue template
 about: issue template
-title: ''
+title: '타입: 작업설명'
 labels: ''
 assignees: ''
 
