@@ -1,5 +1,9 @@
 package com.fiveguys.fivelogbackend.domain.post.blog.entity;
 
+<<<<<<< HEAD
+public class Entity {
+}
+=======
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
@@ -36,3 +40,4 @@ public class blog {
 
 
 }
+>>>>>>> ff3dc83820d51908d8927fe5d846befe80b5417e

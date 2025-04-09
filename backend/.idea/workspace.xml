@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ed6788bc-f42f-49ad-ba2c-ca6cfc622b93" name="Changes" comment="" />
+    <list default="true" id="ed6788bc-f42f-49ad-ba2c-ca6cfc622b93" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/fiveguys/fivelogbackend/domain/post/post/command/entity/Command.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/fiveguys/fivelogbackend/domain/post/post/comment/entity/Comment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/.gitignore" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -76,6 +79,17 @@
   }
 }</component>
   <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="backend" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="backend" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
     <configuration name="FiveLogBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="backend.main" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.fiveguys.fivelogbackend.FiveLogBackendApplication" />
