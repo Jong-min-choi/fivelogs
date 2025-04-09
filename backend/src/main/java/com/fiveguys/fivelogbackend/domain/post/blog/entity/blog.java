@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 @Table(name = "blogs")
-public class Entity {
+public class blog {
     @Id
     private Long id;
 
