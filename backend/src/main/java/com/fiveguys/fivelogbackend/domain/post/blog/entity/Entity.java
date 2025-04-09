@@ -4,6 +4,7 @@ package com.fiveguys.fivelogbackend.domain.post.blog.entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @ToString
+@Table(name = "blogs")
 public class Entity {
     @Id
     private Long id;
