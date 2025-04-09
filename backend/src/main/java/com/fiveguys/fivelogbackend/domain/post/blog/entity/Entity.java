@@ -28,6 +28,9 @@ public class Entity {
     @CreatedDate
     private LocalDateTime createdDate;
     @LastModifiedBy
-    private LocalDateTime modifiedDate;
+    private LocalDateTime updatedDate;
+
+
+
 
 }
