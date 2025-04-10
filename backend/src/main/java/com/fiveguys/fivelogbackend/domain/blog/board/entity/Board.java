@@ -7,7 +7,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
-
+//프로젝트를 위한 임포트 목록
 import java.time.LocalDateTime;
 
 @SuperBuilder
@@ -39,6 +39,10 @@ public class Board {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BoardStatus boardStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BoardStatus status; // 공개 여부 (PUBLIC / PRIVATE)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blog_id", nullable = false)
