@@ -22,7 +22,7 @@ public class CommentController {
     @PostMapping("")
     public String createComment(@PathVariable Long boardId
             , Comment comment) {
-        commentService.firstComment(comment, boardId);
+//        commentService.firstComment(comment, boardId);
         return "댓글을 작성했습니다";
     }
 
@@ -31,7 +31,7 @@ public class CommentController {
     public String editComment(@PathVariable Long boardId
             , Long id
             , Comment comment) {
-        commentService.editComment(comment);
+//        commentService.editComment(comment);
         return "댓글을 수정했습니다";
     }
 

@@ -27,7 +27,7 @@ public class User {
     String SNSLink;
     @Column(length = 255)
     String refreshToken;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "image_id", nullable = true)
     Image profileImage;
 

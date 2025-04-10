@@ -1,6 +1,7 @@
 package com.fiveguys.fivelogbackend.domain.blog.board.entity;
 
 import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
+import com.fiveguys.fivelogbackend.domain.blog.comment.entity.Comment;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.global.jpa.BaseEntity;
 import jakarta.persistence.*;
@@ -10,6 +11,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 //프로젝트를 위한 임포트 목록
 import java.time.LocalDateTime;
+import java.util.List;
 
 @SuperBuilder
 @NoArgsConstructor
@@ -42,5 +44,9 @@ public class Board extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+
+    @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    List<Comment> comments;
 
 }
