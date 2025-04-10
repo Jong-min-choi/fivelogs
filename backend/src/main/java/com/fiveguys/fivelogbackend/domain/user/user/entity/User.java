@@ -2,10 +2,7 @@ package com.fiveguys.fivelogbackend.domain.user.user.entity;
 
 import com.fiveguys.fivelogbackend.domain.image.image.entity.Image;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "users")
