@@ -3,7 +3,7 @@ package com.fiveguys.fivelogbackend.domain.blog.board.entity;
 @SuperBuilder
 @MappedSuperClass
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
+@Entity
 @Getter
 @ToString
 public class Board {
