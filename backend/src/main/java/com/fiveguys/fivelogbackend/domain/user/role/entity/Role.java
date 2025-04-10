@@ -1,5 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.user.role.entity;
 
+import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import jakarta.persistence.*;
 
 @Entity
@@ -11,4 +12,8 @@ public class Role {
 
     @Column(length = 30, nullable = false)
     String name;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    User user;
 }

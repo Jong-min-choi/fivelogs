@@ -1,11 +1,18 @@
 package com.fiveguys.fivelogbackend.domain.blog.board.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.MappedSuperclass;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "boards")
+@SuperBuilder
+@MappedSuperclass
+@NoArgsConstructor
 @Getter
 @Setter
 @NoArgsConstructor
