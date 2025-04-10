@@ -31,5 +31,4 @@ public class User {
     @JoinColumn(name = "image_id", nullable = false)
     Image profileImage;
 
-
 }
