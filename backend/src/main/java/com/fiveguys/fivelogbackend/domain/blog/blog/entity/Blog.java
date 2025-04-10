@@ -7,6 +7,7 @@ import com.fiveguys.fivelogbackend.global.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @Getter
+@Setter
 @ToString
 @Table(name = "blogs")
 @Entity
