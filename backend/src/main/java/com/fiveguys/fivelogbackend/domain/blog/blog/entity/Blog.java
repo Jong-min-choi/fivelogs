@@ -15,7 +15,6 @@ import java.util.List;
 
 
 @SuperBuilder
-@MappedSuperclass
 @NoArgsConstructor
 @Getter
 @ToString
@@ -27,9 +26,9 @@ public class Blog extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    private List<User> userList = new ArrayList<>(); // 회원등록한 유저
+    private User user; // 회원등록한 유저
 
-    @OneToMany
-    private List<Board> boardList = new ArrayList<>(); // 블로그에 등록된 게시물들
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Board> boardList; // 블로그에 등록된 게시물들
 
 }
