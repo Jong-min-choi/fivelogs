@@ -1,9 +1,10 @@
 package com.fiveguys.fivelogbackend.domain.user.user.serivce;
 
+import com.fiveguys.fivelogbackend.domain.blog.blog.repository.BlogRepository;
 import com.fiveguys.fivelogbackend.domain.user.role.entity.Role;
 import com.fiveguys.fivelogbackend.domain.user.role.entity.RoleType;
 import com.fiveguys.fivelogbackend.domain.user.role.repository.RoleRepository;
-import com.fiveguys.fivelogbackend.domain.user.user.dto.AddUserDto;
+import com.fiveguys.fivelogbackend.domain.user.user.dto.CreateUserDto;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +17,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
 
     @Transactional
-    public String addUser(AddUserDto addUserDto){
-        if(userRepository.findByEmail(addUserDto.getEmail()).isPresent()){
+    public User createUser(CreateUserDto createUserDto){
+        if(userRepository.findByEmail(createUserDto.getEmail()).isPresent()){
             throw new IllegalArgumentException("email already exist");
         }
-        User user = AddUserDto.from(addUserDto);
+        User user = CreateUserDto.from(createUserDto);
         User savedUser = userRepository.save(user);
         log.info("user {}", user);
-//        roleRepository
-        //블로그 등록까지 해야함 이건 나중에??..
+        return savedUser;
+    }
 
-        return "User registered successfully";
+    @Transactional
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id))
+            throw new IllegalArgumentException("이미 탈퇴 된 ID입니다 ");
+        userRepository.deleteById(id);
     }
 }

@@ -3,6 +3,7 @@ package com.fiveguys.fivelogbackend.domain.blog.comment.service;
 
 
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
+import com.fiveguys.fivelogbackend.domain.blog.board.repository.BoardRepository;
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentRequestDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.entity.Comment;
 import com.fiveguys.fivelogbackend.domain.blog.comment.repository.CommentRepository;
@@ -19,7 +20,7 @@ import java.util.Optional;
 public class CommentService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
-    private final com.fiveguys.fivelogbackend.domain.blog.board.reposiroty.BoardRepository boardRepository;
+    private final BoardRepository boardRepository;
 
     //댓글 쓰기
 

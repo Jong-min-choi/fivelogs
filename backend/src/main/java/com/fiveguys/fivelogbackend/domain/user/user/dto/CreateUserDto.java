@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @ToString
 
-public class AddUserDto {
+public class CreateUserDto {
 
     private String email;
     private String password;
@@ -16,17 +16,15 @@ public class AddUserDto {
     private String introduce;
     private String snsLink;
 
-    public static User from(AddUserDto addUserDto){
+    public static User from(CreateUserDto createUserDto){
 
         return User.builder()
-                .email(addUserDto.getEmail())
-                .password(addUserDto.getPassword())
-                .nickname(addUserDto.getNickname())
-                .SNSLink(addUserDto.getSnsLink())
-                .introduce(addUserDto.getIntroduce())
+                .email(createUserDto.getEmail())
+                .password(createUserDto.getPassword())
+                .nickname(createUserDto.getNickname())
+                .SNSLink(createUserDto.getSnsLink())
+                .introduce(createUserDto.getIntroduce())
                 .build();
-
-
     }
 
 }
