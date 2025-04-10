@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @Builder
+@Entity
 public class Board {
 
     @Id
