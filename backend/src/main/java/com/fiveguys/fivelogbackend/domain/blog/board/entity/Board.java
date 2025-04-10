@@ -7,7 +7,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
-
+//프로젝트를 위한 임포트 목록
 import java.time.LocalDateTime;
 
 @SuperBuilder
