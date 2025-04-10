@@ -40,6 +40,10 @@ public class Board {
     @Column(nullable = false)
     private BoardStatus boardStatus;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BoardStatus status; // 공개 여부 (PUBLIC / PRIVATE)
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blog_id", nullable = false)
     private Blog blog;
