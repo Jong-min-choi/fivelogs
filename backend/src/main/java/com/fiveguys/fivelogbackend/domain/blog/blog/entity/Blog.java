@@ -19,6 +19,7 @@ import java.util.List;
 @Getter
 @ToString
 @Table(name = "blogs")
+@Entity
 public class Blog extends BaseEntity {
 
     @Column(nullable = false)
