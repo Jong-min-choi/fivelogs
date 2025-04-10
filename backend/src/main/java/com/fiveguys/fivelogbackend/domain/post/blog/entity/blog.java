@@ -1,5 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.post.blog.entity;
 
+import com.fiveguys.fivelogbackend.global.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,16 +19,9 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 @Table(name = "blogs")
-public class blog {
-    @Id
-    private Long id;
+public class blog extends BaseEntity {
+
     @Column(nullable = false)
     private String title;
-    @CreatedDate
-    private LocalDateTime createdDate;
-    @LastModifiedBy
-    private LocalDateTime updatedDate;
-
-
 
 }
