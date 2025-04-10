@@ -1,5 +1,6 @@
-package com.fiveguys.fivelogbackend.global.jpa;
+package com.fiveguys.fivelogbackend.domain.blog.blog.entity;
 
+import com.fiveguys.fivelogbackend.global.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,22 +10,17 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @SuperBuilder
 @MappedSuperclass
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
 @Getter
 @ToString
-public class BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @CreatedDate
-    private LocalDateTime createdDate;
-    @LastModifiedBy
-    private LocalDateTime modifiedDate;
+@Table(name = "blogs")
+public class blog extends BaseEntity {
+
+    @Column(nullable = false)
+    private String title;
 
 }

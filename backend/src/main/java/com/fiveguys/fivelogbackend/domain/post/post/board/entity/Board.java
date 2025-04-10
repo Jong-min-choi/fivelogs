@@ -1,3 +1,4 @@
+
 package com.fiveguys.fivelogbackend.domain.post.post.board.entity;
 
 @SuperBuilder
@@ -8,7 +9,6 @@ package com.fiveguys.fivelogbackend.domain.post.post.board.entity;
 @ToString
 public class Board {
     private String title;
-
     private String content;
     @CreatedDate
     private LocalDateTime createdDate;
