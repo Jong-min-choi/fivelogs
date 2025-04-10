@@ -1,4 +1,4 @@
-package com.fiveguys.fivelogbackend.domain.post.post.comment.entity;
+package com.fiveguys.fivelogbackend.domain.blog.comment.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

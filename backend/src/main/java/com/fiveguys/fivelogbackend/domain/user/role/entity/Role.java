@@ -1,4 +1,4 @@
-package com.fiveguys.fivelogbackend.domain.post.post.role.entity;
+package com.fiveguys.fivelogbackend.domain.user.role.entity;
 
 import jakarta.persistence.*;
 

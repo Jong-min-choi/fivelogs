@@ -1,4 +1,4 @@
-package com.fiveguys.fivelogbackend.domain.post.blog.entity;
+package com.fiveguys.fivelogbackend.domain.blog.blog.entity;
 
 import com.fiveguys.fivelogbackend.global.jpa.BaseEntity;
 import jakarta.persistence.*;
@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @MappedSuperclass
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
 @Getter
 @ToString
 @Table(name = "blogs")

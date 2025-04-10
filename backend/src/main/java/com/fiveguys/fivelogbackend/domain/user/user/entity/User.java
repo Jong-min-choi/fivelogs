@@ -1,4 +1,4 @@
-package com.fiveguys.fivelogbackend.domain.post.post.user.entity;
+package com.fiveguys.fivelogbackend.domain.user.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
