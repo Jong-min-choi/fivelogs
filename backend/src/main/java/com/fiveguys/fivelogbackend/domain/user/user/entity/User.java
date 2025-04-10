@@ -1,5 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.user.user.entity;
 
+import com.fiveguys.fivelogbackend.domain.image.image.entity.Image;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,5 +26,8 @@ public class User {
     String SNSLink;
     @Column(length = 255)
     String refreshToken;
+    @ManyToOne
+    @JoinColumn(name = "image_id", nullable = false)
+    Image profileImage;
 
 }

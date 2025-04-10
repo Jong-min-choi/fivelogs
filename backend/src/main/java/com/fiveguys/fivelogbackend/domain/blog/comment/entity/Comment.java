@@ -1,10 +1,9 @@
 package com.fiveguys.fivelogbackend.domain.blog.comment.entity;
 
+import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.cglib.core.Local;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,5 +21,12 @@ public class Comment {
     @Column(nullable = false)
     private LocalDateTime updatedDate;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "board_id", nullable = false)
+    private User board;
 
 }

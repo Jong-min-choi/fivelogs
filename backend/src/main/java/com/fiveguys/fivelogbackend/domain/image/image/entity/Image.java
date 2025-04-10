@@ -1,4 +1,4 @@
-package com.fiveguys.fivelogbackend.domain.image.entity;
+package com.fiveguys.fivelogbackend.domain.image.image.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
