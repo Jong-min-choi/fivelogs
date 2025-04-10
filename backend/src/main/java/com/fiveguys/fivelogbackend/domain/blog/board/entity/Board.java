@@ -36,6 +36,10 @@ public class Board {
     @Column(nullable = false)
     private LocalDateTime updatedDate;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BoardStatus boardStatus;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blog_id", nullable = false)
     private Blog blog;
@@ -43,4 +47,5 @@ public class Board {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
 }
