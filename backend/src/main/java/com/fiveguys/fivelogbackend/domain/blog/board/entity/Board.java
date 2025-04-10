@@ -2,6 +2,7 @@ package com.fiveguys.fivelogbackend.domain.blog.board.entity;
 
 import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
+import com.fiveguys.fivelogbackend.global.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -17,11 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Board {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Board extends BaseEntity {
 
     @Column(length = 100, nullable = false)
     private String title;
@@ -29,12 +26,6 @@ public class Board {
     @Lob
     @Column(nullable = false)
     private String content;
-
-    @Column(nullable = false)
-    private LocalDateTime createdDate;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

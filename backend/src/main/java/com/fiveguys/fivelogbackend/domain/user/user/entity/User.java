@@ -27,7 +27,7 @@ public class User {
     String SNSLink;
     @Column(length = 255)
     String refreshToken;
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "image_id", nullable = true)
     Image profileImage;
 
