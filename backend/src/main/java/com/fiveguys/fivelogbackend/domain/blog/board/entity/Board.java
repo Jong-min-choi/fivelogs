@@ -1,5 +1,7 @@
 package com.fiveguys.fivelogbackend.domain.blog.board.entity;
 
+import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
+import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
