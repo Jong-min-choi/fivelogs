@@ -8,6 +8,8 @@ import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentRequestDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.entity.Comment;
 import com.fiveguys.fivelogbackend.domain.blog.comment.repository.CommentRepository;
 
+import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
+import com.fiveguys.fivelogbackend.domain.user.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
     //댓글 쓰기
 

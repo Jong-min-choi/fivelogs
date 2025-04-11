@@ -7,6 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface BlogRepository extends JpaRepository<Blog, Long> {
-
-    void delete(User user);
+    void deleteByUser(User user); //    void delete(User user); << 안 됨
 }
