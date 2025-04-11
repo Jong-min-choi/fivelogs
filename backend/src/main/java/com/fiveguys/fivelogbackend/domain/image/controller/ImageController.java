@@ -45,6 +45,7 @@ public class ImageController {
     public ResponseEntity<Void> deleteImage(@PathVariable Long id) {
         imageService.deleteImage(id);
         return ResponseEntity.noContent().build();
+        //테스트
     }
 }
 
