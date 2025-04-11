@@ -9,19 +9,34 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class BlogService {
     private final BlogRepository blogRepository;
+    private final UserRepository userRepository;
 
-    // 회원가입하면 블로그가 생성됨
     @Transactional
     public void createBlog(User user) {
-        String blogTitle = user.getEmail();
+        int count = 0;
+        String blogTitle = user.getEmail().split("@")[0] + ".log";
+
+        if (blogRepository.existsByTitle(blogTitle)) {
+            blogTitle = blogTitle.replace(".log", count + ".log");
+        }
         Blog blog = Blog.builder()
                 .title(blogTitle)
                 .user(user)
                 .build();
         blogRepository.save(blog);
     }
+
+    // 다른 사람 블로그를 찾을떄?
+    public BlogResponseDto findBlog(Long userId) {
+        Blog blog = blogRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException());
+        return BlogResponseDto.fromEntity(blog);
+    }
+
 }
