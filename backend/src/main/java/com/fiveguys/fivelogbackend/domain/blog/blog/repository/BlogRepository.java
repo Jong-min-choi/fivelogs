@@ -12,4 +12,6 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     void delete(Optional<User> user);
 
     public boolean existsByTitle(String title);
+
+    public Optional<Blog> findByUserId(Long userId);
 }

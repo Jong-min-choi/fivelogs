@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 public class BlogController {
     private final BlogService blogService;
 
-    // 블로그 이메일 "@" 앞대가리로 조회 응답이니까 응답 dto 사용
-//    @GetMapping("/{userId}")
-//    public ResponseEntity<BlogResponseDto> findBlog(@PathVariable Long userId) {
-//        BlogResponseDto blog = blogService.
-//        return
-//    }
+//     블로그 이메일 "@" 앞대가리로 조회 응답이니까 응답 dto 사용
+    @GetMapping("/{userId}")
+    public ResponseEntity<BlogResponseDto> findBlog(@PathVariable Long userId) {
+        BlogResponseDto blog = blogService.findBlog(userId);
+        return ResponseEntity.ok().build();
+    }
 
     // 회원탈퇴시 블로그 삭제
     @DeleteMapping("/{userId}")
