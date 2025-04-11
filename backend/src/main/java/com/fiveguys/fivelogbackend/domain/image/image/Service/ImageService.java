@@ -10,10 +10,4 @@ import org.springframework.transaction.annotation.Transactional;
 public class ImageService {
     private final ImageRepository imageRepository;
 
-<<<<<<< Updated upstream
-=======
-
-
-
->>>>>>> Stashed changes
 }
