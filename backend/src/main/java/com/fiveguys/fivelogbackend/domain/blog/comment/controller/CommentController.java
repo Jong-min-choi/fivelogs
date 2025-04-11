@@ -13,13 +13,11 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("")
 public class CommentController {
     private final CommentService commentService;
 
 
     // 댓글 추가
-    @PostMapping("")
     public String createComment(@PathVariable Long boardId
             , Comment comment) {
 //        commentService.firstComment(comment, boardId);
