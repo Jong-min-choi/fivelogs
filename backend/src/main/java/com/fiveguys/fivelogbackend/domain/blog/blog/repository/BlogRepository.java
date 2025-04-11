@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface BlogRepository extends JpaRepository<Blog, Long> {
     void deleteByUser(User user); //    void delete(User user); << 안 됨
 
-    void delete(Optional<User> user);
+//    void delete(Optional<User> user); 잘못된 문법
 
     public boolean existsByTitle(String title);
 

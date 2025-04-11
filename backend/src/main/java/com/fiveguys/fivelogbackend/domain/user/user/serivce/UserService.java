@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
-
     @Transactional
     public User createUser(CreateUserDto createUserDto){
         if(userRepository.findByEmail(createUserDto.getEmail()).isPresent()){
@@ -28,7 +27,6 @@ public class UserService {
         log.info("user {}", user);
         return savedUser;
     }
-
     @Transactional
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id))
