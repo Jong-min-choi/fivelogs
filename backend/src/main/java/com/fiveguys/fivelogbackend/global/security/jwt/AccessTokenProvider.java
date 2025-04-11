@@ -24,7 +24,7 @@ public class AccessTokenProvider {
 
     private static final long EXPIRATION_TIME = 1000 * 60 * 60;
 
-    public AccessTokenProvider(@Value("${jwt.secretKey}") String SECRET) {
+    public AccessTokenProvider(@Value("${custom.jwt}") String SECRET) {
         this.accessSecret= SECRET.getBytes(StandardCharsets.UTF_8);
     }
     public String provideToken(Long userId, String role, String email){
