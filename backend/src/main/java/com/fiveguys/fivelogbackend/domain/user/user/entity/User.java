@@ -1,6 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.user.user.entity;
 
-import com.fiveguys.fivelogbackend.domain.image.image.entity.Image;
+import com.fiveguys.fivelogbackend.domain.image.entity.Image;
 import jakarta.persistence.*;
 import lombok.*;
 
