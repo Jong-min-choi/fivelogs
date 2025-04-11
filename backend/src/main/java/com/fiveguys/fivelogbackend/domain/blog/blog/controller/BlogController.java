@@ -17,12 +17,4 @@ public class BlogController {
         BlogResponseDto blog = blogService.findBlog(userId);
         return ResponseEntity.ok().build();
     }
-
-    // 회원탈퇴시 블로그 삭제
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteBlog(@PathVariable Long userId) {
-        blogService.deleteBlog(userId);
-        return ResponseEntity.ok().build();
-    }
-
 }
