@@ -17,7 +17,8 @@ public class SecurityConfig {
 
     private final String[] permitURL = {"/login",
             "/v3/api-docs/**", "/swagger-ui/**",
-            "/swagger-ui.html"
+            "/swagger-ui.html",
+            "/api/**","/h2-console/**"
     };
 
     @Bean
@@ -30,6 +31,9 @@ public class SecurityConfig {
                    .csrf(csrf -> csrf.disable())
                    .formLogin( form -> form.disable())
                    .httpBasic(httpBasic -> httpBasic.disable());
+
+
+
            return http.build();
     }
 
