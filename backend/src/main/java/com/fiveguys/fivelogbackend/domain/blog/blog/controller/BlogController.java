@@ -11,13 +11,6 @@ import org.springframework.web.bind.annotation.*;
 public class BlogController {
     private final BlogService blogService;
 
-    // 회원가입 했을때 블로그 생성
-    @PostMapping("/{userId}")
-    public ResponseEntity<String> createBlog(@PathVariable Long userId) {
-        blogService.createBlog(userId);
-        return ResponseEntity.ok().build();
-    }
-
     // 블로그 이메일 "@" 앞대가리로 조회 응답이니까 응답 dto 사용
 //    @GetMapping("/{userId}")
 //    public ResponseEntity<BlogResponseDto> findBlog(@PathVariable Long userId) {
