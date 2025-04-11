@@ -39,12 +39,4 @@ public class BlogService {
         return BlogResponseDto.fromEntity(blog);
     }
 
-
-    // 회원탈퇴시 블로그 삭제
-    @Transactional
-    public void deleteBlog(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException());
-        blogRepository.delete(Optional.ofNullable(user));
-    }
 }
