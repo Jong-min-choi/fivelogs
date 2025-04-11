@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface BlogRepository extends JpaRepository<Blog, Long> {
     void deleteByUser(User user); //    void delete(User user); << 안 됨
+
+    void delete(Optional<User> user);
 }

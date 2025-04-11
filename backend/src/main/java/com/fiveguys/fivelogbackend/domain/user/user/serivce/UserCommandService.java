@@ -25,7 +25,7 @@ public class UserCommandService {
         User user = userService.createUser(createUserDto);
         roleService.createUserRole();
         //블로그 가입
-        blogService.createBlog(user);
+        blogService.createBlog(user.getId());
         return "User registered successfully";
     }
 }
