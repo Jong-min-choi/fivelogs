@@ -16,7 +16,7 @@ jobs:
       AWS_REGION: ap-northeast-2
       ECR_REGISTRY: 752725210089.dkr.ecr.ap-northeast-2.amazonaws.com
       ECR_REPOSITORY: fivelogs
-      S3_BUCKET: my-deploytest-bucket
+      S3_BUCKET: fivelogs-bucket
       DEPLOY_APPLICATION: fivelogs
       DEPLOY_GROUP: fivelogs-group
 
