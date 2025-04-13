@@ -44,7 +44,7 @@ class ServiceManager:
 
      # Docker 컨테이너를 실행하는 함수
     def _run_container(self, name: str, port: int) -> None:
-        os.system("aws ecr get-login-password | docker login --username AWS --password-stdin 752725210089.dkr.ecr.ap-northeast-2.amazonaws.com")
+         os.system("aws ecr get-login-password | docker login --username AWS --password-stdin 752725210089.dkr.ecr.ap-northeast-2.amazonaws.com")
          os.system(
              f"docker run -d --name={name} --restart unless-stopped -p {port}:8090 -e TZ=Asia/Seoul -v /app/volumes/gen:/gen --pull always 752725210089.dkr.ecr.ap-northeast-2.amazonaws.com/fivelogs:latest")
 
