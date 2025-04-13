@@ -26,6 +26,7 @@ repositories {
 dependencies {
 	implementation ("com.auth0:java-jwt:4.4.0") // JWT 라이브러리
 	implementation ("org.springframework.boot:spring-boot-starter-security") //security
+	implementation("org.springframework.boot:spring-boot-starter-actuator") // actuator , health check
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 	implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
 	implementation("org.springframework.boot:spring-boot-starter-web")
