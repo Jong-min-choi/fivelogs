@@ -94,6 +94,7 @@ jobs:
           S3_BUCKET: ${{ env.S3_BUCKET }}
         working-directory: ./backend
         run: |
+          chmod +x scripts/deploy.sh
           zip -r deployment.zip appspec.yml scripts/deploy.sh scripts/zero_downtime_deploy.py 
           aws s3 cp deployment.zip s3://$S3_BUCKET/deployment.zip
 
