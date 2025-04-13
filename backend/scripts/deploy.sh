@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home/ubuntu/app
+cd /home/ec2-user/app
 CURRENT_PORT=$(docker ps --format '{{.Ports}}' | grep -o '809[0-1]' | head -1)
 
 if [ -z "$CURRENT_PORT" ] || [ "$CURRENT_PORT" == "8090" ]; then
