@@ -30,7 +30,8 @@ public class SecurityConfig {
                    .cors(cors -> cors.disable())
                    .csrf(csrf -> csrf.disable())
                    .formLogin( form -> form.disable())
-                   .httpBasic(httpBasic -> httpBasic.disable());
+                   .httpBasic(httpBasic -> httpBasic.disable())
+                   .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())); //h2-console 접근 허용
 
 
 

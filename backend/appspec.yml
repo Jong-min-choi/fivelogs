@@ -1,0 +1,10 @@
+version: 0.0
+os: linux
+files:
+  - source: / # 현재 경로 내의 모든 파일
+    destination: /home/ec2-user/app # 아마존 리눅스의 기본 사용자 디렉토리로 변경
+hooks:
+  AfterInstall:
+    - location: scripts/deploy.sh
+      timeout: 180
+      runas: ec2-user # 우분투 사용자에서 ec2-user로 변경
