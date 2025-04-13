@@ -1,23 +1,11 @@
 #!/bin/bash
-cd /home/ec2-user/app
-CURRENT_PORT=$(docker ps --format '{{.Ports}}' | grep -o '809[0-1]' | head -1)
 
-if [ -z "$CURRENT_PORT" ] || [ "$CURRENT_PORT" == "8090" ]; then
-    # Blue 중지 및 제거
-    docker compose stop blue || true
-    docker compose rm -f blue || true
-    # Green 실행
-    docker compose up -d green
-    sleep 10
-    sudo sed -i 's/8090/8091/' /etc/nginx/sites-available/default
-    sudo systemctl reload nginx
-else
-    # Green 중지 및 제거
-    docker compose stop green || true
-    docker compose rm -f green || true
-    # Blue 실행
-    docker compose up -d blue
-    sleep 10
-    sudo sed -i 's/8091/8090/' /etc/nginx/sites-available/default
-    sudo systemctl reload nginx
-fi
+# 필요한 파일에 실행 권한 부여
+chmod +x scripts/zero_downtime_deploy.py
+
+# Python 스크립트 실행
+echo "Starting zero downtime deployment..."
+python3 scripts/zero_downtime_deploy.py
+
+# 배포 후 완료 메시지
+echo "Deployment completed successfully!"
