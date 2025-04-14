@@ -45,7 +45,6 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-
     @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<Comment> comments;
 
