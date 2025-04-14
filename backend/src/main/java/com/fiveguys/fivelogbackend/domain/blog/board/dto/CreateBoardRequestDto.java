@@ -13,4 +13,12 @@ public class CreateBoardRequestDto {
     private String title;
     private String content;
     private BoardStatus status;
+
+    public Board toEntity() {
+        return Board.builder()
+                .title(this.title)
+                .content(this.content)
+                .status(this.status)
+                .build();
+    }
 }

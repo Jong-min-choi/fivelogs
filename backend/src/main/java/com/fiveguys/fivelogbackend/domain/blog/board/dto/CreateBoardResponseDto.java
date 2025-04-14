@@ -1,6 +1,5 @@
 package com.fiveguys.fivelogbackend.domain.blog.board.dto;
 
-
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.BoardStatus;
 import lombok.*;
 

@@ -49,4 +49,13 @@ public class Board extends BaseEntity {
     @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<Comment> comments;
 
+    public static Board from(BoardRequestDto dto) {
+        return Board.builder()
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .status(dto.getStatus())
+                .build();
+    }
+
+
 }
