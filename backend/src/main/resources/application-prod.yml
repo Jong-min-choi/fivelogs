@@ -7,7 +7,7 @@ custom:
 
 db:
   datasource:
-    url: jdbc:mysql://database-1.c5wcay8ss6dm.ap-northeast-2.rds.amazonaws.com:3306/fivelogs?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
-    password: root1234
+    url: "${rds.url}"
+    username: "${rds.username}"
+    password: "${rds.password}"
     driver-class-name: com.mysql.cj.jdbc.Driver
