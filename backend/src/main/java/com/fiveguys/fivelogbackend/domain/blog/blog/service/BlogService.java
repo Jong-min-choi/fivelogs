@@ -37,4 +37,6 @@ public class BlogService {
         return BlogResponseDto.fromEntity(blog);
     }
 
+    // 닉네임으로 검색하는 서비스
+
 }

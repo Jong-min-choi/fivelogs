@@ -37,10 +37,13 @@ public class BlogController {
 //    }
 
 
-    @Operation(summary = "사용자 목록 조회", description = "사용자 목록을 페이지 단위로 조회합니다.")
+    @Operation(summary = "사용자 목록 조회", description = "사용자 목록을 페이지 단위로 조회합니다.") // 스웨거
     @GetMapping("/users")
     public ResponseEntity<Page<Board>> getBoards(@PageableDefault(page = 1, size = 10) Pageable pageable) {
         Page<Board> boards = boardService.getBoards(pageable);
         return ResponseEntity.ok(boards);
     }
+
+    // 닉네임으로 조회?
+
 }
