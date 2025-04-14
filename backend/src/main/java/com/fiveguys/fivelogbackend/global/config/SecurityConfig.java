@@ -18,7 +18,7 @@ public class SecurityConfig {
     private final String[] permitURL = {"/login",
             "/v3/api-docs/**", "/swagger-ui/**",
             "/swagger-ui.html",
-            "/api/**","/h2-console/**"
+            "/api/**","/h2-console/**", "/actuator/**"
     };
 
     @Bean
