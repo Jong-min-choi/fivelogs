@@ -7,25 +7,24 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-
+@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Builder
+@Schema(description = "댓글 작성 DTO")
 public class CommentRequestDto {
-    private Long id;
 
+    @Schema(description = "게시글 ID", example = "1")
+    private Long boardId;
+    @Schema(description = "작성자 유저 ID", example = "2")
+    private Long userId;
 
-    @Schema(description = "닉네임", example = "스프링부트")
-    private String nickname;
-
-    @Schema(description = "댓글", example = "안녕하세요. 반갑습니다.")
-    private String comment;//댓글 내용
-    private String createdDate = LocalDateTime.now()
-            .format(DateTimeFormatter
-            .ofPattern("yyyy.MM.dd HH:mm"));//댓글 생성 날짜
-    private String updatedDate = LocalDateTime.now()
-            .format(DateTimeFormatter
-            .ofPattern("yyyy.MM.dd HH:mm"));//댓글 수정 날짜
+//    @Schema(description = "닉네임", example = "Five Guys")
+//    private String nickname;
+    @Schema(description = "댓글", example = "스프링부트")
+    private String comment;
 
 
 }
