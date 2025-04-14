@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import os
 import requests  # HTTP 요청을 위한 모듈 추가
 import subprocess
@@ -13,8 +12,8 @@ class ServiceManager:
          self.socat_port: int = socat_port
          self.sleep_duration: int = sleep_duration
          self.services: Dict[str, int] = {
-             'blog_1': 8082,
-             'blog_2': 8083
+             'fivelogs_1': 8082,
+             'fivelogs_2': 8083
          }
          self.current_name: Optional[str] = None
          self.current_port: Optional[int] = None
@@ -26,7 +25,7 @@ class ServiceManager:
          cmd: str = f"ps aux | grep 'socat -t0 TCP-LISTEN:{self.socat_port}' | grep -v grep | awk '{{print $NF}}'"
          current_service: str = subprocess.getoutput(cmd)
          if not current_service:
-             self.current_name, self.current_port = 'blog_2', self.services['blog_2']
+             self.current_name, self.current_port = 'fivelogs_2', self.services['fivelogs_2']
          else:
              self.current_port = int(current_service.split(':')[-1])
              self.current_name = next((name for name, port in self.services.items() if port == self.current_port), None)
@@ -45,8 +44,9 @@ class ServiceManager:
 
      # Docker 컨테이너를 실행하는 함수
     def _run_container(self, name: str, port: int) -> None:
+         os.system("aws ecr get-login-password | docker login --username AWS --password-stdin 752725210089.dkr.ecr.ap-northeast-2.amazonaws.com")
          os.system(
-             f"docker run -d --name={name} --restart unless-stopped -p {port}:8090 -e TZ=Asia/Seoul -v /dockerProjects/blog/volumes/gen:/gen --pull always ghcr.io/sik2/blog")
+             f"docker run -d --name={name} --restart unless-stopped -p {port}:8090 -e TZ=Asia/Seoul -v /app/volumes/gen:/gen --pull always 752725210089.dkr.ecr.ap-northeast-2.amazonaws.com/fivelogs:latest")
 
     def _switch_port(self) -> None:
          # Socat 포트를 전환하는 함수
@@ -62,7 +62,6 @@ class ServiceManager:
              f"nohup socat -t0 TCP-LISTEN:{self.socat_port},fork,reuseaddr TCP:localhost:{self.next_port} &>/dev/null &")
 
          # 서비스 상태를 확인하는 함수
-
     def _is_service_up(self, port: int) -> bool:
          url = f"http://127.0.0.1:{port}/actuator/health"
          try:

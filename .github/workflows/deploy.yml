@@ -16,7 +16,7 @@ jobs:
       AWS_REGION: ap-northeast-2
       ECR_REGISTRY: 752725210089.dkr.ecr.ap-northeast-2.amazonaws.com
       ECR_REPOSITORY: fivelogs
-      S3_BUCKET: my-deploytest-bucket
+      S3_BUCKET: fivelogs-bucket
       DEPLOY_APPLICATION: fivelogs
       DEPLOY_GROUP: fivelogs-group
 
@@ -33,6 +33,13 @@ jobs:
         with:
           java-version: "21"
           distribution: "corretto" # Amazon Corretto 사용
+
+      ## application-secret.yml 생성
+      - name: create application-secret.yml
+        env:
+          ACTIONS_STEP_DEBUG: true
+          APPLICATION_SECRET: ${{ secrets.APPLICATION_SECRET_YML }}
+        run: echo "$APPLICATION_SECRET" > backend/src/main/resources/application-secret.yml
 
       # 3. Gradle 캐시 설정
       - name: Cache Gradle
@@ -87,7 +94,9 @@ jobs:
           S3_BUCKET: ${{ env.S3_BUCKET }}
         working-directory: ./backend
         run: |
-          zip -r deployment.zip appspec.yml scripts/deploy.sh docker-compose.yml
+          chmod +x scripts/deploy.sh
+          chmod +x scripts/zero_downtime_deploy.py
+          zip -r deployment.zip appspec.yml scripts/deploy.sh scripts/zero_downtime_deploy.py 
           aws s3 cp deployment.zip s3://$S3_BUCKET/deployment.zip
 
       # 10. CodeDeploy 배포

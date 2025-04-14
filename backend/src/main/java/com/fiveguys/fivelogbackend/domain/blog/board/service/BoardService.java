@@ -1,3 +1,4 @@
+
 package com.fiveguys.fivelogbackend.domain.blog.board.service;
 
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.CreateBoardRequestDto;
@@ -36,3 +37,4 @@ public class BoardService {
         return boardRepository.findAll(pageable);
     }
 }
+
