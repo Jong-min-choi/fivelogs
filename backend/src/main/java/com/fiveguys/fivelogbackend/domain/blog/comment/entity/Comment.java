@@ -1,5 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.blog.comment.entity;
 
+import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -27,6 +28,5 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
-    private User board;
-
+    private Board board;
 }

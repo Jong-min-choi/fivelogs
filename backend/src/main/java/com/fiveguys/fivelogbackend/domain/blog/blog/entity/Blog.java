@@ -7,6 +7,7 @@ import com.fiveguys.fivelogbackend.global.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @Getter
+@Setter
 @ToString
 @Table(name = "blogs")
 @Entity
@@ -25,7 +27,7 @@ public class Blog extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "user_id")
     private User user; // 회원등록한 유저
 

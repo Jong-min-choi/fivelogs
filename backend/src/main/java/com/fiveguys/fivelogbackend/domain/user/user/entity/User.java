@@ -1,15 +1,16 @@
 package com.fiveguys.fivelogbackend.domain.user.user.entity;
 
-import com.fiveguys.fivelogbackend.domain.image.image.entity.Image;
+import com.fiveguys.fivelogbackend.domain.image.entity.Image;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +27,8 @@ public class User {
     String SNSLink;
     @Column(length = 255)
     String refreshToken;
-    @ManyToOne
-    @JoinColumn(name = "image_id", nullable = false)
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JoinColumn(name = "image_id", nullable = true)
     Image profileImage;
 
 }
