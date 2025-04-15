@@ -20,12 +20,8 @@ public class BlogService {
 
     @Transactional
     public void createBlog(User user) {
-        int count = 0;
         String blogTitle = user.getEmail().split("@")[0] + ".log";
 
-        if (blogRepository.existsByTitle(blogTitle)) {
-            blogTitle = blogTitle.replace(".log", count + ".log");
-        }
         Blog blog = Blog.builder()
                 .title(blogTitle)
                 .user(user)

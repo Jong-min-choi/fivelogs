@@ -1,8 +1,10 @@
-package com.fiveguys.fivelogbackend.global.security.security;
+package com.fiveguys.fivelogbackend.global.security.oauth;
 
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
+import com.fiveguys.fivelogbackend.global.security.security.SecurityUser;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -16,6 +18,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomOauth2UserService extends DefaultOAuth2UserService {
     private final UserService userService;
     @Transactional
@@ -31,10 +34,13 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         Map<String, Object> attributes = oAuth2User.getAttributes();
         Map<String, String> attributesProperties = (Map<String, String>) attributes.get("properties");
         String nickname = attributesProperties.get("nickname");
-//        String profileImgUrl = attributesProperties.get("profile_image");
-        String email = providerTypeCode + "__" + oauthId;
+        String email = ((Map<String, Object>) attributes.get("kakao_account")).get("email").toString();
 
-        User user = userService.modifyOrJoin(email, nickname);
+//        log.info("email {}", email2);
+//        log.info("attributes {}", attributes);
+//        String email = providerTypeCode + "__" + oauthId;
+
+        User user = userService.modifyOrJoin(email, nickname, providerTypeCode);
 
         return new SecurityUser(
                  user.getId(),

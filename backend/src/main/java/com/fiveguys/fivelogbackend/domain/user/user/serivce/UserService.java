@@ -1,13 +1,15 @@
 package com.fiveguys.fivelogbackend.domain.user.user.serivce;
 
-import com.fiveguys.fivelogbackend.domain.user.user.dto.CreateUserDto;
+import com.fiveguys.fivelogbackend.domain.user.user.dto.JoinUserDto;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.repository.UserRepository;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.Optional;
@@ -20,12 +22,13 @@ import java.util.UUID;
 public class UserService {
     private final AuthTokenService authTokenService;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     @Transactional
-    public User createUser(CreateUserDto createUserDto){
-        if(userRepository.findByEmail(createUserDto.getEmail()).isPresent()){
+    public User createUser(JoinUserDto joinUserDto){
+        if(userRepository.findByEmail(joinUserDto.getEmail()).isPresent()){
             throw new IllegalArgumentException("email already exist");
         }
-        User user = CreateUserDto.from(createUserDto);
+        User user = JoinUserDto.from(joinUserDto);
         User savedUser = userRepository.save(user);
         log.info("user {}", user);
         return savedUser;
@@ -34,19 +37,20 @@ public class UserService {
         return userRepository.findByRefreshToken(refreshToken);
     }
 
-    public User join(String email, String password, String nickname) {
+    public User join(String email, String password, String nickname, String provider) {
         userRepository
                 .findByEmail(email)
                 .ifPresent(member -> {
-                    throw new RuntimeException("해당 username은 이미 사용중입니다.");
+                    throw new RuntimeException("해당 email은 이미 사용중입니다.");
                 });
-
+        if(StringUtils.hasText(password)) password = passwordEncoder.encode(password);
         User user = User.builder()
                 .email(email)
                 .password(password)
-                .introduce("default introduce")
-                .SNSLink("TEST_LINK")
+                .introduce("안녕하세요 " + nickname + "입니다.")
+                .SNSLink(null)
                 .nickname(nickname)
+                .provider(provider)
                 .refreshToken(UUID.randomUUID().toString())
                 .build();
 
@@ -80,10 +84,10 @@ public class UserService {
         if (payload == null) return null;
 
         long id = (long) payload.get("id");
-        String username = (String) payload.get("username");
+        String email = (String) payload.get("email");
         String nickname = (String) payload.get("nickname");
 
-        User user = new User(id, username, nickname);
+        User user = new User(id, email, nickname);
 
         return user;
     }
@@ -93,7 +97,7 @@ public class UserService {
     }
 
 
-    public User modifyOrJoin(String email, String nickname) {
+    public User modifyOrJoin(String email, String nickname, String provider) {
         Optional<User> opMember = findByEmail(email);
 
         if (opMember.isPresent()) {
@@ -103,6 +107,6 @@ public class UserService {
             return user;
         }
 
-        return join (email, "", nickname);
+        return join (email, "", nickname, provider);
     }
 }

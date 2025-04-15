@@ -17,12 +17,12 @@ public class AuthTokenService {
 
     String genAccessToken(User user) {
         long id = user.getId();
-        String username = user.getEmail();
+        String email = user.getEmail();
 
         return Ut.jwt.toString(
                 jwtSecretKey,
                 accessTokenExpirationSeconds,
-                Map.of("id", id, "username", username)
+                Map.of("id", id, "email", email)
         );
     }
 
@@ -32,8 +32,8 @@ public class AuthTokenService {
         if (parsedPayload == null) return null;
 
         long id = (long) (Integer) parsedPayload.get("id");
-        String username = (String) parsedPayload.get("username");
+        String email = (String) parsedPayload.get("email");
 
-        return Map.of("id", id, "username", username);
+        return Map.of("id", id, "email", email);
     }
 }
