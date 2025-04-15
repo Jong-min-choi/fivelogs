@@ -1,4 +1,4 @@
-package com.fiveguys.fivelogbackend.api;
+package com.fiveguys.fivelogbackend.global.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
