@@ -36,5 +36,7 @@ public class BoardService {
     public Page<Board> getBoards(Pageable pageable) {
         return boardRepository.findAll(pageable);
     }
+
+
 }
 
