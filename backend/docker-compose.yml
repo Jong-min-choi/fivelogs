@@ -1,0 +1,14 @@
+version: '3'
+services:
+  blue:
+    image: 752725210089.dkr.ecr.ap-northeast-2.amazonaws.com/fivelogs:latest
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=blue
+  green:
+    image: 752725210089.dkr.ecr.ap-northeast-2.amazonaws.com/fivelogs:latest
+    ports:
+      - "8091:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=green

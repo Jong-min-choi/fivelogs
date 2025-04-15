@@ -4,3 +4,10 @@ custom:
     cookieDomain: "${custom.prod.cookieDomain}"
     frontUrl: "${custom.prod.frontUrl}"
     backUrl: "${custom.prod.backUrl}"
+
+db:
+  datasource:
+    url: "${rds.url}"
+    username: "${rds.username}"
+    password: "${rds.password}"
+    driver-class-name: com.mysql.cj.jdbc.Driver
