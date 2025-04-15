@@ -1,4 +1,4 @@
-package com.fiveguys.fivelogbackend.global.security.security;
+package com.fiveguys.fivelogbackend.global.security.oauth;
 
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
