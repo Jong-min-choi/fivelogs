@@ -1,6 +1,7 @@
 package com.fiveguys.fivelogbackend.domain.blog.comment.controller;
 
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentRequestDto;
+import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.entity.Comment;
 import com.fiveguys.fivelogbackend.domain.blog.comment.service.CommentService;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
@@ -20,35 +21,33 @@ import java.util.Optional;
 public class CommentController {
     private final CommentService commentService;
 
+    //댓글 조회
     @Operation(summary = "댓글 단건 조회", description = "댓글 ID로 댓글을 조회합니다.")
     @GetMapping("/{id}")
-    public ResponseEntity<Comment> getComment(@PathVariable Long id) {
-        Comment comment = commentService.getComment(id);
-        return ResponseEntity.ok(comment);
+    public ResponseEntity<CommentResponseDto> getComment(@PathVariable Long id) {
+        return ResponseEntity.ok(commentService.getCommentDto(id));
     }
 
     // 댓글 추가
     @PostMapping
-    @Operation(summary = "댓글 작성", description = "댓글을 작성합니다")
-    public ResponseEntity<Comment> createComment(@RequestBody CommentRequestDto dto) {
-        Comment savedComment = commentService.createComment(dto);
+    @Operation(summary = "댓글 작성", description = "댓글 ID로 댓글을 작성합니다")
+    public ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto dto) {
+        CommentResponseDto savedComment = commentService.createComment(dto);
         return new ResponseEntity<>(savedComment, HttpStatus.CREATED);
     }
 
     //댓글 수정
-
     @Operation(summary = "댓글 수정", description = "댓글 ID로 댓글을 수정합니다.")
     @PutMapping("/{id}")
-    public ResponseEntity<Comment> editComment(
+    public ResponseEntity<CommentResponseDto> editComment(
             @PathVariable Long id,
             @RequestBody CommentRequestDto dto
     ) {
-        Comment updated = commentService.editComment(id, dto);
-        return ResponseEntity.ok(updated);
+        CommentResponseDto updatedComment = commentService.editComment(id, dto);
+        return ResponseEntity.ok(updatedComment);
     }
 
     // 댓글 삭제
-
     @Operation(summary = "댓글 삭제", description = "댓글 ID로 댓글을 삭제합니다.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
