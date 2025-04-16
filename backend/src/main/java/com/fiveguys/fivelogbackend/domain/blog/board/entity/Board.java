@@ -7,10 +7,7 @@ import com.fiveguys.fivelogbackend.global.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-//프로젝트를 위한 임포트 목록
-import java.time.LocalDateTime;
+
 import java.util.List;
 
 @SuperBuilder
@@ -21,6 +18,9 @@ import java.util.List;
 @Builder
 @Entity
 public class Board extends BaseEntity {
+
+    @Column(length = 255)
+    private String hashtags;
 
     @Column(length = 100, nullable = false)
     private String title;
