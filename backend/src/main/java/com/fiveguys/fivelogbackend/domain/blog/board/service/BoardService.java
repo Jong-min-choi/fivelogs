@@ -42,7 +42,6 @@ public class BoardService {
     }
 
     // 앞에 자동으로 #붙이고 중복제거 GPT가 만들어줬어요ㅎ
-    public class HashtagUtils {
 
         public static String cleanHashtags(String rawInput) {
             return Arrays.stream(rawInput.split("\\s+")) //   \\s	 공백, 탭, 줄바꿈 등 모든 공백 문자 +는 1개이상을 뜻함 공백이 여러개여도 1개로 취급!
@@ -50,7 +49,7 @@ public class BoardService {
                     .distinct()
                     .collect(Collectors.joining(" "));
         }
-    }
+
 
 }
 
