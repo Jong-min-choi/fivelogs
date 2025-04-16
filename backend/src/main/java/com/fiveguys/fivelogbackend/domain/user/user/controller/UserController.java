@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,12 +21,13 @@ public class UserController {
     private final UserCommandService userCommandService;
 
 
+    @PostMapping("/create")
     public ResponseEntity<String> createUser(CreateUserDto createUserDto){
         String message = userCommandService.createUser(createUserDto);
         return ResponseEntity.ok(message);
     }
     //유저삭제
-    @DeleteMapping("/user/delete")
+    @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteUser() {
 //        userService.deleteUser();
         return ResponseEntity.noContent().build();

@@ -1,6 +1,4 @@
-import Image from "next/image";
-
-export default function Home() {
+export default function BlogPage() {
   const posts = [
     {
       id: 1,
@@ -25,12 +23,8 @@ export default function Home() {
   return (
     <div className="space-y-8">
       <div className="text-center py-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Welcome to FiveLogs
-        </h1>
-        <p className="text-xl text-gray-600">
-          A modern blog platform for sharing ideas and knowledge
-        </p>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Blog</h1>
+        <p className="text-xl text-gray-600">Latest articles and insights</p>
       </div>
 
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">

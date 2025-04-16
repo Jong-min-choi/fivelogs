@@ -1,20 +1,26 @@
-package com.fiveguys.fivelogbackend.global.config;
+package com.fiveguys.fivelogbackend.global.security.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
-
+    private final CustomAuthenticationFilter customAuthenticationFilter;
+    private final CustomOauth2AuthenticationSuccessHandler customOauth2AuthenticationSuccessHandler;
+    private final CustomAuthorizationRequestResolver customAuthorizationRequestResolver;
     private final String[] permitURL = {"/login",
             "/v3/api-docs/**", "/swagger-ui/**",
             "/swagger-ui.html",
@@ -31,8 +37,23 @@ public class SecurityConfig {
                    .csrf(csrf -> csrf.disable())
                    .formLogin( form -> form.disable())
                    .httpBasic(httpBasic -> httpBasic.disable())
-                   .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())); //h2-console 접근 허용
+                   .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+                   .formLogin(
+                           AbstractHttpConfigurer::disable
+                   )
+                   .sessionManagement((sessionManagement) -> sessionManagement
+                           .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                   )
+                   .oauth2Login( oauth2Login ->
+                        oauth2Login.successHandler(customOauth2AuthenticationSuccessHandler)
+                                .authorizationEndpoint( authorizationEndpoint ->
+                                        authorizationEndpoint
+                                                .authorizationRequestResolver(customAuthorizationRequestResolver)
+                                )
+                   )
+                   .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
+           ; //h2-console 접근 허용
 
 
            return http.build();

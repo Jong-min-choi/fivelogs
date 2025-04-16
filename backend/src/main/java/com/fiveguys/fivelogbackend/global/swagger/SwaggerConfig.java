@@ -1,4 +1,4 @@
-package com.fiveguys.fivelogbackend.config;
+package com.fiveguys.fivelogbackend.global.swagger;
 
 import io.swagger.v3.oas.models.*;
 import io.swagger.v3.oas.models.info.Info;
