@@ -1,51 +1,59 @@
 package com.fiveguys.fivelogbackend.domain.image.controller;
 
+import com.fiveguys.fivelogbackend.domain.image.dto.ImageRequestDto;
+import com.fiveguys.fivelogbackend.domain.image.dto.ImageResponseDto;
 import com.fiveguys.fivelogbackend.domain.image.entity.Image;
 import com.fiveguys.fivelogbackend.domain.image.service.ImageService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping()
 @RequiredArgsConstructor
+@RequestMapping("/api/images")
 public class ImageController {
+
     private final ImageService imageService;
 
-    // 이미지 저장
-    @PostMapping
-    public ResponseEntity<Image> saveImage(@RequestBody Image image) {
-        return ResponseEntity.ok(imageService.saveImage(image));
+    //  이미지 업로드
+    @Operation(summary = "이미지 업로드", description = "json형태로 받기 + 이미지 파일 꼭 있어야 작동.")
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ImageResponseDto uploadImage(@RequestPart("file") MultipartFile file) {
+        ImageRequestDto dto = new ImageRequestDto();
+        dto.setFile(file);
+        return imageService.saveImage(dto);
     }
 
-    // 이미지 단건 조회
+    //  이미지 단건 조회
     @GetMapping("/{id}")
-    public ResponseEntity<Image> getImage(@PathVariable Long id) {
-        return imageService.getImageById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @Operation(summary = "이미지 단건 조회", description = "ID로 이미지를 조회합니다.")
+    public Optional<Image> getImage(@PathVariable("id") Long id) {
+        return imageService.getImageById(id);
     }
 
-    // 전체 이미지 리스트 조회
+    //  이미지 전체 조회
     @GetMapping
-    public ResponseEntity<List<Image>> getAllImages() {
-        return ResponseEntity.ok(imageService.getAllImages());
+    @Operation(summary = "이미지 전체 조회", description = "이미지 전체조회 합니다.")
+    public List<Image> getAllImages() {
+        return imageService.getAllImages();
     }
 
-    // 이미지 수정
+    //  이미지 수정
     @PutMapping("/{id}")
-    public ResponseEntity<Image> updateImage(@PathVariable Long id, @RequestBody Image updatedImage) {
-        return ResponseEntity.ok(imageService.updateImage(id, updatedImage));
+    @Operation(summary = "이미지 수정", description = "ID로 이미지를 수정합니다.")
+    public Image updateImage(@PathVariable("id") Long id, @RequestBody Image updatedImage) {
+        return imageService.updateImage(id, updatedImage);
     }
 
-    // 이미지 삭제
+    //  이미지 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteImage(@PathVariable Long id) {
-        imageService.deleteImage(id);
-        return ResponseEntity.noContent().build();
-        //테스트222222
+    @Operation(summary = "이미지 삭제", description = "ID로 이미지를 삭제합니다.")
+    public String deleteImage(@PathVariable("id") Long id) {
+        return imageService.deleteImage(id);
     }
 }
-
