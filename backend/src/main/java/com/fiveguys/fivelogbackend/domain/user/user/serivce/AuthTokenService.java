@@ -1,16 +1,20 @@
 package com.fiveguys.fivelogbackend.domain.user.user.serivce;
 
+import com.fiveguys.fivelogbackend.domain.user.role.repository.RoleRepository;
+import com.fiveguys.fivelogbackend.domain.user.role.service.RoleService;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.global.ut.Ut;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class AuthTokenService {
     @Value("${custom.jwt.secretKey}")
     private String jwtSecretKey;
+    private RoleService roleService;
 
     @Value("${custom.accessToken.expirationSeconds}")
     private long accessTokenExpirationSeconds;
@@ -18,11 +22,10 @@ public class AuthTokenService {
     String genAccessToken(User user) {
         long id = user.getId();
         String email = user.getEmail();
-
         return Ut.jwt.toString(
                 jwtSecretKey,
                 accessTokenExpirationSeconds,
-                Map.of("id", id, "email", email)
+                Map.of("id", id, "email", email )
         );
     }
 

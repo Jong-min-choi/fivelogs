@@ -28,10 +28,8 @@ public class CustomOauth2AuthenticationSuccessHandler extends SavedRequestAwareA
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
 // rq.getActor() 시큐리티에서 로그인된 회원정보 가지고 오기
         User actor = userService.findById(rq.getActor().getId()).get();
-
         // 토큰 발급
         rq.makeAuthCookie (actor);
-
         logger.info("state test:");
 
         String redirectUrl = request.getParameter("state");

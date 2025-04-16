@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static java.util.Arrays.sort;
+import static java.util.Arrays.stream;
+
 @Entity
 @Table(name = "users")
 @Getter @Setter
@@ -57,6 +60,13 @@ public class User {
         return getAuthoritiesAsStringList()
                 .stream()
                 .map(SimpleGrantedAuthority::new)
+                .toList();
+    }
+
+    public Collection<? extends GrantedAuthority> getAuthorities(List<String> names) {
+        return names
+                .stream()
+                .map((name) -> new SimpleGrantedAuthority("ROLE_" + name))
                 .toList();
     }
 
