@@ -13,4 +13,5 @@ public class CreateBoardRequestDto {
     private String title;
     private String content;
     private BoardStatus status;
+    private String hashtags;
 }
