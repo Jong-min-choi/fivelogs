@@ -3,6 +3,7 @@ import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function JoinPage() {
   const [email, setEmail] = useState("");
@@ -10,17 +11,66 @@ export default function JoinPage() {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [nickname, setNickname] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 회원가입 로직 구현
-    console.log({ email, password, passwordConfirm, nickname });
+
+    // 비밀번호 확인
+    if (password !== passwordConfirm) {
+      setError("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setError("");
+
+      const response = await fetch("http://localhost:8090/api/users/join", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          nickname,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "회원가입에 실패했습니다.");
+      }
+
+      const data = await response.json();
+      console.log("회원가입 성공:", data);
+
+      // 회원가입 성공 후 로그인 페이지로 이동
+      alert("회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
+      router.push("/users/login");
+    } catch (err) {
+      console.error("회원가입 오류:", err);
+      setError(
+        err instanceof Error ? err.message : "회원가입 중 오류가 발생했습니다."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <Layout>
       <div className="max-w-md mx-auto my-8 p-6 bg-white rounded-lg shadow-sm">
         <h1 className="text-2xl font-bold text-center mb-8">회원가입</h1>
+
+        {error && (
+          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -104,14 +154,15 @@ export default function JoinPage() {
           <button
             type="submit"
             className="w-full py-3 mt-4 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
+            disabled={isLoading}
           >
-            회원가입
+            {isLoading ? "처리 중..." : "회원가입"}
           </button>
         </form>
 
         <div className="mt-4 text-center text-sm text-gray-500">
           이미 계정이 있으신가요?{" "}
-          <Link href="/login" className="text-rose-500 hover:underline">
+          <Link href="/users/login" className="text-rose-500 hover:underline">
             로그인
           </Link>
         </div>
