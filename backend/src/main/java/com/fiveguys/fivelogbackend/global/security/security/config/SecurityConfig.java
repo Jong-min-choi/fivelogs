@@ -28,12 +28,14 @@ public class SecurityConfig {
             "/v3/api-docs/**", "/swagger-ui/**",
             "/swagger-ui.html",
             "/api/**","/h2-console/**", "/actuator/**",
-            "/user/join","/error", "/css/**", "/js/**"
+            "/user/join","/error", "/css/**", "/js/**",
+            "/user/login"
     };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
            http
+                   .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                    .authorizeHttpRequests( auth -> auth
                            .requestMatchers(permitURL).permitAll()
                            .anyRequest().authenticated())
@@ -54,8 +56,7 @@ public class SecurityConfig {
                                         authorizationEndpoint
                                                 .authorizationRequestResolver(customAuthorizationRequestResolver)
                                 )
-                   )
-                   .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                   );
 
            ; //h2-console 접근 허용
 

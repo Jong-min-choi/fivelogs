@@ -1,6 +1,7 @@
 package com.fiveguys.fivelogbackend.global.security.oauth;
 
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
+import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserCommandService;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import com.fiveguys.fivelogbackend.global.security.security.SecurityUser;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class CustomOauth2UserService extends DefaultOAuth2UserService {
-    private final UserService userService;
+    private final UserCommandService userCommandService;
     @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
@@ -40,7 +41,9 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 //        log.info("attributes {}", attributes);
 //        String email = providerTypeCode + "__" + oauthId;
 
-        User user = userService.modifyOrJoin(email, nickname, providerTypeCode);
+
+
+        User user = userCommandService.joinAndCreateBlog (email,"", nickname, providerTypeCode);
 
         return new SecurityUser(
                  user.getId(),

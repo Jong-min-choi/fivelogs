@@ -31,7 +31,7 @@ dependencies {
 	implementation ("io.jsonwebtoken:jjwt-jackson:0.12.6")
 	implementation ("org.springframework.boot:spring-boot-starter-security") //security
 	implementation("org.springframework.boot:spring-boot-starter-actuator") // actuator , health check
-	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("org.springframework.boot:spring-boot-starter-validation") // 유효성 검사
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 	implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
 	implementation("org.springframework.boot:spring-boot-starter-web")
