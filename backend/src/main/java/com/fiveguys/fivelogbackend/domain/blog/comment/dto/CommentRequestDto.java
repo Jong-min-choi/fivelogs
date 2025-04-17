@@ -14,9 +14,9 @@ import java.time.format.DateTimeFormatter;
 @Schema(description = "댓글 작성 DTO")
 public class CommentRequestDto {
 
-    @Schema(description = "게시글 ID", example = "0")
+    @Schema(description = "게시글 ID", example = "1")
     private Long boardId;
-    @Schema(description = "작성자 유저 ID", example = "0")
+    @Schema(description = "작성자 유저 ID", example = "1")
     private Long userId;
 
     //    @Schema(description = "닉네임", example = "Five Guys")
