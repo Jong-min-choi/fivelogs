@@ -29,7 +29,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
     private AuthTokens getAuthTokensFromRequest() {
         String authorization = rq.getHeader("Authorization");
-        log.info("authorization {}", authorization);
+//        log.info("authorization {}", authorization);
         if (authorization != null && authorization.startsWith("Bearer ")) {
             String token = authorization.substring("Bearer ".length());
             String[] tokenBits = token.split(" ", 2);
@@ -70,8 +70,8 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (!request.getRequestURI().startsWith("/api/")) {
 
+        if (!request.getRequestURI().startsWith("/api/")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -82,11 +82,11 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         }
 
         AuthTokens authTokens = getAuthTokensFromRequest();
+        log.info("authToknes test {}", authTokens);
         if (authTokens == null) {
             filterChain.doFilter(request, response);
             return;
         }
-
         String refreshToken = authTokens.refreshToken;
         String accessToken = authTokens.accessToken;
 

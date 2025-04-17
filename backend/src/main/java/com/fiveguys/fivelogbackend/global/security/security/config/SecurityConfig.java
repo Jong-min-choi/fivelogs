@@ -64,8 +64,6 @@ public class SecurityConfig {
                    );
 
            ; //h2-console 접근 허용
-
-
            return http.build();
     }
     public CorsConfigurationSource corsConfigurationSource() {
