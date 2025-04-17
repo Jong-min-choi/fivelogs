@@ -76,7 +76,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (List.of("/api/users/login", "/api/users/logout", "/api/users/join").contains(request.getRequestURI())) {
+        if (List.of("/api/users/login",  "/api/users/join").contains(request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return;
         }

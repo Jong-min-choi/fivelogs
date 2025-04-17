@@ -3,22 +3,74 @@ import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const socialLoginForKakaoUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/oauth2/authorization/kakao`;
+  const redirectUrlAfterSocialLogin = process.env.NEXT_PUBLIC_FRONT_BASE_URL;
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 로그인 로직 구현
-    console.log({ email, password, rememberMe });
+
+    try {
+      setIsLoading(true);
+      setError("");
+
+      const response = await fetch("http://localhost:8090/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          rememberMe,
+        }),
+        credentials: "include", // ★ 이거 필수!
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "로그인에 실패했습니다.");
+      }
+
+      const data = await response.json();
+      console.log("로그인 성공:", data);
+
+      // 로그인 성공 후 토큰 저장 및 메인 페이지로 이동
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      // 리다이렉트 (메인 페이지로)
+      router.push("/");
+    } catch (err) {
+      console.error("로그인 오류:", err);
+      setError(
+        err instanceof Error ? err.message : "로그인 중 오류가 발생했습니다."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <Layout>
       <div className="max-w-md mx-auto my-8 p-6 bg-white rounded-lg shadow-sm">
         <h1 className="text-2xl font-bold text-center mb-8">로그인</h1>
+
+        {error && (
+          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -56,27 +108,28 @@ export default function LoginPage() {
 
           <div className="flex justify-between mb-4 text-sm">
             <div className="flex items-center">
-              <button
-                type="button"
+              <Link
+                href="/users/find/id"
                 className="text-rose-400 hover:text-rose-500"
               >
                 이메일 찾기
-              </button>
+              </Link>
               <span className="mx-2 text-gray-300">|</span>
-              <button
-                type="button"
+              <Link
+                href="/users/find/password"
                 className="text-rose-400 hover:text-rose-500"
               >
                 비밀번호 찾기
-              </button>
+              </Link>
             </div>
           </div>
 
           <button
             type="submit"
             className="w-full py-3 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
+            disabled={isLoading}
           >
-            로그인
+            {isLoading ? "로그인 중..." : "로그인"}
           </button>
         </form>
 
@@ -110,7 +163,11 @@ export default function LoginPage() {
               />
             </svg>
           </span>
-          카카오톡으로 시작하기
+          <a
+            href={`${socialLoginForKakaoUrl}?redirectUrl=${redirectUrlAfterSocialLogin}`}
+          >
+            카카오톡으로 시작하기
+          </a>
         </button>
 
         <div className="mt-4 text-center text-sm text-gray-500">
