@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import Layout from "@/components/layout/Layout";
+import Layout from "@/app/ClientLayout";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -62,7 +62,7 @@ export default function JoinPage() {
   };
 
   return (
-    <Layout>
+    <>
       <div className="max-w-md mx-auto my-8 p-6 bg-white rounded-lg shadow-sm">
         <h1 className="text-2xl font-bold text-center mb-8">회원가입</h1>
 
@@ -187,6 +187,6 @@ export default function JoinPage() {
       <div className="text-center text-xs text-gray-400 mt-8">
         © 2024 FIVE Log. All rights reserved.
       </div>
-    </Layout>
+    </>
   );
 }

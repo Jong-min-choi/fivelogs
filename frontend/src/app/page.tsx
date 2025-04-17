@@ -1,13 +1,6 @@
-import Layout from "@/components/layout/Layout";
-import { boards, categories } from "@/data/boards";
 import Boards from "@/components/Boards";
+import { boards, categories } from "@/data/boards";
 
 export default function Home() {
-  return (
-    <Layout>
-      <main>
-        <Boards boards={boards} categories={categories} />
-      </main>
-    </Layout>
-  );
+  return <Boards boards={boards} categories={categories} />;
 }
