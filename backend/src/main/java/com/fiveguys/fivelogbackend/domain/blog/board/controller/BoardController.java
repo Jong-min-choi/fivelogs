@@ -8,7 +8,14 @@ import com.fiveguys.fivelogbackend.global.security.security.SecurityUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +35,14 @@ public class BoardController {
 //    @Operation(summary = "게시글 열람")
 //    }
 
+    @GetMapping("/search-tag")
+    @Operation(summary = "태그 기반 게시글 검색", description = "해시태그에 해당하는 게시글 검색")
+    public ResponseEntity<Page<Board>> searchByTag(
+            @RequestParam String tag,
+            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        Page<Board> boards = boardService.searchBoardsByHashtag(tag, pageable);
+        return ResponseEntity.ok(boards);
+    }
     //user는 있고,
     @PostMapping("/blogs/{blogName}/boards/write")
     @Operation(summary = "게시글 작성")
@@ -42,5 +57,4 @@ public class BoardController {
 
         return null;
     }
-
 }

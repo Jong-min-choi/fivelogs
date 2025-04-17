@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
-    Page<Board> findByTitleAndUserNickname(String title, String nickname, Pageable pageable);
+    Page<Board> findByTitleContainingIgnoreCaseOrUser_NicknameContainingIgnoreCase(
+            String title, String nickname, Pageable pageable
+    );
 
+    Page<Board> findByHashtagsContainingIgnoreCase(String hashtag, Pageable pageable);
 }

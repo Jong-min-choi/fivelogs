@@ -38,7 +38,7 @@ public class BlogService {
 
     // 검색기능 서비스 페이징해서 할거임
     public Page<Board> searchBoards(String searchContent, Pageable pageable) {
-        return boardRepository.findByTitleAndUserNickname(searchContent, searchContent, pageable);
+        return boardRepository.findByTitleContainingIgnoreCaseOrUser_NicknameContainingIgnoreCase(searchContent, searchContent, pageable);
         // 제목,작성자 두개로 검색할거라 searchContent가 두개임!
     }
 

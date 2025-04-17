@@ -48,6 +48,10 @@ public class BoardService {
                     .collect(Collectors.joining(" "));
         }
 
+    public Page<Board> searchBoardsByHashtag(String tagName, Pageable pageable) {
+        String searchTagName = tagName.startsWith("#") ? tagName.trim() : "#" + tagName.trim();
+        return boardRepository.findByHashtagsContainingIgnoreCase(searchTagName, pageable);
+    }
 
 }
 
