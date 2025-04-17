@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import Layout from "@/components/layout/Layout";
+import Layout from "@/app/ClientLayout";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -145,189 +145,185 @@ export default function MyBoardPage() {
   };
 
   return (
-    <Layout>
-      <div className="flex flex-col md:flex-row md:gap-8">
-        {/* 메인 콘텐츠 영역 */}
-        <main className="md:w-3/4">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold">My Board</h1>
+    <div className="flex flex-col md:flex-row md:gap-8">
+      {/* 메인 콘텐츠 영역 */}
+      <main className="md:w-3/4">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">My Board</h1>
 
-            {/* 카테고리 필터 */}
-            <div className="relative inline-block">
-              <select
-                className="appearance-none border rounded-md py-1 px-3 pr-8 bg-white focus:outline-none"
-                value={selectedCategory}
-                onChange={(e) => handleCategoryChange(e.target.value)}
+          {/* 카테고리 필터 */}
+          <div className="relative inline-block">
+            <select
+              className="appearance-none border rounded-md py-1 px-3 pr-8 bg-white focus:outline-none"
+              value={selectedCategory}
+              onChange={(e) => handleCategoryChange(e.target.value)}
+            >
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+              <svg
+                className="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
               >
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* 블로그 게시글 목록 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {currentBoards.map((board) => (
+            <div key={board.id} className="border rounded-lg shadow-sm">
+              <div className="p-5">
+                <div className="flex items-center text-sm text-gray-500 mb-2">
+                  <span>{board.category}</span>
+                  <span className="mx-2">•</span>
+                  <span>{board.date}</span>
+                </div>
+                <h2 className="text-lg font-bold mb-2">{board.title}</h2>
+                <p className="text-gray-600 mb-4 line-clamp-2">
+                  {board.description}
+                </p>
+                <Link
+                  href={`/board/${board.id}`}
+                  className="text-rose-500 inline-flex items-center"
+                >
+                  자세히 보기
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 ml-1"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 페이지네이션 */}
+        <div className="flex justify-center">
+          <nav className="inline-flex">
+            {/* 이전 페이지 버튼 */}
+            {currentPage > 1 && (
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="border border-gray-300 px-3 py-1 rounded-l-md hover:bg-gray-100"
+              >
                 <svg
-                  className="fill-current h-4 w-4"
                   xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
-                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
                 </svg>
-              </div>
-            </div>
-          </div>
+              </button>
+            )}
 
-          {/* 블로그 게시글 목록 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {currentBoards.map((board) => (
-              <div key={board.id} className="border rounded-lg shadow-sm">
-                <div className="p-5">
-                  <div className="flex items-center text-sm text-gray-500 mb-2">
-                    <span>{board.category}</span>
-                    <span className="mx-2">•</span>
-                    <span>{board.date}</span>
-                  </div>
-                  <h2 className="text-lg font-bold mb-2">{board.title}</h2>
-                  <p className="text-gray-600 mb-4 line-clamp-2">
-                    {board.description}
-                  </p>
-                  <Link
-                    href={`/board/${board.id}`}
-                    className="text-rose-500 inline-flex items-center"
-                  >
-                    자세히 보기
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 ml-1"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </Link>
-                </div>
-              </div>
+            {/* 페이지 번호 버튼들 */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`${
+                  currentPage === page
+                    ? "bg-rose-500 text-white"
+                    : "border border-gray-300 hover:bg-gray-100"
+                } px-3 py-1`}
+              >
+                {page}
+              </button>
             ))}
-          </div>
 
-          {/* 페이지네이션 */}
-          <div className="flex justify-center">
-            <nav className="inline-flex">
-              {/* 이전 페이지 버튼 */}
-              {currentPage > 1 && (
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  className="border border-gray-300 px-3 py-1 rounded-l-md hover:bg-gray-100"
+            {/* 다음 페이지 버튼 */}
+            {currentPage < totalPages && (
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="border border-gray-300 px-3 py-1 rounded-r-md hover:bg-gray-100"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                </button>
-              )}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            )}
+          </nav>
+        </div>
+      </main>
 
-              {/* 페이지 번호 버튼들 */}
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`${
-                      currentPage === page
-                        ? "bg-rose-500 text-white"
-                        : "border border-gray-300 hover:bg-gray-100"
-                    } px-3 py-1`}
-                  >
-                    {page}
-                  </button>
-                )
-              )}
+      {/* 오른쪽 사이드바 - 프로필 영역 */}
+      <aside className="md:w-1/4 mt-8 md:mt-0">
+        <div className="sticky top-8 bg-gray-50 rounded-xl p-6">
+          <div className="flex flex-col items-center mb-4">
+            <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden mb-4">
+              <Image
+                src="/next.svg"
+                alt="프로필 이미지"
+                width={96}
+                height={96}
+                className="object-cover"
+              />
+            </div>
+            <h2 className="text-xl font-bold">김개발</h2>
+            <p className="text-gray-600 mb-4">프론트엔드 개발자</p>
 
-              {/* 다음 페이지 버튼 */}
-              {currentPage < totalPages && (
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className="border border-gray-300 px-3 py-1 rounded-r-md hover:bg-gray-100"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
-              )}
-            </nav>
-          </div>
-        </main>
-
-        {/* 오른쪽 사이드바 - 프로필 영역 */}
-        <aside className="md:w-1/4 mt-8 md:mt-0">
-          <div className="sticky top-8 bg-gray-50 rounded-xl p-6">
-            <div className="flex flex-col items-center mb-4">
-              <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden mb-4">
-                <Image
-                  src="/next.svg"
-                  alt="프로필 이미지"
-                  width={96}
-                  height={96}
-                  className="object-cover"
-                />
-              </div>
-              <h2 className="text-xl font-bold">김개발</h2>
-              <p className="text-gray-600 mb-4">프론트엔드 개발자</p>
-
-              <div className="w-full space-y-4">
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div>
-                    <p className="font-medium text-sm">총 게시글</p>
-                    <p className="text-lg">26개</p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-sm">총 댓글</p>
-                    <p className="text-lg">124개</p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-sm">방문자</p>
-                    <p className="text-lg">1,234명</p>
-                  </div>
+            <div className="w-full space-y-4">
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div>
+                  <p className="font-medium text-sm">총 게시글</p>
+                  <p className="text-lg">26개</p>
+                </div>
+                <div>
+                  <p className="font-medium text-sm">총 댓글</p>
+                  <p className="text-lg">124개</p>
+                </div>
+                <div>
+                  <p className="font-medium text-sm">방문자</p>
+                  <p className="text-lg">1,234명</p>
                 </div>
               </div>
             </div>
-
-            <div className="border-t pt-4 mt-2">
-              <h3 className="font-medium mb-2">시리즈</h3>
-              <ul className="space-y-2">
-                <li className="text-sm">• React 완벽 가이드 (12)</li>
-                <li className="text-sm">• TypeScript 기초 (8)</li>
-                <li className="text-sm">• 웹 성능 최적화 (6)</li>
-              </ul>
-            </div>
           </div>
-        </aside>
-      </div>
-    </Layout>
+
+          <div className="border-t pt-4 mt-2">
+            <h3 className="font-medium mb-2">시리즈</h3>
+            <ul className="space-y-2">
+              <li className="text-sm">• React 완벽 가이드 (12)</li>
+              <li className="text-sm">• TypeScript 기초 (8)</li>
+              <li className="text-sm">• 웹 성능 최적화 (6)</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
   );
 }

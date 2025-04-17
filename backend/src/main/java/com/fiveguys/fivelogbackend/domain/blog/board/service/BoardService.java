@@ -19,7 +19,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
-    public CreateBoardResponseDto createBoard(CreateBoardRequestDto dto) {
+    public Board createBoard(CreateBoardRequestDto dto) {
         Board board = Board.builder()
                 .title(dto.getTitle())
                 .hashtags(dto.getHashtags())
@@ -27,8 +27,7 @@ public class BoardService {
                 .status(dto.getStatus())
                 .build();
 
-        Board saved = boardRepository.save(board);
-        return null;
+        return boardRepository.save(board);
     }
 
     public CreateBoardResponseDto getBoard(Long id) {
@@ -42,7 +41,6 @@ public class BoardService {
     }
 
     // 앞에 자동으로 #붙이고 중복제거 GPT가 만들어줬어요ㅎ
-
         public static String cleanHashtags(String rawInput) {
             return Arrays.stream(rawInput.split("\\s+")) //   \\s	 공백, 탭, 줄바꿈 등 모든 공백 문자 +는 1개이상을 뜻함 공백이 여러개여도 1개로 취급!
                     .map(tag -> tag.startsWith("#") ? tag : "#" + tag)

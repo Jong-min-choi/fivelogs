@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import Layout from "@/components/layout/Layout";
+import Layout from "@/app/ClientLayout";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -42,15 +42,8 @@ export default function LoginPage() {
       }
 
       const data = await response.json();
-      console.log("로그인 성공:", data);
 
-      // 로그인 성공 후 토큰 저장 및 메인 페이지로 이동
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-      }
-
-      // 리다이렉트 (메인 페이지로)
-      router.push("/");
+      window.location.href = "/";
     } catch (err) {
       console.error("로그인 오류:", err);
       setError(
@@ -62,7 +55,7 @@ export default function LoginPage() {
   };
 
   return (
-    <Layout>
+    <>
       <div className="max-w-md mx-auto my-8 p-6 bg-white rounded-lg shadow-sm">
         <h1 className="text-2xl font-bold text-center mb-8">로그인</h1>
 
@@ -197,6 +190,6 @@ export default function LoginPage() {
       <div className="text-center text-xs text-gray-400 mt-8">
         © 2024 FIVE Log. All rights reserved.
       </div>
-    </Layout>
+    </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import Layout from "@/components/layout/Layout";
+import Layout from "@/app/ClientLayout";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 
@@ -178,78 +178,76 @@ export default function BoardDetail() {
   }
 
   return (
-    <Layout>
-      <main className="py-6">
-        {/* 블로그 헤더 */}
-        <div className="mb-8">
-          <div className="flex items-center text-sm text-gray-500 mb-2">
-            <span>{board.category}</span>
-            <span className="mx-2">•</span>
-            <span>{board.date}</span>
-          </div>
-          <h1 className="text-3xl font-bold mb-4">{board.title}</h1>
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 mr-3">
-                {board.author.charAt(0)}
-              </div>
-              <span>{board.author}</span>
+    <main className="py-6">
+      {/* 블로그 헤더 */}
+      <div className="mb-8">
+        <div className="flex items-center text-sm text-gray-500 mb-2">
+          <span>{board.category}</span>
+          <span className="mx-2">•</span>
+          <span>{board.date}</span>
+        </div>
+        <h1 className="text-3xl font-bold mb-4">{board.title}</h1>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 mr-3">
+              {board.author.charAt(0)}
             </div>
-            <div className="text-gray-500">조회수 {board.viewCount}회</div>
+            <span>{board.author}</span>
           </div>
+          <div className="text-gray-500">조회수 {board.viewCount}회</div>
         </div>
+      </div>
 
-        {/* 블로그 콘텐츠 */}
-        <div
-          className="prose prose-rose max-w-none mb-12"
-          dangerouslySetInnerHTML={{ __html: board.content }}
-        ></div>
+      {/* 블로그 콘텐츠 */}
+      <div
+        className="prose prose-rose max-w-none mb-12"
+        dangerouslySetInnerHTML={{ __html: board.content }}
+      ></div>
 
-        {/* 추천 게시글 */}
-        <div className="border-t pt-8">
-          <h3 className="text-xl font-bold mb-4">관련 게시글</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {board.relatedBoards.map((relatedBoard: any) => (
-              <Link
-                key={relatedBoard.id}
-                href={`/board/${relatedBoard.id}`}
-                className="p-4 border rounded-lg hover:shadow-md transition"
-              >
-                <h4 className="font-medium">{relatedBoard.title}</h4>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* 이전/다음 버튼 */}
-        <div className="flex justify-between mt-12">
-          <Link href="/board" className="flex items-center text-rose-500">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+      {/* 추천 게시글 */}
+      <div className="border-t pt-8">
+        <h3 className="text-xl font-bold mb-4">관련 게시글</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {board.relatedBoards.map((relatedBoard: any) => (
+            <Link
+              key={relatedBoard.id}
+              href={`/board/${relatedBoard.id}`}
+              className="p-4 border rounded-lg hover:shadow-md transition"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            목록으로
-          </Link>
-          <div className="flex gap-4">
-            <button className="px-4 py-2 border rounded-md hover:bg-gray-50 transition">
-              이전 글
-            </button>
-            <button className="px-4 py-2 border rounded-md hover:bg-gray-50 transition">
-              다음 글
-            </button>
-          </div>
+              <h4 className="font-medium">{relatedBoard.title}</h4>
+            </Link>
+          ))}
         </div>
-      </main>
-    </Layout>
+      </div>
+
+      {/* 이전/다음 버튼 */}
+      <div className="flex justify-between mt-12">
+        <Link href="/board" className="flex items-center text-rose-500">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4 mr-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          목록으로
+        </Link>
+        <div className="flex gap-4">
+          <button className="px-4 py-2 border rounded-md hover:bg-gray-50 transition">
+            이전 글
+          </button>
+          <button className="px-4 py-2 border rounded-md hover:bg-gray-50 transition">
+            다음 글
+          </button>
+        </div>
+      </div>
+    </main>
   );
 }
