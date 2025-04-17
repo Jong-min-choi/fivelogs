@@ -1,6 +1,9 @@
-import Image from "next/image";
+import Layout from "@/components/layout/Layout";
+import { boards, categories } from "@/data/boards";
+import Boards from "@/components/Boards";
 
 export default function Home() {
+<<<<<<< HEAD
   const posts = [
     {
       id: 1,
@@ -67,5 +70,13 @@ export default function Home() {
         ))}
       </div>
     </div>
+=======
+  return (
+    <Layout>
+      <main>
+        <Boards boards={boards} categories={categories} />
+      </main>
+    </Layout>
+>>>>>>> 16a8d542087a276c301e689bceb2f3589b648306
   );
 }

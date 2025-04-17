@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.SneakyThrows;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class Ut {
             Date issuedAt = new Date();
             Date expiration = new Date(issuedAt.getTime() + 1000L * expireSeconds);
 
-            SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes());
+            SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
             String jwt = Jwts.builder()
                     .claims(body)
                     .issuedAt(issuedAt)

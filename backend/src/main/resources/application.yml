@@ -21,7 +21,10 @@ spring:
         registration:
           kakao:
             clientId: ${kakao.clientId}
-            scope: profile_nickname
+            scope:
+              - profile_nickname
+              - account_email
+
             client-name: Kakao
             authorization-grant-type: authorization_code
             redirect-uri: "${custom.site.backUrl}/{action}/oauth2/code/{registrationId}"
@@ -41,12 +44,20 @@ spring:
         format_sql: true
         highlight_sql: true
         use_sql_comments: true
+<<<<<<< HEAD
   security:
     oauth2:
       client:
         registration:
           kakao:
             clientId: 230afbbe705881f083467c17d24d00ed
+=======
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+>>>>>>> 16a8d542087a276c301e689bceb2f3589b648306
 logging:
   level:
     com.ll.blog: DEBUG
@@ -54,6 +65,8 @@ logging:
     org.hibernate.orm.jdbc.bind: TRACE
     org.hibernate.orm.jdbc.extract: TRACE
     org.springframework.transaction.interceptor: TRACE
+    org.springframework.security: TRACE
+
 custom:
   dev:
     cookieDomain: localhost

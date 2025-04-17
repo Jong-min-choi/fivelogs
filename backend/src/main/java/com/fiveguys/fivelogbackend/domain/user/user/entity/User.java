@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static java.util.Arrays.sort;
+import static java.util.Arrays.stream;
+
 @Entity
 @Table(name = "users")
 @Getter @Setter
@@ -30,9 +33,11 @@ public class User {
     @Column(length = 50, nullable = false)
     String introduce;
     @Column(name = "SNS_link")
-    String SNSLink;
+    SNSLinks SNSLink;
     @Column(length = 255)
     String refreshToken;
+    @Column(length = 20)
+    String provider;
     @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "image_id", nullable = true)
     Image profileImage;
@@ -55,6 +60,13 @@ public class User {
         return getAuthoritiesAsStringList()
                 .stream()
                 .map(SimpleGrantedAuthority::new)
+                .toList();
+    }
+
+    public Collection<? extends GrantedAuthority> getAuthorities(List<String> names) {
+        return names
+                .stream()
+                .map((name) -> new SimpleGrantedAuthority("ROLE_" + name))
                 .toList();
     }
 

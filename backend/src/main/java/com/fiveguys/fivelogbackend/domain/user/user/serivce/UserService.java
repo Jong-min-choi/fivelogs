@@ -1,13 +1,17 @@
 package com.fiveguys.fivelogbackend.domain.user.user.serivce;
 
-import com.fiveguys.fivelogbackend.domain.user.user.dto.CreateUserDto;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.repository.UserRepository;
+import com.fiveguys.fivelogbackend.global.rq.Rq;
+import com.fiveguys.fivelogbackend.global.ut.Ut;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.Optional;
@@ -20,33 +24,27 @@ import java.util.UUID;
 public class UserService {
     private final AuthTokenService authTokenService;
     private final UserRepository userRepository;
-    @Transactional
-    public User createUser(CreateUserDto createUserDto){
-        if(userRepository.findByEmail(createUserDto.getEmail()).isPresent()){
-            throw new IllegalArgumentException("email already exist");
-        }
-        User user = CreateUserDto.from(createUserDto);
-        User savedUser = userRepository.save(user);
-        log.info("user {}", user);
-        return savedUser;
-    }
+    private final PasswordEncoder passwordEncoder;
+    private final Rq rq;
+
     public Optional<User> findByRefreshToken(String refreshToken) {
         return userRepository.findByRefreshToken(refreshToken);
     }
-
-    public User join(String email, String password, String nickname) {
+    @Transactional
+    public User join(String email, String password, String nickname, String provider) {
         userRepository
                 .findByEmail(email)
                 .ifPresent(member -> {
-                    throw new RuntimeException("해당 username은 이미 사용중입니다.");
+                    throw new RuntimeException("해당 email은 이미 사용중입니다.");
                 });
-
+        if(StringUtils.hasText(password)) password = passwordEncoder.encode(password);
         User user = User.builder()
                 .email(email)
                 .password(password)
-                .introduce("default introduce")
-                .SNSLink("TEST_LINK")
+                .introduce("안녕하세요 " + nickname + "입니다.")
+                .SNSLink(null)
                 .nickname(nickname)
+                .provider(provider)
                 .refreshToken(UUID.randomUUID().toString())
                 .build();
 
@@ -80,10 +78,10 @@ public class UserService {
         if (payload == null) return null;
 
         long id = (long) payload.get("id");
-        String username = (String) payload.get("username");
+        String email = (String) payload.get("email");
         String nickname = (String) payload.get("nickname");
 
-        User user = new User(id, username, nickname);
+        User user = new User(id, email, nickname);
 
         return user;
     }
@@ -92,17 +90,29 @@ public class UserService {
         user.setNickname(nickname);
     }
 
+    @Transactional
+    public User modifyOrJoin(String email,String password,String nickname, String provider) {
+        Optional<User> opUser = findByEmail(email);
 
-    public User modifyOrJoin(String email, String nickname) {
-        Optional<User> opMember = findByEmail(email);
-
-        if (opMember.isPresent()) {
-            User user = opMember.get();
+        if (opUser.isPresent()) {
+            User user = opUser.get();
 
             modify(user, nickname);
             return user;
         }
 
-        return join (email, "", nickname);
+        return join (email, password, nickname, provider);
     }
+
+    public String login(String email, String password){
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                return rq.makeAuthCookie(user);
+            }
+        }
+        throw new BadCredentialsException("Invalid email or password");
+    }
+
 }

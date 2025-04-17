@@ -1,5 +1,6 @@
 package com.fiveguys.fivelogbackend.global.rq;
 
+import com.fiveguys.fivelogbackend.domain.user.role.service.RoleService;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import com.fiveguys.fivelogbackend.global.security.security.SecurityUser;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 // Request, Response, Cookie, Session 등을 다룬다.
@@ -26,22 +28,23 @@ public class Rq {
     private final HttpServletRequest req;
     private final HttpServletResponse resp;
     private final UserService userService;
+    private final RoleService roleService;
 
     public void setLogin(User user) {
-        UserDetails springUser = new SecurityUser(
+        List<String> roleNames = roleService.getRoleNames(user.getId());
+        UserDetails securityUser = new SecurityUser(
                 user.getId(),
                 user.getEmail(),
                 "",
                 user.getNickname(),
-                user.getAuthorities()
+                user.getAuthorities(roleNames)
         );
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user,
-                user.getPassword(),
-                user.getAuthorities()
+                securityUser,
+                securityUser.getPassword(),
+                securityUser.getAuthorities()
         );
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 

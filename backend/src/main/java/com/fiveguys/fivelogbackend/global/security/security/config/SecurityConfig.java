@@ -1,5 +1,8 @@
-package com.fiveguys.fivelogbackend.global.security.security;
+package com.fiveguys.fivelogbackend.global.security.security.config;
 
+import com.fiveguys.fivelogbackend.global.security.oauth.CustomOauth2AuthenticationSuccessHandler;
+import com.fiveguys.fivelogbackend.global.security.security.CustomAuthenticationFilter;
+import com.fiveguys.fivelogbackend.global.security.security.CustomAuthorizationRequestResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,12 +27,15 @@ public class SecurityConfig {
     private final String[] permitURL = {"/login",
             "/v3/api-docs/**", "/swagger-ui/**",
             "/swagger-ui.html",
-            "/api/**","/h2-console/**", "/actuator/**"
+            "/api/**","/h2-console/**", "/actuator/**",
+            "/user/join","/error", "/css/**", "/js/**",
+            "/user/login"
     };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
            http
+                   .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                    .authorizeHttpRequests( auth -> auth
                            .requestMatchers(permitURL).permitAll()
                            .anyRequest().authenticated())
@@ -50,8 +56,7 @@ public class SecurityConfig {
                                         authorizationEndpoint
                                                 .authorizationRequestResolver(customAuthorizationRequestResolver)
                                 )
-                   )
-                   .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                   );
 
            ; //h2-console 접근 허용
 
@@ -62,10 +67,6 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return new InMemoryUserDetailsManager(); // 빈 등록만 하고 사용자 추가 X
-    }
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
     }
 
 }
