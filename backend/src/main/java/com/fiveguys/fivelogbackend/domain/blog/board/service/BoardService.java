@@ -1,4 +1,5 @@
 
+
 package com.fiveguys.fivelogbackend.domain.blog.board.service;
 
 import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
@@ -29,7 +30,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserService userService;
     private final BlogRepository blogRepository;
-//    @Transactional
+    //    @Transactional
     public Board createBoard(CreateBoardRequestDto dto, Long id) {
         User user = userService.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id입니다."));
         Blog blog = blogRepository.findByUserId(user.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 blog id 입니다."));
@@ -74,4 +75,3 @@ public class BoardService {
 
 
 }
-
