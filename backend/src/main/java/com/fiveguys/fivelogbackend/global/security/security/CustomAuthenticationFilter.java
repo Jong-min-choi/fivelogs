@@ -70,8 +70,15 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        log.info("오긴하냐?>");
+        String method = request.getMethod();
         if (!request.getRequestURI().startsWith("/api/")) {
+            filterChain.doFilter(request, response);
+
+            return;
+        }
+        //  GET 요청은 모두 인증 없이 통과, 예외는 필요함 ex) mypage
+        if ("GET".equalsIgnoreCase(method)) {
             filterChain.doFilter(request, response);
             return;
         }

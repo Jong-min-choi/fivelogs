@@ -2,6 +2,7 @@ package com.fiveguys.fivelogbackend.domain.blog.board.controller;
 
 import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.blog.blog.service.BlogService;
+import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardMainPageResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.CreateBoardRequestDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.CreateBoardResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
@@ -11,10 +12,12 @@ import com.fiveguys.fivelogbackend.global.rq.Rq;
 import com.fiveguys.fivelogbackend.global.security.security.SecurityUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/boards")
@@ -63,4 +68,21 @@ public class BoardController {
 
         return ResponseEntity.ok(ApiResponse.success(responseDto, "게시글 작성 성공"));
     }
+
+    @GetMapping
+    @Operation(summary = "게시글 조회")
+    //4*4 로간다.
+    public ResponseEntity<ApiResponse<BoardMainPageResponseDto>> getBoards(@PageableDefault(size=12, direction = Sort.Direction.DESC) Pageable pageable){
+        Page<Board> pagedBoards = boardService.getBoards(pageable);
+
+        log.info("pagedBoards {}", pagedBoards.getContent().size());
+        for (Board board : pagedBoards) {
+            log.info("pagedBoards {}", board.getTitle());
+        }
+        BoardMainPageResponseDto pageBoardDto =
+                boardService.getBoardMainPageResponseDtoList(pagedBoards);
+        log.info("BoardMainPageResponseDto : {}", pageBoardDto.getBoardDtoList().size());
+        return ResponseEntity.ok(ApiResponse.success(pageBoardDto, "게시판 페이징 성공"));
+    }
+
 }
