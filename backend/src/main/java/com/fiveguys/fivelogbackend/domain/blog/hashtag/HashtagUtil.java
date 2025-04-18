@@ -14,9 +14,9 @@ public class HashtagUtil {
     public static String joinHashtags(String[] hashtags) {
         return Arrays.stream(hashtags)
                 .filter(tag -> tag != null && !tag.isBlank())
-                .map(tag -> tag.startsWith("#") ? tag : "#" + tag)
+                .map(tag -> tag.endsWith(",") ? tag : tag + ",")
                 .distinct()
-                .collect(Collectors.joining(" "));
+                .collect(Collectors.joining(","));
     }
 
 

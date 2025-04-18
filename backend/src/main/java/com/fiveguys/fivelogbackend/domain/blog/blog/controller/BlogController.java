@@ -44,7 +44,7 @@ public class BlogController {
     }
 
     // 닉네임으로 조회?
-// 검색기능
+    // 검색기능
     @Operation(summary = "게시물 검색", description = "제목, 닉네임으로 게시물 검색후 페이징")
     @GetMapping("search")
     public ResponseEntity<Page<Board>> searchBoards(

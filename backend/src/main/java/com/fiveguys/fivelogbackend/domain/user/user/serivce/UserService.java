@@ -3,7 +3,6 @@ package com.fiveguys.fivelogbackend.domain.user.user.serivce;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.repository.UserRepository;
 import com.fiveguys.fivelogbackend.global.rq.Rq;
-import com.fiveguys.fivelogbackend.global.ut.Ut;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

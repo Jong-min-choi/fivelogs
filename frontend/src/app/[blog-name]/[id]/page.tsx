@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import Layout from "@/app/ClientLayout";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export default function BoardDetail() {
   const params = useParams();
@@ -168,13 +168,7 @@ export default function BoardDetail() {
   }, [boardName]);
 
   if (loading) {
-    return (
-      <Layout>
-        <div className="flex justify-center items-center h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-500"></div>
-        </div>
-      </Layout>
-    );
+    return <LoadingSpinner />;
   }
 
   return (

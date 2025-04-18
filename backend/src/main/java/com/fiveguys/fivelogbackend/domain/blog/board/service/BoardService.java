@@ -3,22 +3,23 @@ package com.fiveguys.fivelogbackend.domain.blog.board.service;
 
 import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.blog.blog.repository.BlogRepository;
-import com.fiveguys.fivelogbackend.domain.blog.blog.service.BlogService;
+import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardMainPageResponseDto;
+import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardSummaryDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.CreateBoardRequestDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.CreateBoardResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import com.fiveguys.fivelogbackend.domain.blog.board.repository.BoardRepository;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.HashtagUtil;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
-import com.fiveguys.fivelogbackend.domain.user.user.repository.UserRepository;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
+import com.fiveguys.fivelogbackend.global.pagination.PageDto;
+import com.fiveguys.fivelogbackend.global.pagination.PageUt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +37,7 @@ public class BoardService {
                 .title(dto.getTitle())
                 .hashtags(HashtagUtil.joinHashtags(dto.getHashtags()))
                 .content(dto.getContent())
+                .views(0L)
                 .status(dto.getStatus())
                 .user(user)
                 .blog(blog)
@@ -56,12 +58,20 @@ public class BoardService {
 
     // 앞에 자동으로 #붙이고 중복제거 GPT가 만들어줬어요ㅎ
 
-
-
     public Page<Board> searchBoardsByHashtag(String tagName, Pageable pageable) {
         String searchTagName = tagName.startsWith("#") ? tagName.trim() : "#" + tagName.trim();
         return boardRepository.findByHashtagsContainingIgnoreCase(searchTagName, pageable);
     }
+    //dto로 바꿔야함
+    public BoardMainPageResponseDto getBoardMainPageResponseDtoList (Page<Board> pageBoards){
+        PageDto unitPageInit = PageUt.get10unitPageDto(pageBoards.getNumber(), pageBoards.getTotalPages());
+        List<BoardSummaryDto> boardSummaryDtoList = pageBoards.getContent()
+                .stream()
+                .map(BoardSummaryDto::from)
+                .collect(Collectors.toList());
+        return new BoardMainPageResponseDto(boardSummaryDtoList, unitPageInit);
+    }
+
 
 }
 
