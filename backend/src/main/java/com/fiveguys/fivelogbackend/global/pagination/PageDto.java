@@ -15,6 +15,5 @@ public class PageDto {
     int endPage;
     int currentPage;
     int totalPage;
-    private boolean isFirst;
-    private boolean isLast;
+
 }
