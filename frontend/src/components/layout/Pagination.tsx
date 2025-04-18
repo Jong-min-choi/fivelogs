@@ -1,39 +1,34 @@
 "use client";
 import React from "react";
+import { PageDto } from "@/types/board";
 
 type PaginationProps = {
-  currentPage: number;
-  totalPages: number;
+  pageInfo: PageDto | null;
   onPageChange: (page: number) => void;
 };
 
 export default function Pagination({
-  currentPage,
-  totalPages,
+  pageInfo,
   onPageChange,
 }: PaginationProps) {
-  // 표시할 페이지 번호 계산 (최대 10개)
-  const getPageNumbers = () => {
-    // 페이지가 10개 이하면 모두 표시
-    if (totalPages <= 10) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
+  if (!pageInfo) return null;
 
-    // 현재 페이지가 앞부분에 위치할 경우
-    if (currentPage <= 6) {
-      return Array.from({ length: 10 }, (_, i) => i + 1);
-    }
+  // API 응답에서 받은 페이지 정보
+  const { currentPage, totalPage, startPage, endPage } = pageInfo;
+  const totalPages = totalPage;
 
-    // 현재 페이지가 뒷부분에 위치할 경우
-    if (currentPage > totalPages - 5) {
-      return Array.from({ length: 10 }, (_, i) => totalPages - 9 + i);
-    }
+  // 현재 페이지 그룹 계산 (1-10, 11-20 등)
+  // const currentGroup = Math.ceil(currentPage / 10);
 
-    // 그 외의 경우 현재 페이지를 중심으로 앞뒤로 페이지를 균형 있게 표시
-    return Array.from({ length: 10 }, (_, i) => currentPage - 5 + i);
-  };
+  // 현재 페이지 그룹의 시작 페이지와 끝 페이지
+  // const startPage = (currentGroup - 1) * 10 + 1;
+  // const endPage  = Math.min(currentGroup * 10, totalPages)
 
-  const pageNumbers = getPageNumbers();
+  // 현재 페이지 그룹에 표시할 페이지 번호 배열
+  const pageNumbers = Array.from(
+    { length: endPage - startPage + 1 },
+    (_, i) => startPage + i
+  );
 
   return (
     <div className="flex justify-center mt-8">
@@ -61,10 +56,10 @@ export default function Pagination({
           </button>
         )}
 
-        {/* 이전 페이지 버튼 */}
-        {currentPage > 1 && (
+        {/* 이전 페이지 그룹 버튼 */}
+        {startPage > 1 && (
           <button
-            onClick={() => onPageChange(currentPage - 1)}
+            onClick={() => onPageChange(startPage - 1)}
             className="border border-gray-300 px-3 py-1 focus:outline-none hover:bg-gray-50"
           >
             <svg
@@ -102,10 +97,10 @@ export default function Pagination({
           </button>
         ))}
 
-        {/* 다음 페이지 버튼 */}
-        {currentPage < totalPages && (
+        {/* 다음 페이지 그룹 버튼 */}
+        {endPage < totalPages && (
           <button
-            onClick={() => onPageChange(currentPage + 1)}
+            onClick={() => onPageChange(endPage + 1)}
             className="border border-gray-300 px-3 py-1 focus:outline-none hover:bg-gray-50"
           >
             <svg
@@ -128,7 +123,7 @@ export default function Pagination({
         {/* 마지막 페이지 버튼 */}
         {currentPage < totalPages && (
           <button
-            onClick={() => onPageChange(totalPages)}
+            onClick={() => onPageChange(totalPage)}
             className="border border-gray-300 px-3 py-1 rounded-r-md focus:outline-none hover:bg-gray-50"
           >
             <svg

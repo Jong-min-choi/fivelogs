@@ -56,7 +56,7 @@ export default function Boards({ initialBoards = [] }: BoardsProps) {
 
   useEffect(() => {
     fetchBoards(currentPage);
-  }, []);
+  }, [currentPage, viewType]);
 
   // 페이지 변경 핸들러
   const handlePageChange = (pageNumber: number) => {
@@ -67,6 +67,7 @@ export default function Boards({ initialBoards = [] }: BoardsProps) {
 
   // 뷰 타입 변경 핸들러
   const handleViewTypeChange = (type: ViewType) => {
+    console.log("뷰 타입 변경:", type);
     setViewType(type);
     setCurrentPage(1); // 뷰 타입 변경 시 첫 페이지로 이동
     fetchBoards(1); // 뷰 타입 변경 시 첫 페이지 데이터 다시 요청
@@ -84,8 +85,6 @@ export default function Boards({ initialBoards = [] }: BoardsProps) {
     );
   }
 
-  // 현재 페이지 계산 (API의 페이지는 0부터 시작, UI는 1부터 시작)
-  const displayCurrentPage = pageInfo ? pageInfo.presentPage + 1 : currentPage;
   const totalPages = pageInfo?.totalPage || 1;
 
   return (
@@ -171,14 +170,15 @@ export default function Boards({ initialBoards = [] }: BoardsProps) {
                   <div className="mt-auto">
                     {/* 해시태그 */}
                     <div className="flex flex-wrap gap-1 mb-3">
-                      {board.hashtags.map((tag, index) => (
-                        <span
-                          key={index}
-                          className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
-                        >
-                          {tag.startsWith("#") ? tag : `#${tag}`}
-                        </span>
-                      ))}
+                      {board.hashtags &&
+                        board.hashtags.map((tag, index) => (
+                          <span
+                            key={index}
+                            className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
+                          >
+                            {tag.startsWith("#") ? tag : `#${tag}`}
+                          </span>
+                        ))}
                     </div>
 
                     <Link
@@ -208,11 +208,7 @@ export default function Boards({ initialBoards = [] }: BoardsProps) {
           </div>
 
           <div className="mt-6">
-            <Pagination
-              currentPage={displayCurrentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
+            <Pagination pageInfo={pageInfo} onPageChange={handlePageChange} />
           </div>
         </>
       )}

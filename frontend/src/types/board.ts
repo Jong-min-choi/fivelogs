@@ -11,7 +11,7 @@ export type Board = {
 export type PageDto = {
   startPage: number;
   endPage: number;
-  presentPage: number;
+  currentPage: number;
   totalPage: number;
   first: boolean;
   last: boolean;
