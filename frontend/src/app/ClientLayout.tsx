@@ -16,7 +16,12 @@ export default function ClientLayout({ children }: LayoutProps) {
       method: "GET",
       credentials: "include",
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("응답 실패: " + response.status); // 401, 404, 500 등
+        }
+        return response.json();
+      })
       .then((data) => {
         console.log(data);
         setLoginUser(data.data);

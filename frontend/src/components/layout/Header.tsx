@@ -8,8 +8,8 @@ export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { isLogin, loginUser, logoutAndHome, isLoginUserPending } =
     useGlobalLoginUser();
-  console.log(loginUser);
-  console.log(isLogin);
+  // console.log(loginUser);
+  // console.log(isLogin);
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
