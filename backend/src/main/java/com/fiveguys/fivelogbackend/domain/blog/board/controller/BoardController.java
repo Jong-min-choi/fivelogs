@@ -1,13 +1,18 @@
 package com.fiveguys.fivelogbackend.domain.blog.board.controller;
 
+import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
+import com.fiveguys.fivelogbackend.domain.blog.blog.service.BlogService;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.CreateBoardRequestDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.CreateBoardResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import com.fiveguys.fivelogbackend.domain.blog.board.service.BoardService;
+import com.fiveguys.fivelogbackend.global.response.ApiResponse;
+import com.fiveguys.fivelogbackend.global.rq.Rq;
 import com.fiveguys.fivelogbackend.global.security.security.SecurityUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,12 +25,14 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/boards")
+@RequestMapping("/api/boards")
 @RequiredArgsConstructor
 @Tag(name = "Board", description = "게시글 관련 API")
+@Slf4j
 public class BoardController {
 
     private final BoardService boardService;
+    private final Rq rq;
 
 //    @PostMapping
 //    @Operation(summary = "게시글 작성")
@@ -44,17 +51,16 @@ public class BoardController {
         return ResponseEntity.ok(boards);
     }
     //user는 있고,
-    @PostMapping("/blogs/{blogName}/boards/write")
+    @PostMapping
     @Operation(summary = "게시글 작성")
-    public ResponseEntity<CreateBoardResponseDto> writeBoard(@AuthenticationPrincipal SecurityUser securityUser,
-                                                              @PathVariable("blogName") String blogName,
-                                                              @RequestBody CreateBoardRequestDto createBoardRequestDto){
-        Board board = boardService.createBoard(createBoardRequestDto);
+    public ResponseEntity<ApiResponse<CreateBoardResponseDto>> createBoard(
+            @RequestBody CreateBoardRequestDto createBoardRequestDto){
+        log.info("요청이 오나? {}", createBoardRequestDto);
+        Board board = boardService.createBoard(createBoardRequestDto, rq.getActor().getId());
         //여기서 boardid와 블로그 주소를 반환하자
-
-
+        CreateBoardResponseDto responseDto = new CreateBoardResponseDto(board.getId(), board.getTitle());
         //성공하면 board id와
 
-        return null;
+        return ResponseEntity.ok(ApiResponse.success(responseDto, "게시글 작성 성공"));
     }
 }

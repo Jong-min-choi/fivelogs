@@ -8,10 +8,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
+@ToString
 public class CreateBoardRequestDto {
     private String title;
     private String content;
     private BoardStatus status;
-    private String hashtags;
+    private String[] hashtags;
 }

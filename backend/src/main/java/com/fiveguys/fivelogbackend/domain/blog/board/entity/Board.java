@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "boards")
 public class Board extends BaseEntity {
 
     @Column(length = 255)
