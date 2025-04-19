@@ -2,6 +2,7 @@ package com.fiveguys.fivelogbackend.domain.blog.board.controller;
 
 import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.blog.blog.service.BlogService;
+import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardDetailDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardMainPageResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.CreateBoardRequestDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.CreateBoardResponseDto;
@@ -83,6 +84,15 @@ public class BoardController {
                 boardService.getBoardMainPageResponseDtoList(pagedBoards);
         log.info("BoardMainPageResponseDto : {}", pageBoardDto.getBoardDtoList().size());
         return ResponseEntity.ok(ApiResponse.success(pageBoardDto, "게시판 페이징 성공"));
+    }
+
+    @GetMapping("/{boardId}")
+    public ResponseEntity<ApiResponse<BoardDetailDto>> getBlogWithBoards(
+            @PathVariable("boardId")  Long boardId ){
+
+        BoardDetailDto boardDetailDto = boardService.getBlogDetailDto(boardId);
+
+        return ResponseEntity.ok().body(ApiResponse.success(boardDetailDto, "board 생성 성공"));
     }
 
 }

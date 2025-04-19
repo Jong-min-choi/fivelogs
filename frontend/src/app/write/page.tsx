@@ -50,19 +50,22 @@ export default function WritePage() {
       setIsLoading(true);
       setError("");
 
-      const response = await fetch("http://localhost:8090/api/boards", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // 인증 정보 포함
-        body: JSON.stringify({
-          title,
-          content,
-          hashtags,
-          status,
-        }),
-      });
+      const response = await fetch(
+        "${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // 인증 정보 포함
+          body: JSON.stringify({
+            title,
+            content,
+            hashtags,
+            status,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();

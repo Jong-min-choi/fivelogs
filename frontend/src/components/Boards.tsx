@@ -2,7 +2,7 @@
 import { Board, PageDto, BoardApiResponse } from "@/types/board";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import Pagination from "./layout/Pagination";
+import Pagination from "./common/Pagination";
 import LoadingSpinner from "./common/LoadingSpinner";
 
 type BoardsProps = {
@@ -26,7 +26,7 @@ export default function Boards({ initialBoards = [] }: BoardsProps) {
 
       // viewType에 따라 다른 정렬 파라미터 전달
       const sortParam = viewType === "trending" ? "views" : "created";
-      const url = `http://localhost:8090/api/boards?page=${page}&size=${boardsPerPage}`;
+      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards?page=${page}&size=${boardsPerPage}`;
       console.log("API 요청 URL:", url);
 
       const response = await fetch(url);
@@ -182,7 +182,7 @@ export default function Boards({ initialBoards = [] }: BoardsProps) {
                     </div>
 
                     <Link
-                      href={`/blog/${board.id}`}
+                      href={`/${board.nickname}/${board.id}`}
                       className="text-rose-500 flex items-center group"
                     >
                       자세히 보기

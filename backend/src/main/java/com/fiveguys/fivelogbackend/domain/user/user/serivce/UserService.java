@@ -37,6 +37,15 @@ public class UserService {
                     throw new RuntimeException("해당 email은 이미 사용중입니다.");
                 });
         if(StringUtils.hasText(password)) password = passwordEncoder.encode(password);
+        if (userRepository.existsByEmail(email)){
+            throw new IllegalArgumentException("이미 가입한 email 입니다.");
+        }
+        int count = 1;
+        if(userRepository.existsByNickname(nickname)){
+            while(userRepository.existsByNickname(nickname + "_" + count)){
+                count++;
+            }
+        }
         User user = User.builder()
                 .email(email)
                 .password(password)
