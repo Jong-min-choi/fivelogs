@@ -1,9 +1,12 @@
 package com.fiveguys.fivelogbackend.domain.blog.board.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter @Setter
 @Builder
@@ -14,9 +17,13 @@ public class BoardSummaryDto {
     String title;
     String content;
     Long views;
-    String[] hashtags;
+    List<String> hashtags;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     LocalDateTime created;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     LocalDateTime updated;
+    String nickname;
+
 
     public static BoardSummaryDto from(Board board){
         return BoardSummaryDto.builder()
@@ -24,7 +31,8 @@ public class BoardSummaryDto {
                 .title(board.getTitle())
                 .content(board.getContent())
                 .views(board.getViews())
-                .hashtags(board.getHashtags().split(","))
+                .nickname(board.getUser().getNickname())
+                .hashtags(Arrays.stream(board.getHashtags().split(",")).toList())
                 .created(board.getCreatedDate())
                 .updated(board.getUpdatedDate())
                 .build();

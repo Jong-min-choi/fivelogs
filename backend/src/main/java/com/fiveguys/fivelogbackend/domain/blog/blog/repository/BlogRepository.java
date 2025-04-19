@@ -14,4 +14,6 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     public boolean existsByTitle(String title);
 
     public Optional<Blog> findByUserId(Long userId);
+
+    public Optional<Blog> findByTitle(String userId);
 }

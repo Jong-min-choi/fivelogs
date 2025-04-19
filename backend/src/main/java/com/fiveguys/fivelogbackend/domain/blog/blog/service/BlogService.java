@@ -1,6 +1,7 @@
 package com.fiveguys.fivelogbackend.domain.blog.blog.service;
 
 import com.fiveguys.fivelogbackend.domain.blog.blog.dto.BlogResponseDto;
+import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardDetailDto;
 import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.blog.blog.repository.BlogRepository;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
@@ -20,7 +21,7 @@ public class BlogService {
 
     @Transactional
     public void createBlog(User user) {
-        String blogTitle = user.getEmail().split("@")[0] + ".log";
+        String blogTitle = user.getNickname() + ".log";
 
         Blog blog = Blog.builder()
                 .title(blogTitle)
@@ -41,5 +42,6 @@ public class BlogService {
         return boardRepository.findByTitleContainingIgnoreCaseOrUser_NicknameContainingIgnoreCase(searchContent, searchContent, pageable);
         // 제목,작성자 두개로 검색할거라 searchContent가 두개임!
     }
+
 
 }

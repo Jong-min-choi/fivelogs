@@ -6,6 +6,7 @@ export type Board = {
   hashtags: string[];
   created: string;
   updated: string | null;
+  nickname: string;
 };
 
 export type PageDto = {
