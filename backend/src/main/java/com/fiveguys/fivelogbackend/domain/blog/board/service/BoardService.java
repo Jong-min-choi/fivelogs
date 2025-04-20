@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,8 +54,11 @@ public class BoardService {
         return null;
     }
 
-    public Page<Board> getBoards(Pageable pageable) {
+    public Page<Board> getBoardsAllWithUser(Pageable pageable) {
         return boardRepository.findAllWithUser(pageable);
+    }
+    public Page<Board> getBoardsAllWithNickname(String nickname,Pageable pageable) {
+        return boardRepository.findAllWithUserByNickname(nickname, pageable);
     }
 
     // 앞에 자동으로 #붙이고 중복제거 GPT가 만들어줬어요ㅎ
@@ -64,13 +68,13 @@ public class BoardService {
         return boardRepository.findByHashtagsContainingIgnoreCase(searchTagName, pageable);
     }
     //dto로 바꿔야함
-    public BoardMainPageResponseDto getBoardMainPageResponseDtoList (Page<Board> pageBoards){
+    public BoardPageResponseDto getBoardMainPageResponseDtoList (Page<Board> pageBoards){
         PageDto unitPageInit = PageUt.get10unitPageDto(pageBoards.getNumber(), pageBoards.getTotalPages());
         List<BoardSummaryDto> boardSummaryDtoList = pageBoards.getContent()
                 .stream()
                 .map(BoardSummaryDto::from)
                 .collect(Collectors.toList());
-        return new BoardMainPageResponseDto(boardSummaryDtoList, unitPageInit);
+        return new BoardPageResponseDto(boardSummaryDtoList, unitPageInit);
     }
 
     @Transactional
@@ -80,5 +84,29 @@ public class BoardService {
         return BoardDetailDto.from(board);
     }
 
+    @Transactional
+    public SideBoardInfoDto sideBoardInfoDto(Long boardId, String nickname){
+        Optional<Board> opPreBoard = boardRepository.findFirstByIdLessThanAndUser_NicknameOrderByIdDesc(boardId, nickname);
+        SimpleBoardDto preBoardDto = null;
+        if(opPreBoard.isPresent()){
+            preBoardDto = SimpleBoardDto.from(opPreBoard.get());
+        }
 
+
+        Optional<Board> opNextBoard = boardRepository.findFirstByIdGreaterThanAndUser_NicknameOrderByIdAsc(boardId, nickname);
+        SimpleBoardDto nextBoardDto = null;
+        if(opNextBoard.isPresent()) {
+            log.info("opNextBoard {}", opNextBoard);
+            nextBoardDto = SimpleBoardDto.from(opNextBoard.get());
+        }
+        return new SideBoardInfoDto(preBoardDto, nextBoardDto);
+    }
+
+    public Long getBlogBoardCount(String nickname){
+        return boardRepository.countByUser_Nickname(nickname);
+    }
+
+    public Long getAllBoardView(String nickname){
+        return boardRepository.countView(nickname);
+    }
 }

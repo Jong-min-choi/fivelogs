@@ -1,9 +1,7 @@
 package com.fiveguys.fivelogbackend.domain.blog.blog.controller;
 
-import com.fiveguys.fivelogbackend.domain.blog.blog.dto.BlogResponseDto;
-import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardDetailDto;
 import com.fiveguys.fivelogbackend.domain.blog.blog.service.BlogService;
-import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardMainPageResponseDto;
+import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardPageResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import com.fiveguys.fivelogbackend.domain.blog.board.service.BoardService;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
@@ -26,11 +24,11 @@ public class BlogController {
     private final BoardService boardService;
 
 //     블로그 이메일 "@" 앞대가리로 조회 응답이니까 응답 dto 사용
-    @GetMapping("/{userId}")
-    public ResponseEntity<BlogResponseDto> findBlog(@PathVariable Long userId) {
-        BlogResponseDto blog = blogService.findBlog(userId);
-        return ResponseEntity.ok().build();
-    }
+//    @GetMapping("/{userId}")
+//    public ResponseEntity<BlogResponseDto> findBlog(@PathVariable Long userId) {
+//        BlogResponseDto blog = blogService.findBlog(userId);
+//        return ResponseEntity.ok().build();
+//    }
 
     // 사용자 페이징
 //    @Operation(summary = "사용자 목록 조회", description = "사용자 목록을 페이지 단위로 조회합니다.")
@@ -45,7 +43,7 @@ public class BlogController {
     @Operation(summary = "사용자 목록 조회", description = "사용자 목록을 페이지 단위로 조회합니다.") // 스웨거
     @GetMapping("/users")
     public ResponseEntity<Page<Board>> getBoards(@PageableDefault(page = 1, size = 10) Pageable pageable) {
-        Page<Board> boards = boardService.getBoards(pageable);
+        Page<Board> boards = boardService.getBoardsAllWithUser(pageable);
         return ResponseEntity.ok(boards);
     }
 
@@ -60,20 +58,20 @@ public class BlogController {
         return ResponseEntity.ok(searchResult);
     }
 
-//    @GetMapping("/{nickname}")
-//    public ResponseEntity<ApiResponse<BoardMainPageResponseDto>> getBlogBoards(@PageableDefault(size=10, direction = Sort.Direction.DESC) Pageable pageable,
-//                                                                               @PathVariable String nickname){
-//        Page<Board> pagedBoards = boardService.getBoards(pageable);
-//
-//        log.info("pagedBoards {}", pagedBoards.getContent().size());
-//        for (Board board : pagedBoards) {
-//            log.info("pagedBoards {}", board.getTitle());
-//        }
-//        BoardMainPageResponseDto pageBoardDto =
-//                boardService.getBoardMainPageResponseDtoList(pagedBoards);
-//        log.info("BoardMainPageResponseDto : {}", pageBoardDto.getBoardDtoList().size());
-//        return ResponseEntity.ok(ApiResponse.success(pageBoardDto, "게시판 페이징 성공"));
-//    }
+    @GetMapping("/{nickname}")
+    public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBlogMainInfo(@PageableDefault(size=10, direction = Sort.Direction.DESC) Pageable pageable,
+                                                                           @PathVariable(name = "nickname") String nickname){
+        Page<Board> pagedBoards = boardService.getBoardsAllWithNickname(nickname,pageable);
+
+        log.info("pagedBoards {}", pagedBoards.getContent().size());
+        for (Board board : pagedBoards) {
+            log.info("pagedBoards {}", board.getTitle());
+        }
+        BoardPageResponseDto pageBoardDto =
+                boardService.getBoardMainPageResponseDtoList(pagedBoards);
+        log.info("BoardMainPageResponseDto : {}", pageBoardDto.getBoardDtoList().size());
+        return ResponseEntity.ok(ApiResponse.success(pageBoardDto, "게시판 페이징 성공"));
+    }
 
 
 

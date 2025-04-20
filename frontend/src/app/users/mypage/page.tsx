@@ -8,34 +8,12 @@ export default function MyPage() {
   const [introduction, setIntroduction] = useState(
     "안녕하세요! 프론트엔드 개발을 사랑하는 개발자입니다. 사용자 경험을 개선하는 것에 관심이 많습니다."
   );
+  const [blogTitle, setBlogTitle] = useState("개발자의 성장 일기");
+  const [email, setEmail] = useState("example@fivelog.com");
   const [githubUrl, setGithubUrl] = useState("");
   const [instagramUrl, setInstagramUrl] = useState("");
   const [twitterUrl, setTwitterUrl] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-
-  // 임시 게시글 데이터
-  const myPosts = [
-    {
-      id: 1,
-      title: "React 컴포넌트 설계 방법론",
-      date: "2024.02.20",
-      description:
-        "React 컴포넌트를 효율적으로 설계하는 방법에 대해 공유합니다.",
-    },
-    {
-      id: 2,
-      title: "CSS Grid 완벽 가이드",
-      date: "2024.02.15",
-      description: "CSS Grid를 활용한 레이아웃 구성 방법을 상세히 설명합니다.",
-    },
-    {
-      id: 3,
-      title: "Next.js 상등 최적화 팁",
-      date: "2024.02.10",
-      description:
-        "Next.js 애플리케이션의 성능을 향상시키는 실용적인 방법들을 소개합니다.",
-    },
-  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,34 +83,26 @@ export default function MyPage() {
           </div>
         </div>
 
-        {/* 자기소개 및 게시글 - 오른쪽 */}
+        {/* 자기소개 및 블로그 정보 - 오른쪽 */}
         <div className="md:w-2/3 md:pl-8">
           <h3 className="text-xl font-bold mb-4">자기소개</h3>
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
             <p className="text-gray-700">{introduction}</p>
           </div>
 
-          <h3 className="text-xl font-bold mb-4">나의 게시글</h3>
-          <div className="space-y-4">
-            {myPosts.map((post) => (
-              <div key={post.id} className="border-b pb-4">
-                <div className="flex justify-between mb-1">
-                  <Link
-                    href={`/board/${post.id}`}
-                    className="text-lg font-medium hover:text-rose-500"
-                  >
-                    {post.title}
-                  </Link>
-                  <span className="text-sm text-gray-500">{post.date}</span>
-                </div>
-                <p className="text-gray-600 text-sm">{post.description}</p>
-              </div>
-            ))}
+          <h3 className="text-xl font-bold mb-4">블로그 제목</h3>
+          <div className="bg-gray-50 p-4 rounded-lg mb-6">
+            <div className="flex justify-between items-center">
+              <p className="text-gray-900 font-bold">{blogTitle}</p>
+              <button className="text-rose-400 text-sm hover:text-rose-500">
+                수정
+              </button>
+            </div>
           </div>
-          <div className="mt-4 text-center">
-            <button className="text-rose-400 hover:text-rose-500">
-              더보기 ▼
-            </button>
+
+          <h3 className="text-xl font-bold mb-4">이메일 주소</h3>
+          <div className="bg-gray-50 p-4 rounded-lg mb-6">
+            <p className="text-gray-900">{email}</p>
           </div>
 
           <h3 className="text-xl font-bold mt-8 mb-4">SNS 링크 설정</h3>

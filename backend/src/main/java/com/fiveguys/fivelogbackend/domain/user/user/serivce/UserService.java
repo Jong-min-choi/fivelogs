@@ -68,6 +68,10 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public Optional<User> findByNickname(String nickname){
+        return userRepository.findByNickname(nickname);
+    }
+
     public Optional<User> findById(long authorId) {
         return userRepository.findById(authorId);
     }
@@ -82,7 +86,6 @@ public class UserService {
 
     public User getUserFromAccessToken(String accessToken) {
         Map<String, Object> payload = authTokenService.payload(accessToken);
-
         if (payload == null) return null;
 
         long id = (long) payload.get("id");

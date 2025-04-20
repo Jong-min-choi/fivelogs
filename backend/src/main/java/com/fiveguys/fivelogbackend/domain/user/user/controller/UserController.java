@@ -1,5 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.user.user.controller;
 
+import com.fiveguys.fivelogbackend.domain.user.user.dto.BlogOwnerDto;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.JoinUserDto;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.LoginRequestDto;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.MeUserResponseDto;
@@ -73,4 +74,12 @@ public class UserController {
 //        userService.deleteUser();
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{nickname}/blog")
+    public ResponseEntity<ApiResponse<BlogOwnerDto>> getBlogOwnerInfo(@PathVariable("nickname") String nickname){
+        BlogOwnerDto blogOwnerDto = userCommandService.getBlogOwnerDto(nickname);
+
+        return ResponseEntity.ok(ApiResponse.success(blogOwnerDto,"success get owner info"));
+    }
+
 }
