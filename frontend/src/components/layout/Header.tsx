@@ -82,7 +82,7 @@ export default function Header() {
                   마이 페이지
                 </Link>
                 <Link
-                  href="/blogname"
+                  href={`/${loginUser.nickname}`}
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   마이 블로그

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import AuthorProfile from "@/components/common/AuthorProfile";
 
 // BoardDetailDto 타입 정의
 interface BoardDetailDto {
@@ -18,6 +19,21 @@ interface BoardDetailDto {
   myIntroduce: string;
 }
 
+// 이전/다음 게시글 정보 타입 정의
+interface SimpleBoardDto {
+  id: number;
+  title: string;
+}
+
+interface PrevNextResponse {
+  success: boolean;
+  message: string;
+  data: {
+    prev: SimpleBoardDto | null;
+    next: SimpleBoardDto | null;
+  };
+}
+
 export default function BoardDetail() {
   const params = useParams();
   const boardId = params?.id || "";
@@ -27,6 +43,14 @@ export default function BoardDetail() {
   const [error, setError] = useState<string | null>(null);
   // 임시 로그인 사용자 정보 (실제로는 로그인 컨텍스트나 상태에서 가져와야 함)
   const [isMyBoard, setIsMyBoard] = useState(false);
+  // 이전/다음 게시글 정보
+  const [prevNext, setPrevNext] = useState<{
+    prev: SimpleBoardDto | null;
+    next: SimpleBoardDto | null;
+  }>({
+    prev: null,
+    next: null,
+  });
 
   useEffect(() => {
     const fetchBoardDetail = async () => {
@@ -34,7 +58,7 @@ export default function BoardDetail() {
         setLoading(true);
 
         // API 호출
-        const url = `http://localhost:8090/api/boards/${boardId}`;
+        const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}`;
         console.log("API 요청 URL:", url);
 
         const response = await fetch(url);
@@ -57,6 +81,9 @@ export default function BoardDetail() {
         } else {
           throw new Error(data.message || "게시글을 불러오는데 실패했습니다.");
         }
+
+        // 이전/다음 게시글 정보 가져오기
+        await fetchPrevNextBoard();
       } catch (err) {
         console.error("API 요청 중 오류 발생:", err);
         setError("게시글을 불러올 수 없습니다. 잠시 후 다시 시도해주세요.");
@@ -65,10 +92,37 @@ export default function BoardDetail() {
       }
     };
 
+    // 이전/다음 게시글 정보를 가져오는 함수
+    const fetchPrevNextBoard = async () => {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}/author/${nickname}`;
+        console.log("이전/다음 게시글 API 요청 URL:", url);
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(`서버 응답 오류: ${response.status}`);
+        }
+
+        const data: PrevNextResponse = await response.json();
+        console.log("이전/다음 게시글 API 응답 데이터:", data);
+
+        if (data.success) {
+          setPrevNext({
+            prev: data.data.prev,
+            next: data.data.next,
+          });
+        }
+      } catch (err) {
+        console.error("이전/다음 게시글 정보 가져오기 오류:", err);
+        // 이전/다음 게시글 정보 가져오기 실패는 치명적인 오류가 아니므로 별도의 에러 상태 설정하지 않음
+      }
+    };
+
     if (boardId) {
       fetchBoardDetail();
     }
-  }, [boardId]);
+  }, [boardId, nickname]);
 
   // 게시글 삭제 핸들러
   const handleDelete = async () => {
@@ -153,22 +207,26 @@ export default function BoardDetail() {
           {/* 블로그 제목 */}
           {board.blogTitle && (
             <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center text-lg text-gray-800 font-medium">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
-                  />
-                </svg>
-                <span className="font-bold">{board.blogTitle}</span>
+              <div className="flex items-center text-lg text-blue-400 font-medium cursor-pointer hover:text-blue-600 transition-colors">
+                <Link href={`/${nickname}`} className="flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2 text-blue-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+                    />
+                  </svg>
+                  <span className="font-medium underline underline-offset-2">
+                    {board.blogTitle}
+                  </span>
+                </Link>
               </div>
 
               {/* 수정/삭제 버튼 (로그인 사용자의 게시물인 경우에만 표시) */}
@@ -247,60 +305,81 @@ export default function BoardDetail() {
       ></div>
 
       {/* 작성자 프로필 영역 */}
-      <div className="bg-gray-50 p-6 rounded-lg mb-8 border">
-        <div className="flex items-center">
-          <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 mr-4 overflow-hidden">
-            {board.profileImageLink ? (
-              <img
-                src={board.profileImageLink}
-                alt={board.nickName}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className="text-2xl font-bold">
-                {board.nickName.charAt(0)}
-              </span>
-            )}
-          </div>
-          <div>
-            <div className="text-lg font-bold mb-1">{board.nickName}</div>
-            {board.myIntroduce && (
-              <div className="text-gray-600">{board.myIntroduce}</div>
-            )}
-          </div>
-        </div>
-      </div>
+      <AuthorProfile
+        nickName={board.nickName}
+        profileImageLink={board.profileImageLink}
+        myIntroduce={board.myIntroduce}
+      />
 
       {/* 이전/다음 버튼 */}
       <div className="flex justify-between mt-12 border-t pt-6">
-        <Link
-          href="/"
-          className="flex items-center text-gray-500 hover:text-gray-700"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4 mr-1"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+        {prevNext.prev ? (
+          <Link
+            href={`/${nickname}/${prevNext.prev.id}`}
+            className="flex items-center text-gray-700 hover:text-rose-500 transition-colors"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          목록으로
-        </Link>
-        <div className="flex gap-4">
-          <button className="px-4 py-2 border rounded-md hover:bg-gray-50 transition">
-            이전 글
-          </button>
-          <button className="px-4 py-2 border rounded-md hover:bg-gray-50 transition">
-            다음 글
-          </button>
-        </div>
+            <div className="flex items-center">
+              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-gray-500">
+                  이전 포스트
+                </span>
+                <span className="font-medium">{prevNext.prev.title}</span>
+              </div>
+            </div>
+          </Link>
+        ) : (
+          <div></div>
+        )}
+
+        {prevNext.next ? (
+          <Link
+            href={`/${nickname}/${prevNext.next.id}`}
+            className="flex items-center text-gray-700 hover:text-rose-500 transition-colors text-right"
+          >
+            <div className="flex items-center">
+              <div className="flex flex-col items-end">
+                <span className="text-xs font-medium text-gray-500">
+                  다음 포스트
+                </span>
+                <span className="font-medium">{prevNext.next.title}</span>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center ml-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          </Link>
+        ) : (
+          <div></div>
+        )}
       </div>
     </main>
   );
