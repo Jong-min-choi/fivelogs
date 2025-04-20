@@ -1,7 +1,9 @@
-import Image from "next/image";
+import Boards from "@/components/Boards";
 
 export default function Home() {
-  console.log(process.env.NEXT_PUBLIC_API_BASE_URL);
-
-  return <div>HOME</div>;
+  return (
+    <main>
+      <Boards />
+    </main>
+  );
 }
