@@ -13,6 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class BlogService {
@@ -41,6 +44,10 @@ public class BlogService {
     public Page<Board> searchBoards(String searchContent, Pageable pageable) {
         return boardRepository.findByTitleContainingIgnoreCaseOrUser_NicknameContainingIgnoreCase(searchContent, searchContent, pageable);
         // 제목,작성자 두개로 검색할거라 searchContent가 두개임!
+    }
+
+    public Optional<Blog> findByUserId(Long userId){
+        return blogRepository.findByUserId(userId);
     }
 
 

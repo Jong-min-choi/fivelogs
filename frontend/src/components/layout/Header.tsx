@@ -49,14 +49,20 @@ export default function Header() {
               className="flex items-center gap-2 cursor-pointer"
               onClick={toggleDropdown}
             >
-              <div className="w-8 h-8 rounded-full bg-gray-300 overflow-hidden">
-                <Image
-                  src="/next.svg"
-                  alt="프로필 이미지"
-                  width={32}
-                  height={32}
-                  className="object-cover"
-                />
+              <div className="w-8 h-8 rounded-full bg-gray-300 overflow-hidden flex items-center justify-center">
+                {loginUser.nickname ? (
+                  <span className="text-lg font-bold text-gray-600">
+                    {loginUser.nickname.charAt(0)}
+                  </span>
+                ) : (
+                  <Image
+                    src="/next.svg"
+                    alt="프로필 이미지"
+                    width={32}
+                    height={32}
+                    className="object-cover"
+                  />
+                )}
               </div>
               <span className="font-medium">{loginUser.nickname}</span>
               <svg

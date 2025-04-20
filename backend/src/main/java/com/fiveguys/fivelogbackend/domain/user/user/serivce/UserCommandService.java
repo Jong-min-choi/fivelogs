@@ -1,11 +1,13 @@
 package com.fiveguys.fivelogbackend.domain.user.user.serivce;
 
 
+import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.blog.blog.service.BlogService;
 import com.fiveguys.fivelogbackend.domain.blog.board.service.BoardService;
 import com.fiveguys.fivelogbackend.domain.blog.comment.service.CommentService;
 import com.fiveguys.fivelogbackend.domain.user.role.service.RoleService;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.BlogOwnerDto;
+import com.fiveguys.fivelogbackend.domain.user.user.dto.MyPageDto;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,6 @@ public class UserCommandService {
     private final RoleService roleService;
     private final BlogService blogService;
     private final BoardService boardService;
-    private final CommentService commentService;
 
     /*
     두 가지 방법
@@ -57,7 +58,6 @@ public class UserCommandService {
     public BlogOwnerDto getBlogOwnerDto(String nickname){
         User user = userService.findByNickname(nickname).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 nickname 입니다."));
 
-
         Long blogBoardCount = boardService.getBlogBoardCount(nickname);
         Long viewCount = boardService.getAllBoardView(nickname);
 
@@ -69,7 +69,14 @@ public class UserCommandService {
                 .followerCount(0L)
                 .followingCount(0L)
                 .build();
+    }
 
+    @Transactional(readOnly = true)
+    public MyPageDto getMyPageDto(Long userId){
+        User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 user Id 입니다."));
+        Blog blog = blogService.findByUserId(user.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id입니다."));
+
+        return MyPageDto.from(user, blog.getTitle());
     }
 
 
