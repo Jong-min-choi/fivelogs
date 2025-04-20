@@ -1,9 +1,7 @@
 package com.fiveguys.fivelogbackend.domain.user.user.controller;
 
-import com.fiveguys.fivelogbackend.domain.user.user.dto.BlogOwnerDto;
-import com.fiveguys.fivelogbackend.domain.user.user.dto.JoinUserDto;
-import com.fiveguys.fivelogbackend.domain.user.user.dto.LoginRequestDto;
-import com.fiveguys.fivelogbackend.domain.user.user.dto.MeUserResponseDto;
+import com.fiveguys.fivelogbackend.domain.blog.blog.service.BlogService;
+import com.fiveguys.fivelogbackend.domain.user.user.dto.*;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserCommandService;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
@@ -54,18 +52,6 @@ public class UserController {
         String token = userService.login(user.getEmail(), user.getPassword());
         return ResponseEntity.ok(ApiResponse.success(token, "login success"));
     }
-    @GetMapping("/me")
-    public ResponseEntity<ApiResponse<MeUserResponseDto>> getMe(@AuthenticationPrincipal SecurityUser securityUser) {
-//        User user = userService.findById(rq.getActor().getId()).get();
-        log.info("securiryUser {}" ,securityUser.getNickname() );
-        log.info("securiryUser {}" ,securityUser.getName() );
-        MeUserResponseDto me = MeUserResponseDto.builder()
-                .email(securityUser.getUsername())
-                .nickname(securityUser.getNickname())
-                .build();
-        return ResponseEntity.ok(ApiResponse.success(me,"인가 성공"));
-    }
-
     //유저삭제
     @DeleteMapping("/logout")
     public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal SecurityUser securityUser) {
@@ -74,6 +60,25 @@ public class UserController {
 //        userService.deleteUser();
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<MeUserResponseDto>> getMe() {
+        User user = rq.getActor();
+
+        MeUserResponseDto me = MeUserResponseDto.builder()
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .build();
+        return ResponseEntity.ok(ApiResponse.success(me,"인가 성공"));
+    }
+
+    @GetMapping("/me/mypage")
+    public ResponseEntity<ApiResponse<MyPageDto>> getMypage(){
+        User user = rq.getActor();
+        MyPageDto myPageDto = userCommandService.getMyPageDto(user.getId());
+        return ResponseEntity.ok(ApiResponse.success(myPageDto, "myPageDto 생성 성공"));
+    }
+
+
 
     @GetMapping("/{nickname}/blog")
     public ResponseEntity<ApiResponse<BlogOwnerDto>> getBlogOwnerInfo(@PathVariable("nickname") String nickname){
@@ -81,5 +86,6 @@ public class UserController {
 
         return ResponseEntity.ok(ApiResponse.success(blogOwnerDto,"success get owner info"));
     }
+
 
 }
