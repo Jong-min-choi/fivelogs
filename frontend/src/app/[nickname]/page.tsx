@@ -1,326 +1,313 @@
 "use client";
-import { useState } from "react";
-import Layout from "@/app/ClientLayout";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { useParams } from "next/navigation";
+import {
+  BoardSummaryDto,
+  BoardPageResponseDto,
+  ApiResponse,
+  BlogOwnerDto,
+} from "@/types/blog";
+import { PageDto } from "@/types/board";
+import Pagination from "@/components/common/Pagination";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export default function MyBoardPage() {
+  const params = useParams();
+  const nickname = params?.nickname as string;
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedCategory, setSelectedCategory] = useState("전체");
-
-  // 블로그 게시글 더미 데이터
-  const boardItems = [
-    {
-      id: "1",
-      category: "기술",
-      date: "2024.02.15",
-      title: "효율적인 코드 작성을 위한 10가지 팁",
-      description:
-        "개발자로서 더 나은 코드를 작성하기 위한 실용적인 팁들을 소개합니다. 코드 리뷰부터 문서화까지, 프로젝트의 효율을 높이는 방법을 알아보세요.",
-      author: "김개발",
-    },
-    {
-      id: "2",
-      category: "라이프스타일",
-      date: "2024.02.14",
-      title: "서울의 숨은 카페 명소 TOP 10",
-      description:
-        "분위기 좋은 카페부터 맛있는 커피로 유명한 곳까지, 서울의 숨은 카페들을 소개합니다. 주말 데이트 코스로 추천드려요.",
-      author: "박여행",
-    },
-    {
-      id: "3",
-      category: "여행",
-      date: "2024.02.13",
-      title: "한국의 전통 사찰 여행기",
-      description:
-        "아름다운 풍경과 고요한 분위기의 전통 사찰을 찾아 떠난 여행기를 소개합니다.",
-      author: "이여행",
-    },
-    {
-      id: "4",
-      category: "개발",
-      date: "2024.02.12",
-      title: "V11 버전 업데이트 소식",
-      description: "최신 버전의 주요 기능과 개선사항을 소개합니다.",
-      author: "최버전",
-    },
-    {
-      id: "5",
-      category: "기술",
-      date: "2024.02.11",
-      title: "신기술 트렌드 분석",
-      description: "2024년 주목해야 할 기술 트렌드를 분석합니다.",
-      author: "정분석",
-    },
-    {
-      id: "6",
-      category: "AI",
-      date: "2024.02.07",
-      title: "AI 개발 시작하기",
-      description:
-        "AI 개발을 시작하는 개발자를 위한 기초 가이드와 실전 팁을 공유합니다.",
-      author: "김인공",
-    },
-    {
-      id: "7",
-      category: "클라우드",
-      date: "2024.02.08",
-      title: "클라우드 서비스 비교",
-      description: "주요 클라우드 서비스의 특징과 장단점을 비교 분석합니다.",
-      author: "한구름",
-    },
-    {
-      id: "8",
-      category: "백엔드",
-      date: "2024.02.05",
-      title: "마이크로서비스 아키텍처 설계",
-      description:
-        "실제 프로젝트에서 마이크로서비스를 구현하는 방법과 모범 사례를 소개합니다.",
-      author: "박서버",
-    },
-    {
-      id: "9",
-      category: "프론트엔드",
-      date: "2024.02.04",
-      title: "React 컴포넌트 최적화 기법",
-      description:
-        "React 애플리케이션의 성능을 향상시키는 다양한의 최적화 기법을 소개합니다.",
-      author: "이리액트",
-    },
-    {
-      id: "10",
-      category: "기술",
-      date: "2024.02.03",
-      title: "Git 고급 사용법",
-      description:
-        "Git을 더 효율적으로 사용하기 위한 고급 팁과 기법을 알아봅니다.",
-      author: "박깃",
-    },
-  ];
-
-  // 카테고리 목록
-  const categories = [
-    "전체",
-    "기술",
-    "라이프스타일",
-    "여행",
-    "개발",
-    "AI",
-    "클라우드",
-    "백엔드",
-    "프론트엔드",
-  ];
-
-  // 현재 카테고리에 따라 게시글 필터링
-  const filteredBoards =
-    selectedCategory === "전체"
-      ? boardItems
-      : boardItems.filter((board) => board.category === selectedCategory);
-
-  // 페이지당 게시글 수
-  const boardsPerPage = 4;
-
-  // 전체 페이지 수 계산
-  const totalPages = Math.ceil(filteredBoards.length / boardsPerPage);
-
-  // 현재 페이지에 표시할 게시글
-  const indexOfLastBoard = currentPage * boardsPerPage;
-  const indexOfFirstBoard = indexOfLastBoard - boardsPerPage;
-  const currentBoards = filteredBoards.slice(
-    indexOfFirstBoard,
-    indexOfLastBoard
-  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [boardData, setBoardData] = useState<BoardSummaryDto[]>([]);
+  const [pageInfo, setPageInfo] = useState<PageDto | null>(null);
+  const [ownerInfo, setOwnerInfo] = useState<BlogOwnerDto | null>(null);
+  const boardsPerPage = 10; // 한 페이지에 10개 게시글 표시
 
   // 페이지 변경 핸들러
   const handlePageChange = (page: number) => {
+    console.log("페이지 변경:", page);
     setCurrentPage(page);
     window.scrollTo(0, 0);
   };
 
-  // 카테고리 변경 핸들러
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-    setCurrentPage(1);
+  // 블로그 소유자 정보 가져오기
+  const fetchBlogOwnerInfo = async () => {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/${nickname}/blog`;
+      console.log("블로그 소유자 정보 API 요청 URL:", url);
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`서버 응답 오류: ${response.status}`);
+      }
+
+      const data = (await response.json()) as ApiResponse<BlogOwnerDto>;
+      console.log("블로그 소유자 정보 API 응답 데이터:", data);
+
+      if (data.success) {
+        setOwnerInfo(data.data);
+      } else {
+        console.error(
+          "블로그 소유자 정보를 가져오는데 실패했습니다:",
+          data.message
+        );
+      }
+    } catch (err) {
+      console.error("블로그 소유자 정보 API 요청 중 오류 발생:", err);
+    }
   };
+
+  const fetchBlogData = async (page: number) => {
+    try {
+      setLoading(true);
+      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${nickname}?page=${page}&size=${boardsPerPage}`;
+
+      console.log("API 요청 URL:", url);
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`서버 응답 오류: ${response.status}`);
+      }
+
+      const data = (await response.json()) as ApiResponse<BoardPageResponseDto>;
+      console.log("API 응답 데이터:", data);
+
+      if (data.success) {
+        // API 응답 데이터 설정 - 구조 변경에 따라 수정
+        const responseData = data.data;
+        setBoardData(responseData.boardDtoList || []);
+        setPageInfo(responseData.pageDto || null);
+      } else {
+        throw new Error(data.message || "데이터를 불러오는데 실패했습니다.");
+      }
+    } catch (err) {
+      console.error("API 요청 중 오류 발생:", err);
+      setError(
+        "블로그 데이터를 불러올 수 없습니다. 잠시 후 다시 시도해주세요."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlogData(currentPage);
+    fetchBlogOwnerInfo();
+  }, [nickname, currentPage]);
+
+  // 로딩 중 표시
+  if (loading && boardData.length === 0) {
+    return <LoadingSpinner size="md" color="rose-500" height="h-60" />;
+  }
+
+  // 에러 표시
+  if (error) {
+    return (
+      <div className="bg-red-50 text-red-500 p-4 rounded-lg text-center">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col md:flex-row md:gap-8">
       {/* 메인 콘텐츠 영역 */}
       <main className="md:w-3/4">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">My Board</h1>
-
-          {/* 카테고리 필터 */}
-          <div className="relative inline-block">
-            <select
-              className="appearance-none border rounded-md py-1 px-3 pr-8 bg-white focus:outline-none"
-              value={selectedCategory}
-              onChange={(e) => handleCategoryChange(e.target.value)}
-            >
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-              <svg
-                className="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-              </svg>
-            </div>
-          </div>
+          <h1 className="text-2xl font-bold">{nickname}의 블로그</h1>
         </div>
+
+        {/* 로딩 인디케이터 (기존 데이터가 있을 때) */}
+        {loading && boardData.length > 0 && (
+          <div className="fixed inset-0 bg-white bg-opacity-70 flex items-center justify-center z-10">
+            <LoadingSpinner size="md" color="rose-500" height="h-20" />
+          </div>
+        )}
 
         {/* 블로그 게시글 목록 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {currentBoards.map((board) => (
-            <div key={board.id} className="border rounded-lg shadow-sm">
-              <div className="p-5">
-                <div className="flex items-center text-sm text-gray-500 mb-2">
-                  <span>{board.category}</span>
-                  <span className="mx-2">•</span>
-                  <span>{board.date}</span>
-                </div>
-                <h2 className="text-lg font-bold mb-2">{board.title}</h2>
-                <p className="text-gray-600 mb-4 line-clamp-2">
-                  {board.description}
-                </p>
-                <Link
-                  href={`/board/${board.id}`}
-                  className="text-rose-500 inline-flex items-center"
-                >
-                  자세히 보기
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 ml-1"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
+        {boardData.length === 0 && !loading ? (
+          <div className="text-center p-10 bg-gray-50 rounded-lg">
+            <p className="text-gray-500">게시글이 없습니다.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {boardData.map((board) => (
+              <div key={board.id} className="border rounded-lg shadow-sm">
+                <div className="p-5">
+                  <div className="flex items-center text-sm text-gray-500 mb-2">
+                    {/* <span>{board.nickname}</span> */}
+                    {/* <span className="mx-2">•</span> */}
+                    <span>{new Date(board.created).toLocaleDateString()}</span>
+                    <span className="mx-2">•</span>
+                    <span>조회 {board.views}</span>
+                  </div>
+                  <h2 className="text-lg font-bold mb-2">{board.title}</h2>
+                  <p className="text-gray-600 mb-4 line-clamp-2">
+                    {board.content.replace(/<[^>]*>/g, "")}
+                  </p>
+                  {board.hashtags && board.hashtags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {board.hashtags.map((tag, idx) => (
+                        <span
+                          key={idx}
+                          className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
+                        >
+                          {tag.startsWith("#") ? tag : `#${tag}`}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <Link
+                    href={`/${nickname}/${board.id}`}
+                    className="text-rose-500 inline-flex items-center group"
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </Link>
+                    자세히 보기
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 ml-1 group-hover:translate-x-1 transition"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </Link>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* 페이지네이션 */}
-        <div className="flex justify-center">
-          <nav className="inline-flex">
-            {/* 이전 페이지 버튼 */}
-            {currentPage > 1 && (
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                className="border border-gray-300 px-3 py-1 rounded-l-md hover:bg-gray-100"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
-            )}
-
-            {/* 페이지 번호 버튼들 */}
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={`${
-                  currentPage === page
-                    ? "bg-rose-500 text-white"
-                    : "border border-gray-300 hover:bg-gray-100"
-                } px-3 py-1`}
-              >
-                {page}
-              </button>
-            ))}
-
-            {/* 다음 페이지 버튼 */}
-            {currentPage < totalPages && (
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                className="border border-gray-300 px-3 py-1 rounded-r-md hover:bg-gray-100"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
-            )}
-          </nav>
-        </div>
+        {pageInfo && (
+          <Pagination pageInfo={pageInfo} onPageChange={handlePageChange} />
+        )}
       </main>
 
       {/* 오른쪽 사이드바 - 프로필 영역 */}
       <aside className="md:w-1/4 mt-8 md:mt-0">
-        <div className="sticky top-8 bg-gray-50 rounded-xl p-6">
-          <div className="flex flex-col items-center mb-4">
-            <div className="w-24 h-24 rounded-full bg-gray-200 overflow-hidden mb-4">
-              <Image
-                src="/next.svg"
-                alt="프로필 이미지"
-                width={96}
-                height={96}
-                className="object-cover"
-              />
-            </div>
-            <h2 className="text-xl font-bold">김개발</h2>
-            <p className="text-gray-600 mb-4">프론트엔드 개발자</p>
-
-            <div className="w-full space-y-4">
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <div>
-                  <p className="font-medium text-sm">총 게시글</p>
-                  <p className="text-lg">26개</p>
-                </div>
-                <div>
-                  <p className="font-medium text-sm">총 댓글</p>
-                  <p className="text-lg">124개</p>
-                </div>
-                <div>
-                  <p className="font-medium text-sm">방문자</p>
-                  <p className="text-lg">1,234명</p>
-                </div>
+        <div className="sticky top-8 bg-white rounded-lg shadow-sm p-5">
+          <div className="flex items-start mb-5">
+            <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden mr-4">
+              <div className="w-full h-full flex items-center justify-center text-gray-400 text-2xl font-bold">
+                {nickname.charAt(0).toUpperCase()}
               </div>
+            </div>
+            <div className="flex-1">
+              <h2 className="text-xl font-bold">
+                {ownerInfo?.nickname || nickname}
+              </h2>
+              <p className="text-gray-500 text-sm mb-2">
+                {ownerInfo?.introduce ||
+                  ownerInfo?.myIntroduce ||
+                  "소개글이 없습니다"}
+              </p>
             </div>
           </div>
 
-          <div className="border-t pt-4 mt-2">
-            <h3 className="font-medium mb-2">시리즈</h3>
-            <ul className="space-y-2">
-              <li className="text-sm">• React 완벽 가이드 (12)</li>
-              <li className="text-sm">• TypeScript 기초 (8)</li>
-              <li className="text-sm">• 웹 성능 최적화 (6)</li>
-            </ul>
+          {/* 통계 정보 */}
+          <div className="space-y-2 border-t pt-4">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600 flex items-center">
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  ></path>
+                </svg>
+                게시글
+              </span>
+              <span className="font-medium">
+                {ownerInfo?.boardCount || 0}개
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600 flex items-center">
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  ></path>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  ></path>
+                </svg>
+                방문자
+              </span>
+              <span className="font-medium">{ownerInfo?.viewCount || 0}명</span>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600 flex items-center">
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                  ></path>
+                </svg>
+                팔로잉
+              </span>
+              <span className="font-medium">
+                {ownerInfo?.followingCount || 0}명
+              </span>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600 flex items-center">
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  ></path>
+                </svg>
+                팔로워
+              </span>
+              <span className="font-medium">
+                {ownerInfo?.followerCount || 0}명
+              </span>
+            </div>
           </div>
         </div>
       </aside>

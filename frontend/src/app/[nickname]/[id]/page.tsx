@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import AuthorProfile from "@/components/common/AuthorProfile";
 
 // BoardDetailDto 타입 정의
 interface BoardDetailDto {
@@ -304,29 +305,11 @@ export default function BoardDetail() {
       ></div>
 
       {/* 작성자 프로필 영역 */}
-      <div className="bg-gray-50 p-6 rounded-lg mb-8 border">
-        <div className="flex items-center">
-          <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 mr-4 overflow-hidden">
-            {board.profileImageLink ? (
-              <img
-                src={board.profileImageLink}
-                alt={board.nickName}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className="text-2xl font-bold">
-                {board.nickName.charAt(0)}
-              </span>
-            )}
-          </div>
-          <div>
-            <div className="text-lg font-bold mb-1">{board.nickName}</div>
-            {board.myIntroduce && (
-              <div className="text-gray-600">{board.myIntroduce}</div>
-            )}
-          </div>
-        </div>
-      </div>
+      <AuthorProfile
+        nickName={board.nickName}
+        profileImageLink={board.profileImageLink}
+        myIntroduce={board.myIntroduce}
+      />
 
       {/* 이전/다음 버튼 */}
       <div className="flex justify-between mt-12 border-t pt-6">
