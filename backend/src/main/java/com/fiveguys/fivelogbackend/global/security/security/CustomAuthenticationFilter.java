@@ -70,18 +70,18 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("오긴하냐?>");
         String method = request.getMethod();
         if (!request.getRequestURI().startsWith("/api/")) {
             filterChain.doFilter(request, response);
-
             return;
         }
+
         //  GET 요청은 모두 인증 없이 통과, 예외는 필요함 ex) mypage
-        if ("GET".equalsIgnoreCase(method)) {
+        if ("GET".equalsIgnoreCase(method) && !request.getRequestURI().startsWith("/api/users")) {
             filterChain.doFilter(request, response);
             return;
         }
+
 
         if (List.of("/api/users/login",  "/api/users/join").contains(request.getRequestURI())) {
             filterChain.doFilter(request, response);
@@ -89,13 +89,15 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         }
 
         AuthTokens authTokens = getAuthTokensFromRequest();
-        log.info("authToknes test {}", authTokens);
+        log.info("authTokens test {}", authTokens);
         if (authTokens == null) {
             filterChain.doFilter(request, response);
             return;
         }
+
         String refreshToken = authTokens.refreshToken;
         String accessToken = authTokens.accessToken;
+
 
         User user = userService.getUserFromAccessToken(accessToken);
         if (user == null)
@@ -103,6 +105,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
         if (user != null)
             rq.setLogin(user);
+
 
         filterChain.doFilter(request, response);
     }

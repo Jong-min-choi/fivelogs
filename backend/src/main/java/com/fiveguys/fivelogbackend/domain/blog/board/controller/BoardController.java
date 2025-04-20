@@ -2,10 +2,7 @@ package com.fiveguys.fivelogbackend.domain.blog.board.controller;
 
 import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.blog.blog.service.BlogService;
-import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardDetailDto;
-import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardMainPageResponseDto;
-import com.fiveguys.fivelogbackend.domain.blog.board.dto.CreateBoardRequestDto;
-import com.fiveguys.fivelogbackend.domain.blog.board.dto.CreateBoardResponseDto;
+import com.fiveguys.fivelogbackend.domain.blog.board.dto.*;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import com.fiveguys.fivelogbackend.domain.blog.board.service.BoardService;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
@@ -13,7 +10,6 @@ import com.fiveguys.fivelogbackend.global.rq.Rq;
 import com.fiveguys.fivelogbackend.global.security.security.SecurityUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,10 +21,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/boards")
@@ -94,5 +88,12 @@ public class BoardController {
 
         return ResponseEntity.ok().body(ApiResponse.success(boardDetailDto, "board 생성 성공"));
     }
+
+    @GetMapping("/{boardId}/author/{nickname}")
+    public ResponseEntity<ApiResponse<SideBoardInfoDto>> getSidesBoardInfo(@PathVariable("boardId") Long boardId,
+                                                                           @PathVariable("nickname") String nickname){
+        return ResponseEntity.ok(ApiResponse.success(boardService.sideBoardInfoDto(boardId, nickname), "전, 후 게시판 조회 성공"));
+    }
+
 
 }

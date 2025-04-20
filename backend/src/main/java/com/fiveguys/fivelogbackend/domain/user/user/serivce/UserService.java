@@ -82,7 +82,6 @@ public class UserService {
 
     public User getUserFromAccessToken(String accessToken) {
         Map<String, Object> payload = authTokenService.payload(accessToken);
-
         if (payload == null) return null;
 
         long id = (long) payload.get("id");

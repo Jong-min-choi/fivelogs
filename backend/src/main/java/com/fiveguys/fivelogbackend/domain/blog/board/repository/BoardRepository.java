@@ -28,4 +28,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("SELECT b FROM Board b JOIN FETCH b.user")
     Page<Board> findAllWithUser(Pageable pageable);
+
+    Optional<Board>  findFirstByIdLessThanAndUser_NicknameOrderByIdDesc(Long id, String nickname);
+
+    Optional<Board> findFirstByIdGreaterThanAndUser_NicknameOrderByIdAsc(Long id, String nickname);
+
 }

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,5 +81,22 @@ public class BoardService {
         return BoardDetailDto.from(board);
     }
 
+    @Transactional
+    public SideBoardInfoDto sideBoardInfoDto(Long boardId, String nickname){
+        Optional<Board> opPreBoard = boardRepository.findFirstByIdLessThanAndUser_NicknameOrderByIdDesc(boardId, nickname);
+        SimpleBoardDto preBoardDto = null;
+        if(opPreBoard.isPresent()){
+            preBoardDto = SimpleBoardDto.from(opPreBoard.get());
+        }
+
+
+        Optional<Board> opNextBoard = boardRepository.findFirstByIdGreaterThanAndUser_NicknameOrderByIdAsc(boardId, nickname);
+        SimpleBoardDto nextBoardDto = null;
+        if(opNextBoard.isPresent()) {
+            log.info("opNextBoard {}", opNextBoard);
+            nextBoardDto = SimpleBoardDto.from(opNextBoard.get());
+        }
+        return new SideBoardInfoDto(preBoardDto, nextBoardDto);
+    }
 
 }
