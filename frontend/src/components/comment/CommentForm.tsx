@@ -22,12 +22,12 @@ const CommentForm = ({ boardId, parentId, onSuccess }: CommentFormProps) => {
     // 현재 로그인한 사용자 정보 가져오기
     const fetchUserInfo = async () => {
       try {
-        const res = await fetch('http://localhost:8090/api/users/me', {
-          method: 'GET',
-          credentials: 'include',
+        const res = await fetch("http://localhost:8090/api/users/me", {
+          method: "GET",
+          credentials: "include",
           headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
+            Accept: "application/json",
+            "Content-Type": "application/json",
           },
         });
 
@@ -69,19 +69,22 @@ const CommentForm = ({ boardId, parentId, onSuccess }: CommentFormProps) => {
     setLoading(true);
 
     try {
-      const res = await fetch(`http://localhost:8090/api/comments/boards/${boardId}`, {
-        method: "POST",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          boardId: boardId,
-          comment: comment.trim(),
-          parentId: parentId || null
-        }),
-      });
+      const res = await fetch(
+        `http://localhost:8090/api/comments/boards/${boardId}`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            boardId: boardId,
+            comment: comment.trim(),
+            parentId: parentId || null,
+          }),
+        }
+      );
 
       if (!res.ok) {
         if (res.status === 401) {
@@ -94,12 +97,14 @@ const CommentForm = ({ boardId, parentId, onSuccess }: CommentFormProps) => {
       }
 
       const json = await res.json();
-      console.log('댓글 작성 성공:', json);
+      console.log("댓글 작성 성공:", json);
       setComment("");
       onSuccess?.();
     } catch (error) {
       console.error("❌ 댓글 작성 오류:", error);
-      alert(error instanceof Error ? error.message : "댓글 작성에 실패했습니다.");
+      alert(
+        error instanceof Error ? error.message : "댓글 작성에 실패했습니다."
+      );
     } finally {
       setLoading(false);
     }
@@ -118,7 +123,13 @@ const CommentForm = ({ boardId, parentId, onSuccess }: CommentFormProps) => {
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         rows={3}
-        placeholder={!user ? "로그인이 필요합니다" : parentId ? "대댓글을 입력하세요" : "댓글을 입력하세요"}
+        placeholder={
+          !user
+            ? "로그인이 필요합니다"
+            : parentId
+            ? "대댓글을 입력하세요"
+            : "댓글을 입력하세요"
+        }
         className="w-full border rounded p-2 mb-2"
         disabled={loading || !user}
       />
