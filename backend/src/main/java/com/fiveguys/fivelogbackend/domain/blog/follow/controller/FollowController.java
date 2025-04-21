@@ -32,8 +32,8 @@ public class FollowController {
     // 상대 프로필을 봤을때 팔로우했는지 안했는지 띄워주기
     @Operation(summary = "팔로우 상태 확인", description = "유저가 다른 유저를 팔로우했는지 확인.")
     @GetMapping("/isFollow")
-    public ResponseEntity<Boolean> isFollow(@RequestParam Long followerId, @RequestParam Long followingId) {
-        boolean isFollow = followService.isFollow(followerId, followingId);
+    public ResponseEntity<Boolean> isFollow(@RequestParam Long loginUserId, @RequestParam Long targetId) {
+        boolean isFollow = followService.followButton(loginUserId, targetId);
         return ResponseEntity.ok(isFollow);
     }
 

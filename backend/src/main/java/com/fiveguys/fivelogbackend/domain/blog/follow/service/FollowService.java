@@ -33,7 +33,7 @@ public class FollowService {
     }
 
     // 이건 내가 상대 프로필 들어갔을때 팔로우했냐 안했냐 뜨게하기위해
-    public boolean isFollow(Long loginUserId, Long targetId) {
+    public boolean followButton(Long loginUserId, Long targetId) {
         return followRepository.findByFollowerIdAndFollowingId(loginUserId,targetId).isPresent();
     }
 
