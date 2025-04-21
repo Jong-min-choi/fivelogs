@@ -24,8 +24,11 @@ repositories {
 }
 
 dependencies {
+
+	implementation ("org.springframework.boot:spring-boot-starter-mail") // email service
+	implementation ("org.springframework.boot:spring-boot-starter-data-redis") // redis
+	implementation ("org.springframework.data:spring-data-redis") //redis
 	implementation ("com.auth0:java-jwt:4.4.0") // JWT 라이브러리
-	//Jwt
 	implementation ("io.jsonwebtoken:jjwt-api:0.12.6")
 	implementation ("io.jsonwebtoken:jjwt-impl:0.12.6")
 	implementation ("io.jsonwebtoken:jjwt-jackson:0.12.6")

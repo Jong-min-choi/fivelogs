@@ -125,6 +125,9 @@ public class UserService {
         }
         throw new BadCredentialsException("Invalid email or password");
     }
+    public boolean emailExists(String email){return userRepository.existsByEmail(email);}
+
+    public boolean nicknameExists(String nickname){return userRepository.existsByNickname(nickname);}
 
     public Long countUsers(){
         return userRepository.count();

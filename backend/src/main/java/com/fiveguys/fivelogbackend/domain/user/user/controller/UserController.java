@@ -1,6 +1,5 @@
 package com.fiveguys.fivelogbackend.domain.user.user.controller;
 
-import com.fiveguys.fivelogbackend.domain.blog.blog.service.BlogService;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.*;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserCommandService;
@@ -10,16 +9,14 @@ import com.fiveguys.fivelogbackend.global.rq.Rq;
 import com.fiveguys.fivelogbackend.global.security.security.SecurityUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -78,7 +75,11 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(myPageDto, "myPageDto 생성 성공"));
     }
 
-
+    @GetMapping("/nickname-exists")
+    public ResponseEntity<?> checkEmail(@RequestParam String nickname) {
+        boolean exists = userService.nicknameExists(nickname);
+        return ResponseEntity.ok(ApiResponse.success((Map.of("exists", exists)), "중복 확인 성공"));
+    }
 
     @GetMapping("/{nickname}/blog")
     public ResponseEntity<ApiResponse<BlogOwnerDto>> getBlogOwnerInfo(@PathVariable("nickname") String nickname){
