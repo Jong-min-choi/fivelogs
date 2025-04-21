@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 public class BoardDetailDto {
 
+    Long boardId;
     String blogTitle;
     String boardTitle;
     String content;
@@ -31,6 +32,7 @@ public class BoardDetailDto {
 
     public static BoardDetailDto from (Board board){
         return BoardDetailDto.builder()
+                .boardId(board.getId())
                 .blogTitle(board.getBlog().getTitle())
                 .boardTitle(board.getTitle())
                 .content(board.getContent())

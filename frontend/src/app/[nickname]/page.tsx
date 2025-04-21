@@ -14,7 +14,9 @@ import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export default function MyBoardPage() {
   const params = useParams();
-  const nickname = params?.nickname as string;
+  // URL에서 받은 닉네임 디코딩
+  const encodedNickname = params?.nickname as string;
+  const nickname = decodeURIComponent(encodedNickname);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -34,7 +36,10 @@ export default function MyBoardPage() {
   // 블로그 소유자 정보 가져오기
   const fetchBlogOwnerInfo = async () => {
     try {
-      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/${nickname}/blog`;
+      // API 요청 시 닉네임 인코딩
+      const url = `${
+        process.env.NEXT_PUBLIC_API_BASE_URL
+      }/api/users/${encodeURIComponent(nickname)}/blog`;
       console.log("블로그 소유자 정보 API 요청 URL:", url);
 
       const response = await fetch(url);
@@ -62,7 +67,12 @@ export default function MyBoardPage() {
   const fetchBlogData = async (page: number) => {
     try {
       setLoading(true);
-      const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${nickname}?page=${page}&size=${boardsPerPage}`;
+      // API 요청 시 닉네임 인코딩
+      const url = `${
+        process.env.NEXT_PUBLIC_API_BASE_URL
+      }/api/blogs/${encodeURIComponent(
+        nickname
+      )}?page=${page}&size=${boardsPerPage}`;
 
       console.log("API 요청 URL:", url);
 
@@ -161,7 +171,7 @@ export default function MyBoardPage() {
                     </div>
                   )}
                   <Link
-                    href={`/${nickname}/${board.id}`}
+                    href={`/${encodeURIComponent(nickname)}/${board.id}`}
                     className="text-rose-500 inline-flex items-center group"
                   >
                     자세히 보기

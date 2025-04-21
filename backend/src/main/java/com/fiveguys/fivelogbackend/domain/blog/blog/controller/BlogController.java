@@ -59,7 +59,7 @@ public class BlogController {
     }
 
     @GetMapping("/{nickname}")
-    public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBlogMainInfo(@PageableDefault(size=10, direction = Sort.Direction.DESC) Pageable pageable,
+    public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBlogMainInfo(@PageableDefault(size=10, sort = "createdDate",direction = Sort.Direction.DESC) Pageable pageable,
                                                                            @PathVariable(name = "nickname") String nickname){
         Page<Board> pagedBoards = boardService.getBoardsAllWithNickname(nickname,pageable);
 
