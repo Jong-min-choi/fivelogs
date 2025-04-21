@@ -7,6 +7,11 @@ import Comment, { CommentType } from "./Comment";
 interface CommentListProps {
   boardId: number;
 }
+const commentRequestDto = {
+  boardId: 1,
+  comment: "test",
+  parentId: null,
+};
 
 export default function CommentList({ boardId }: CommentListProps) {
   const [comments, setComments] = useState<CommentType[]>([]);
@@ -17,7 +22,13 @@ export default function CommentList({ boardId }: CommentListProps) {
   const fetchComments = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8090/api/comments/boards/${boardId}`);
+      const res = await fetch(
+        `http://localhost:8090/api/comments/boards/${boardId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
 
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);

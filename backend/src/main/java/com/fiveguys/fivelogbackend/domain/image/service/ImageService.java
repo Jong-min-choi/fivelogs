@@ -6,8 +6,12 @@ import com.fiveguys.fivelogbackend.domain.image.dto.ImageResponseDto;
 import com.fiveguys.fivelogbackend.domain.image.entity.Image;
 import com.fiveguys.fivelogbackend.domain.image.repository.ImageRepository;
 
+import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
+import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
+import com.fiveguys.fivelogbackend.global.rq.Rq;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -27,7 +31,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ImageService {
 
-    public final ImageRepository imageRepository;
+    private final ImageRepository imageRepository;
+    private final UserService userService;
+    private final Rq rq;
+
 
     // 이미지 저장
     @Transactional
@@ -41,7 +48,8 @@ public class ImageService {
         try {
             String originalName = file.getOriginalFilename();
             String serverFileName = UUID.randomUUID().toString() + "_" + originalName;
-            String uploadDir = "/Users/yugwanglyun/team project/uploadDir";
+//            String uploadDir = "/Users/yugwanglyun/team project/uploadDir";
+            String uploadDir = "C:/Users/82103/Desktop/public/junho/projects/likeLion/five-log/backend/images";
             File destination = new File(uploadDir, serverFileName);
             file.transferTo(destination);
 
@@ -50,7 +58,12 @@ public class ImageService {
             image.serverImageName = serverFileName;
             image.path = uploadDir + "/" + serverFileName;
 
+            User actor = rq.getActor();
+            User user = userService.findById(actor.getId()).orElseThrow(()-> new IllegalArgumentException("존재하지 않는 id입니다."));
+
             Image saved = imageRepository.save(image);
+            user.setProfileImage(saved); //프로파일 저장
+
 
             return ImageResponseDto.builder()
                     .id(saved.getId())

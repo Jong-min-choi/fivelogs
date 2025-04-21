@@ -51,7 +51,7 @@ export default function WritePage() {
       setError("");
 
       const response = await fetch(
-        "${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards`,
         {
           method: "POST",
           headers: {

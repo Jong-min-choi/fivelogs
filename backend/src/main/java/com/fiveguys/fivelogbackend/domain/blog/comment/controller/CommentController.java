@@ -10,6 +10,7 @@ import com.fiveguys.fivelogbackend.global.rq.Rq;
 import io.swagger.v3.oas.annotations.Operation;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/comments")
+@Slf4j
 public class CommentController {
     private final CommentService commentService;
     private final Rq rq;
@@ -44,7 +46,7 @@ public class CommentController {
     }
 
     // 댓글 작성
-    @PostMapping("/boards/{boardId}/")
+    @PostMapping("/boards/{boardId}")
     @Operation(summary = "댓글 작성", description = "댓글을 작성합니다.")
     public ResponseEntity<ApiResponse<CommentResponseDto>> createComment(
             @PathVariable("boardId") Long boardId,

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import CommentList from '@/components/comment/CommentList';
+import { useState, useEffect } from "react";
+import CommentList from "@/components/comment/CommentList";
 
 interface User {
   id: number;
@@ -13,63 +13,63 @@ export default function CommentsTestPage() {
   const [boardId, setBoardId] = useState<number>(1);
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    // 페이지 로드시 자동 로그인
-    const autoLogin = async () => {
-      try {
-        // 먼저 로그인 시도
-        const loginRes = await fetch('http://localhost:8090/api/users/login', {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: 'test@test.com',
-            password: '1234'
-          }),
-        });
+  // useEffect(() => {
+  //   // 페이지 로드시 자동 로그인
+  //   const autoLogin = async () => {
+  //     try {
+  //       // 먼저 로그인 시도
+  //       const loginRes = await fetch("http://localhost:8090/api/users/login", {
+  //         method: "POST",
+  //         credentials: "include",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           email: "test@test.com",
+  //           password: "1234",
+  //         }),
+  //       });
 
-        if (loginRes.ok) {
-          // 로그인 성공 후 사용자 정보 가져오기
-          const userRes = await fetch('http://localhost:8090/api/users/me', {
-            credentials: 'include',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-          });
+  //       if (loginRes.ok) {
+  //         // 로그인 성공 후 사용자 정보 가져오기
+  //         const userRes = await fetch("http://localhost:8090/api/users/me", {
+  //           credentials: "include",
+  //           headers: {
+  //             Accept: "application/json",
+  //             "Content-Type": "application/json",
+  //           },
+  //         });
 
-          if (userRes.ok) {
-            const userData = await userRes.json();
-            setUser(userData);
-            console.log('테스트 계정으로 자동 로그인 되었습니다.');
-          }
-        } else {
-          console.error('테스트 계정 로그인 실패');
-        }
-      } catch (error) {
-        console.error('자동 로그인 실패:', error);
-      }
-    };
+  //         if (userRes.ok) {
+  //           const userData = await userRes.json();
+  //           setUser(userData);
+  //           console.log("테스트 계정으로 자동 로그인 되었습니다.");
+  //         }
+  //       } else {
+  //         console.error("테스트 계정 로그인 실패");
+  //       }
+  //     } catch (error) {
+  //       console.error("자동 로그인 실패:", error);
+  //     }
+  //   };
 
-    autoLogin();
-  }, []);
+  //   autoLogin();
+  // }, []);
 
-  const handleLogout = async () => {
-    try {
-      const res = await fetch('http://localhost:8090/api/users/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
+  // const handleLogout = async () => {
+  //   try {
+  //     const res = await fetch('http://localhost:8090/api/users/logout', {
+  //       method: 'POST',
+  //       credentials: 'include',
+  //     });
 
-      if (res.ok) {
-        setUser(null);
-      }
-    } catch (error) {
-      console.error('로그아웃 실패:', error);
-    }
-  };
+  //     if (res.ok) {
+  //       setUser(null);
+  //     }
+  //   } catch (error) {
+  //     console.error('로그아웃 실패:', error);
+  //   }
+  // };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -77,11 +77,12 @@ export default function CommentsTestPage() {
         {/* 로그인 상태 표시 */}
         <div className="mb-6 flex justify-between items-center">
           <h1 className="text-2xl font-bold">댓글 테스트 페이지</h1>
-          <div>
+          {/* <div>
             {user && (
               <div className="flex items-center gap-4">
                 <span className="text-sm text-gray-600">
-                  <span className="font-medium">{user.nickname}</span>님 (테스트 계정)
+                  <span className="font-medium">{user.nickname}</span>님 (테스트
+                  계정)
                 </span>
                 <button
                   onClick={handleLogout}
@@ -91,19 +92,17 @@ export default function CommentsTestPage() {
                 </button>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
-        
+
         {/* 테스트용 게시글 */}
         <div className="mb-8 p-4 bg-gray-50 rounded-lg">
           <h2 className="text-xl font-semibold mb-2">테스트 게시글</h2>
           <p className="text-gray-600 mb-4">
-            이 게시글은 댓글 기능을 테스트하기 위한 샘플 게시글입니다.
-            댓글, 대댓글, 좋아요/싫어요 기능을 자유롭게 테스트해보세요.
+            이 게시글은 댓글 기능을 테스트하기 위한 샘플 게시글입니다. 댓글,
+            대댓글, 좋아요/싫어요 기능을 자유롭게 테스트해보세요.
           </p>
-          <div className="text-sm text-gray-500">
-            게시글 ID: {boardId}
-          </div>
+          <div className="text-sm text-gray-500">게시글 ID: {boardId}</div>
         </div>
 
         {/* 게시글 ID 변경 */}
@@ -133,4 +132,4 @@ export default function CommentsTestPage() {
       </div>
     </div>
   );
-} 
+}
