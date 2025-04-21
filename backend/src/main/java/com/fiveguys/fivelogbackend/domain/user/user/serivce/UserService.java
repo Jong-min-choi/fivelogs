@@ -126,4 +126,8 @@ public class UserService {
         throw new BadCredentialsException("Invalid email or password");
     }
 
+    public Long countUsers(){
+        return userRepository.count();
+    }
+
 }

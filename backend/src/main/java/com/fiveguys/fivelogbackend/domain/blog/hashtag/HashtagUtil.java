@@ -11,14 +11,20 @@ public class HashtagUtil {
                 .distinct()
                 .collect(Collectors.joining(" "));
     }
+//    public static String joinHashtags(String[] hashtags) {
+//        return Arrays.stream(hashtags)
+//                .filter(tag -> tag != null && !tag.isBlank())
+//                .map(tag -> tag.endsWith(",") ? tag : tag + ",")
+//                .distinct()
+//                .collect(Collectors.joining(","));
+//    }
     public static String joinHashtags(String[] hashtags) {
         return Arrays.stream(hashtags)
-                .filter(tag -> tag != null && !tag.isBlank())
-                .map(tag -> tag.endsWith(",") ? tag : tag + ",")
-                .distinct()
-                .collect(Collectors.joining(","));
+                .filter(tag -> tag != null && !tag.isBlank()) // null 또는 빈 문자열 필터링
+                .map(tag -> tag.trim())  // 공백 제거
+                .distinct()  // 중복 제거
+                .collect(Collectors.joining(","));  // 쉼표로 연결
     }
-
 
 
 }
