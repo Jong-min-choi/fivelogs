@@ -18,6 +18,12 @@ public class CommentResponseDto {
     private Long id;
     private String comment;
 
+    @Schema(description = "댓글 작성자 닉네임")
+    private String nickname;
+
+    private int likeCount;
+    private int dislikeCount;
+
     @Schema(description = "작성 날짜", example = "2025-04-14T10:30:00")
     private LocalDateTime createdDate;
 
@@ -31,9 +37,11 @@ public class CommentResponseDto {
         CommentResponseDto dto = new CommentResponseDto();
         dto.id = comment.getId();
         dto.comment = comment.getComment();
+        dto.setNickname(comment.getUser().getNickname());
         dto.createdDate = comment.getCreatedDate();
         dto.comment = comment.isDeleted() ? "삭제된 댓글입니다." : comment.getComment();
-
+        dto.likeCount = comment.getLikeCount();
+        dto.dislikeCount = comment.getDislikeCount();
         //수정할때 나오게
         if (!comment.getUpdatedDate().isEqual(comment.getCreatedDate())) {
             dto.updatedDate = comment.getUpdatedDate();
