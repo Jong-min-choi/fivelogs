@@ -13,7 +13,6 @@ public class CreateBoardRequestDto {
     private String title;
     private String content;
     private BoardStatus status;
-<<<<<<< HEAD
 
     public Board toEntity() {
         return Board.builder()
@@ -22,7 +21,5 @@ public class CreateBoardRequestDto {
                 .status(this.status)
                 .build();
     }
-=======
     private String hashtags;
->>>>>>> 16a8d542087a276c301e689bceb2f3589b648306
 }

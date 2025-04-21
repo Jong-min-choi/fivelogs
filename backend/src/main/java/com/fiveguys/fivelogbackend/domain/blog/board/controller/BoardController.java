@@ -16,12 +16,4 @@ import org.springframework.web.bind.annotation.RestController;
 public class BoardController {
 
     private final BoardService boardService;
-
-//    @PostMapping
-//    @Operation(summary = "게시글 작성")
-//        return ResponseEntity.ok(boardService.createBoard(requestDto));
-//    }
-
-//    @Operation(summary = "게시글 열람")
-//    }
 }
