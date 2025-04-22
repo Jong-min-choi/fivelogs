@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
   BoardSummaryDto,
   BoardPageResponseDto,
   ApiResponse,
   BlogOwnerDto,
+  HashtagCountDto,
 } from "@/types/blog";
 import { PageDto } from "@/types/board";
 import Pagination from "@/components/common/Pagination";
@@ -14,9 +15,15 @@ import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export default function MyBoardPage() {
   const params = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   // URL에서 받은 닉네임 디코딩
   const encodedNickname = params?.nickname as string;
   const nickname = decodeURIComponent(encodedNickname);
+
+  // tag 쿼리 파라미터 읽기
+  const selectedTag = searchParams.get("tag");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -24,7 +31,34 @@ export default function MyBoardPage() {
   const [boardData, setBoardData] = useState<BoardSummaryDto[]>([]);
   const [pageInfo, setPageInfo] = useState<PageDto | null>(null);
   const [ownerInfo, setOwnerInfo] = useState<BlogOwnerDto | null>(null);
+  const [hashtags, setHashtags] = useState<HashtagCountDto[]>([]);
   const boardsPerPage = 10; // 한 페이지에 10개 게시글 표시
+
+  // 필터링된 게시글 데이터
+  const filteredBoardData =
+    selectedTag && selectedTag !== ""
+      ? boardData.filter((board) =>
+          board.hashtags?.some(
+            (tag) => tag.replace(/^#/, "") === selectedTag.replace(/^#/, "")
+          )
+        )
+      : boardData;
+
+  // tag가 있을 때는 클라이언트에서 페이지네이션 정보 재계산
+  const filteredPageInfo: PageDto | null = (() => {
+    if (!selectedTag || !pageInfo) return pageInfo;
+    const totalElements = filteredBoardData.length;
+    const totalPages = Math.ceil(totalElements / boardsPerPage);
+    return {
+      ...pageInfo,
+      totalElements,
+      totalPages,
+      page: currentPage,
+      size: boardsPerPage,
+      isFirst: currentPage === 1,
+      isLast: currentPage === totalPages || totalPages === 0,
+    };
+  })();
 
   // 페이지 변경 핸들러
   const handlePageChange = (page: number) => {
@@ -64,18 +98,18 @@ export default function MyBoardPage() {
     }
   };
 
-  const fetchBlogData = async (page: number) => {
+  // 게시글 데이터 가져오기 (tag 쿼리 반영)
+  const fetchBlogData = async (page: number, tag?: string | null) => {
     try {
       setLoading(true);
-      // API 요청 시 닉네임 인코딩
-      const url = `${
+      let url = `${
         process.env.NEXT_PUBLIC_API_BASE_URL
       }/api/blogs/${encodeURIComponent(
         nickname
       )}?page=${page}&size=${boardsPerPage}`;
-
-      console.log("API 요청 URL:", url);
-
+      if (tag) {
+        url += `&tag=${encodeURIComponent(tag)}`;
+      }
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -83,10 +117,8 @@ export default function MyBoardPage() {
       }
 
       const data = (await response.json()) as ApiResponse<BoardPageResponseDto>;
-      console.log("API 응답 데이터:", data);
 
       if (data.success) {
-        // API 응답 데이터 설정 - 구조 변경에 따라 수정
         const responseData = data.data;
         setBoardData(responseData.boardDtoList || []);
         setPageInfo(responseData.pageDto || null);
@@ -94,7 +126,6 @@ export default function MyBoardPage() {
         throw new Error(data.message || "데이터를 불러오는데 실패했습니다.");
       }
     } catch (err) {
-      console.error("API 요청 중 오류 발생:", err);
       setError(
         "블로그 데이터를 불러올 수 없습니다. 잠시 후 다시 시도해주세요."
       );
@@ -103,10 +134,35 @@ export default function MyBoardPage() {
     }
   };
 
+  // 해시태그 정보 가져오기
+  const fetchHashtags = async () => {
+    try {
+      const url = `${
+        process.env.NEXT_PUBLIC_API_BASE_URL
+      }/api/hashtags/${encodeURIComponent(nickname)}`;
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`서버 응답 오류: ${response.status}`);
+      }
+
+      const data = (await response.json()) as ApiResponse<HashtagCountDto[]>;
+
+      if (data.success) {
+        setHashtags(data.data);
+      } else {
+        console.error("해시태그 정보를 가져오는데 실패했습니다:", data.message);
+      }
+    } catch (err) {
+      console.error("해시태그 API 요청 중 오류 발생:", err);
+    }
+  };
+
   useEffect(() => {
-    fetchBlogData(currentPage);
+    fetchBlogData(currentPage, selectedTag);
     fetchBlogOwnerInfo();
-  }, [nickname, currentPage]);
+    fetchHashtags();
+  }, [nickname, currentPage, selectedTag]);
 
   // 로딩 중 표시
   if (loading && boardData.length === 0) {
@@ -138,18 +194,16 @@ export default function MyBoardPage() {
         )}
 
         {/* 블로그 게시글 목록 */}
-        {boardData.length === 0 && !loading ? (
+        {filteredBoardData.length === 0 && !loading ? (
           <div className="text-center p-10 bg-gray-50 rounded-lg">
             <p className="text-gray-500">게시글이 없습니다.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {boardData.map((board) => (
+            {filteredBoardData.map((board) => (
               <div key={board.id} className="border rounded-lg shadow-sm">
                 <div className="p-5">
                   <div className="flex items-center text-sm text-gray-500 mb-2">
-                    {/* <span>{board.nickname}</span> */}
-                    {/* <span className="mx-2">•</span> */}
                     <span>{new Date(board.created).toLocaleDateString()}</span>
                     <span className="mx-2">•</span>
                     <span>조회 {board.views}</span>
@@ -195,14 +249,18 @@ export default function MyBoardPage() {
         )}
 
         {/* 페이지네이션 */}
-        {pageInfo && (
-          <Pagination pageInfo={pageInfo} onPageChange={handlePageChange} />
+        {filteredPageInfo && (
+          <Pagination
+            pageInfo={filteredPageInfo}
+            onPageChange={handlePageChange}
+          />
         )}
       </main>
 
-      {/* 오른쪽 사이드바 - 프로필 영역 */}
+      {/* 오른쪽 사이드바 - 프로필 영역 및 해시태그 목차 */}
       <aside className="md:w-1/4 mt-8 md:mt-0">
         <div className="sticky top-8 bg-white rounded-lg shadow-sm p-5">
+          {/* 프로필 영역 */}
           <div className="flex items-start mb-5">
             <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden mr-4">
               <div className="w-full h-full flex items-center justify-center text-gray-400 text-2xl font-bold">
@@ -319,6 +377,69 @@ export default function MyBoardPage() {
               </span>
             </div>
           </div>
+
+          {/* 해시태그 목차 */}
+          {hashtags.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-lg font-bold mb-4 flex items-center">
+                <svg
+                  className="w-5 h-5 mr-2 text-gray-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+                  />
+                </svg>
+                해시태그
+              </h3>
+              <ul className="space-y-2">
+                <li>
+                  <button
+                    className={`text-gray-600 hover:text-rose-500 transition-colors cursor-pointer bg-transparent border-none p-0 ${
+                      !selectedTag ? "font-bold text-rose-500" : ""
+                    }`}
+                    onClick={() => {
+                      router.push(`/${encodeURIComponent(nickname)}`);
+                      setCurrentPage(1);
+                    }}
+                  >
+                    전체
+                  </button>
+                </li>
+                {hashtags.map((tag) => (
+                  <li
+                    key={tag.name}
+                    className="flex justify-between items-center"
+                  >
+                    <button
+                      className={`text-gray-600 hover:text-rose-500 transition-colors cursor-pointer bg-transparent border-none p-0 ${
+                        selectedTag === tag.name
+                          ? "font-bold text-rose-500"
+                          : ""
+                      }`}
+                      onClick={() => {
+                        router.push(
+                          `/${encodeURIComponent(
+                            nickname
+                          )}?tag=${encodeURIComponent(tag.name)}`
+                        );
+                        setCurrentPage(1);
+                      }}
+                    >
+                      #{tag.name}
+                    </button>
+                    <span className="text-sm text-gray-400">{tag.count}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </aside>
     </div>
