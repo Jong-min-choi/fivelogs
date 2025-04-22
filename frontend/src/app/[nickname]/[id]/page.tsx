@@ -7,6 +7,7 @@ import AuthorProfile from "@/components/common/AuthorProfile";
 
 // BoardDetailDto 타입 정의
 interface BoardDetailDto {
+  boardId: number;
   blogTitle: string;
   boardTitle: string;
   content: string;
