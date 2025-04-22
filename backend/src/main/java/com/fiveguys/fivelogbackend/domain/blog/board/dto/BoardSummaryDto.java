@@ -25,14 +25,14 @@ public class BoardSummaryDto {
     String nickname;
 
 
-    public static BoardSummaryDto from(Board board){
+    public static BoardSummaryDto from(Board board, List<String> hashtagNames){
         return BoardSummaryDto.builder()
                 .id(board.getId())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .views(board.getViews())
                 .nickname(board.getUser().getNickname())
-                .hashtags(Arrays.stream(board.getHashtags().split(",")).toList())
+                .hashtags(hashtagNames)
                 .created(board.getCreatedDate())
                 .updated(board.getUpdatedDate())
                 .build();
