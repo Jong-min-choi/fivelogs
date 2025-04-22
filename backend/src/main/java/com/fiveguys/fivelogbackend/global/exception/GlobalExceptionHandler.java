@@ -1,7 +1,7 @@
 package com.fiveguys.fivelogbackend.global.exception;
 
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
-import com.fiveguys.fivelogbackend.global.ut.Ut;
+import com.fiveguys.fivelogbackend.global.jwt.JwtUt;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,6 +30,6 @@ public class GlobalExceptionHandler {
         e.getBindingResult().getFieldErrors().forEach(
                 error -> errors.put(error.getField(), error.getDefaultMessage())
         );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.fail(Ut.json.toString(errors)));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.fail(JwtUt.json.toString(errors)));
     }
 }

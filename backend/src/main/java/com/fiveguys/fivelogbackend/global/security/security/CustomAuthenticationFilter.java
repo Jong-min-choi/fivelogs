@@ -29,7 +29,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
     private AuthTokens getAuthTokensFromRequest() {
         String authorization = rq.getHeader("Authorization");
-        log.info("authorization {}", authorization);
+//        log.info("authorization {}", authorization);
         if (authorization != null && authorization.startsWith("Bearer ")) {
             String token = authorization.substring("Bearer ".length());
             String[] tokenBits = token.split(" ", 2);
@@ -70,11 +70,18 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String method = request.getMethod();
         if (!request.getRequestURI().startsWith("/api/")) {
-
             filterChain.doFilter(request, response);
             return;
         }
+
+        //  GET 요청은 모두 인증 없이 통과, 예외는 필요함 ex) mypage
+        if ("GET".equalsIgnoreCase(method) && !request.getRequestURI().startsWith("/api/users")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
 
         if (List.of("/api/users/login",  "/api/users/join").contains(request.getRequestURI())) {
             filterChain.doFilter(request, response);
@@ -82,6 +89,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         }
 
         AuthTokens authTokens = getAuthTokensFromRequest();
+        log.info("authTokens test {}", authTokens);
         if (authTokens == null) {
             filterChain.doFilter(request, response);
             return;
@@ -90,12 +98,14 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         String refreshToken = authTokens.refreshToken;
         String accessToken = authTokens.accessToken;
 
+
         User user = userService.getUserFromAccessToken(accessToken);
         if (user == null)
             user = refreshAccessTokenByRefreshToken(refreshToken);
 
         if (user != null)
             rq.setLogin(user);
+
 
         filterChain.doFilter(request, response);
     }

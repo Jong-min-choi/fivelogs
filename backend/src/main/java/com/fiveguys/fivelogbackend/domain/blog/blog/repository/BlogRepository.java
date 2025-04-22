@@ -1,6 +1,7 @@
 package com.fiveguys.fivelogbackend.domain.blog.blog.repository;
 
 import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
+import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,4 +15,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     public boolean existsByTitle(String title);
 
     public Optional<Blog> findByUserId(Long userId);
+
+    public Optional<Blog> findByTitle(String userId);
+
 }

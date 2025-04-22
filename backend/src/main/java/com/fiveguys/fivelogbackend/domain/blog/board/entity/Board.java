@@ -1,3 +1,4 @@
+
 package com.fiveguys.fivelogbackend.domain.blog.board.entity;
 
 import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
@@ -17,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "boards")
 public class Board extends BaseEntity {
 
     @Column(length = 255)
@@ -29,9 +31,8 @@ public class Board extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private BoardStatus boardStatus;
+    private Long views = 0L;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

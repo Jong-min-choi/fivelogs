@@ -1,16 +1,16 @@
 package com.fiveguys.fivelogbackend.domain.user.user.serivce;
 
-import com.fiveguys.fivelogbackend.domain.user.role.repository.RoleRepository;
 import com.fiveguys.fivelogbackend.domain.user.role.service.RoleService;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
-import com.fiveguys.fivelogbackend.global.ut.Ut;
+import com.fiveguys.fivelogbackend.global.jwt.JwtUt;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class AuthTokenService {
     @Value("${custom.jwt.secretKey}")
     private String jwtSecretKey;
@@ -22,21 +22,23 @@ public class AuthTokenService {
     String genAccessToken(User user) {
         long id = user.getId();
         String email = user.getEmail();
-        return Ut.jwt.toString(
+
+        String nickname = user.getNickname();
+        return JwtUt.jwt.toString(
                 jwtSecretKey,
                 accessTokenExpirationSeconds,
-                Map.of("id", id, "email", email )
+                Map.of("id", id, "email", email, "nickname", nickname)
         );
     }
 
     Map<String, Object> payload(String accessToken) {
-        Map<String, Object> parsedPayload = Ut.jwt.payload(jwtSecretKey, accessToken);
+        Map<String, Object> parsedPayload = JwtUt.jwt.payload(jwtSecretKey, accessToken);
 
         if (parsedPayload == null) return null;
 
         long id = (long) (Integer) parsedPayload.get("id");
         String email = (String) parsedPayload.get("email");
-
-        return Map.of("id", id, "email", email);
+        String nickname = (String) parsedPayload.get("nickname");
+        return Map.of("id", id, "email", email, "nickname", nickname);
     }
 }

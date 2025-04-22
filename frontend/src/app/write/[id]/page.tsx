@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import Layout from "@/components/layout/Layout";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -15,7 +14,7 @@ export default function editPage() {
   };
 
   return (
-    <Layout>
+    <>
       <div className="max-w-4xl mx-auto my-8 p-6 bg-white rounded-lg shadow-sm">
         <h1 className="text-2xl font-bold mb-8">게시글 수정</h1>
 
@@ -85,6 +84,6 @@ export default function editPage() {
       <div className="text-center text-xs text-gray-400 mt-8">
         © 2024 FIVE Log. All rights reserved.
       </div>
-    </Layout>
+    </>
   );
 }

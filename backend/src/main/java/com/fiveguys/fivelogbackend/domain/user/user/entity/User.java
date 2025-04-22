@@ -26,9 +26,9 @@ public class User {
     Long id;
     @Column(length = 255, nullable = false)
     String password;
-    @Column(length = 50, nullable = false)
+    @Column(length = 50, nullable = false, unique = true)
     String email;
-    @Column(length = 50, nullable = false)
+    @Column(length = 50, nullable = false, unique = true)
     String nickname;
     @Column(length = 50, nullable = false)
     String introduce;

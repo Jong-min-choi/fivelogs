@@ -8,18 +8,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
+@ToString
 public class CreateBoardRequestDto {
     private String title;
     private String content;
     private BoardStatus status;
-
-    public Board toEntity() {
-        return Board.builder()
-                .title(this.title)
-                .content(this.content)
-                .status(this.status)
-                .build();
-    }
-    private String hashtags;
+    private String[] hashtags;
 }

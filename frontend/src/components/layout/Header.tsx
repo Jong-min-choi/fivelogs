@@ -2,15 +2,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useGlobalLoginUser } from "@/stores/auth/loginUser";
 
 export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+  const { isLogin, loginUser, logoutAndHome, isLoginUserPending } =
+    useGlobalLoginUser();
+  // console.log(loginUser);
+  // console.log(isLogin);
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-
+  if (isLoginUserPending) {
+    return <div>로딩중...</div>;
+  }
   return (
     <header className="flex justify-between items-center mb-8">
       <div className="flex items-center gap-2">
@@ -38,22 +43,28 @@ export default function Header() {
           </button>
         </div>
 
-        {isLoggedIn ? (
+        {isLogin ? (
           <div className="relative">
             <div
               className="flex items-center gap-2 cursor-pointer"
               onClick={toggleDropdown}
             >
-              <div className="w-8 h-8 rounded-full bg-gray-300 overflow-hidden">
-                <Image
-                  src="/next.svg"
-                  alt="프로필 이미지"
-                  width={32}
-                  height={32}
-                  className="object-cover"
-                />
+              <div className="w-8 h-8 rounded-full bg-gray-300 overflow-hidden flex items-center justify-center">
+                {loginUser.nickname ? (
+                  <span className="text-lg font-bold text-gray-600">
+                    {loginUser.nickname.charAt(0)}
+                  </span>
+                ) : (
+                  <Image
+                    src="/next.svg"
+                    alt="프로필 이미지"
+                    width={32}
+                    height={32}
+                    className="object-cover"
+                  />
+                )}
               </div>
-              <span className="font-medium">김개발</span>
+              <span className="font-medium">{loginUser.nickname}</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -77,7 +88,7 @@ export default function Header() {
                   마이 페이지
                 </Link>
                 <Link
-                  href="/blogname"
+                  href={`/${loginUser.nickname}`}
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   마이 블로그
@@ -90,7 +101,7 @@ export default function Header() {
                 </Link>
                 <hr className="my-1" />
                 <button
-                  onClick={() => setIsLoggedIn(false)}
+                  onClick={logoutAndHome}
                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   로그아웃
@@ -100,11 +111,10 @@ export default function Header() {
           </div>
         ) : (
           <>
-            <button
-              className="bg-rose-500 text-white px-4 py-1 rounded-md hover:bg-rose-600 transition"
-              onClick={() => setIsLoggedIn(true)}
-            >
-              로그인
+            <button className="bg-rose-500 text-white px-4 py-1 rounded-md hover:bg-rose-600 transition">
+              <Link href="/users/login" className="text-white">
+                로그인
+              </Link>
             </button>
             <button className="bg-green-500 text-white font-bold px-4 py-2 rounded-md hover:bg-green-600 transition">
               <Link

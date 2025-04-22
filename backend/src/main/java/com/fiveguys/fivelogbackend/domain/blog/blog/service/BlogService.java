@@ -1,6 +1,7 @@
 package com.fiveguys.fivelogbackend.domain.blog.blog.service;
 
 import com.fiveguys.fivelogbackend.domain.blog.blog.dto.BlogResponseDto;
+import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardDetailDto;
 import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.blog.blog.repository.BlogRepository;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
@@ -12,6 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class BlogService {
@@ -20,7 +24,7 @@ public class BlogService {
 
     @Transactional
     public void createBlog(User user) {
-        String blogTitle = user.getEmail().split("@")[0] + ".log";
+        String blogTitle = user.getNickname() + ".log";
 
         Blog blog = Blog.builder()
                 .title(blogTitle)
@@ -38,8 +42,15 @@ public class BlogService {
 
     // 검색기능 서비스 페이징해서 할거임
     public Page<Board> searchBoards(String searchContent, Pageable pageable) {
-        return boardRepository.findByTitleAndUserNickname(searchContent, searchContent, pageable);
+        return boardRepository.findByTitleContainingIgnoreCaseOrUser_NicknameContainingIgnoreCase(searchContent, searchContent, pageable);
         // 제목,작성자 두개로 검색할거라 searchContent가 두개임!
     }
+
+    public Optional<Blog> findByUserId(Long userId){
+        return blogRepository.findByUserId(userId);
+    }
+
+
+
 
 }

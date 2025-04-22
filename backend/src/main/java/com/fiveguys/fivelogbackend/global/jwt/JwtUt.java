@@ -1,4 +1,4 @@
-package com.fiveguys.fivelogbackend.global.ut;
+package com.fiveguys.fivelogbackend.global.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
 
-public class Ut {
+public class JwtUt {
     public static class str {
         public static boolean isBlank(String str) {
             return str == null || str.trim().isEmpty();
