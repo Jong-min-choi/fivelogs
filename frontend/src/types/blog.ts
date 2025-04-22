@@ -40,3 +40,8 @@ export interface ApiResponse<T> {
   message: string;
   data: T;
 }
+
+export interface HashtagCountDto {
+  name: string;
+  count: number;
+}

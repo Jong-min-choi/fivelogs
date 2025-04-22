@@ -25,9 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -147,4 +145,36 @@ public class BoardService {
     public Long getAllBoardView(String nickname){
         return boardRepository.countView(nickname);
     }
+
+    public Map<String, List<BoardSummaryDto>> getBoardMainPageByHashtags(List<Board> boardList) {
+        List<Long> boardIds = boardList.stream()
+                .map(Board::getId)
+                .collect(Collectors.toList());
+
+        // 1. boardId - hashtagName 매핑
+        Map<Long, List<String>> hashtagsGroupedByBoardIds = taggingService.getHashtagsGroupedByBoardIds(boardIds);
+
+
+        // 2. Board → BoardSummaryDto 변환
+        List<BoardSummaryDto> boardSummaryList = boardList.stream()
+                .map(board -> {
+                    List<String> hashtags = hashtagsGroupedByBoardIds.getOrDefault(board.getId(), Collections.emptyList());
+                    return BoardSummaryDto.from(board, hashtags);
+                })
+                .toList();
+
+        // 3. hashtagName → BoardSummaryDto 리스트 매핑
+        Map<String, List<BoardSummaryDto>> hashtagToBoardMap = new HashMap<>();
+        for (BoardSummaryDto dto : boardSummaryList) {
+            for (String hashtag : dto.getHashtags()) {
+                hashtagToBoardMap
+                        .computeIfAbsent(hashtag, key -> new ArrayList<>())
+                        .add(dto);
+            }
+        }
+
+        return hashtagToBoardMap;
+    }
+
+
 }

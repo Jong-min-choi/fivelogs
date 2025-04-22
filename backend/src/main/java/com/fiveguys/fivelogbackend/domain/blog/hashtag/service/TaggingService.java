@@ -2,11 +2,13 @@ package com.fiveguys.fivelogbackend.domain.blog.hashtag.service;
 
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardHashtagDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
+import com.fiveguys.fivelogbackend.domain.blog.hashtag.dto.HashtagCountDto;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.entity.Hashtag;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.entity.Tagging;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.repository.TaggingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,5 +39,11 @@ public class TaggingService {
                         BoardHashtagDto::getBoardId,
                         Collectors.mapping(BoardHashtagDto::getHashtagName, Collectors.toList())
                 ));
+    }
+
+    @Transactional(readOnly = true)
+    public List<HashtagCountDto> getHashtagCountDtoList(String nickname){
+        return taggingRepository.findHashtagCountsByNickname(nickname);
+
     }
 }

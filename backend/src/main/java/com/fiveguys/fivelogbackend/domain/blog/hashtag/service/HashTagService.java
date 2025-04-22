@@ -1,7 +1,9 @@
 package com.fiveguys.fivelogbackend.domain.blog.hashtag.service;
 
+import com.fiveguys.fivelogbackend.domain.blog.hashtag.dto.HashtagCountDto;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.entity.Hashtag;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.repository.HashTagRepository;
+import com.fiveguys.fivelogbackend.domain.blog.hashtag.repository.TaggingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,5 +47,6 @@ public class HashTagService {
         finalHashtags.addAll(hashtagsToSave);
         return finalHashtags;
     }
+
 
 }

@@ -89,7 +89,4 @@ public class BoardController {
         return ResponseEntity.ok(ApiResponse.success(boardService.sideBoardInfoDto(boardId, nickname), "전, 후 게시판 조회 성공"));
     }
 
-
-
-
 }
