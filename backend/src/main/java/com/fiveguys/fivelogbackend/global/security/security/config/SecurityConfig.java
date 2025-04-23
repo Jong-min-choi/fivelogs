@@ -34,7 +34,7 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/api/**","/h2-console/**", "/actuator/**",
             "/user/join","/error", "/css/**", "/js/**",
-            "/user/login"
+            "/user/login", "/chat/completion/content"
     };
 
     @Bean
