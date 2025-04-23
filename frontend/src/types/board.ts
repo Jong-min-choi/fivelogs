@@ -28,3 +28,5 @@ export type BoardApiResponse = {
   message: string;
   data: BoardResponseData;
 };
+
+

@@ -109,4 +109,20 @@ public class BoardService {
     public Long getAllBoardView(String nickname){
         return boardRepository.countView(nickname);
     }
+
+    //게시글 수정
+    @Transactional
+    public void updateBoard(Long boardId, BoardRequestDto dto) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        board.update(dto);  // 엔티티 내부 update 메서드 사용
+    }
+    //게시글 삭제
+    @Transactional
+    public void deleteBoard(Long boardId) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+        boardRepository.delete(board);
+    }
 }

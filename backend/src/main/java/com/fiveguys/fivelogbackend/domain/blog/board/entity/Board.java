@@ -57,5 +57,9 @@ public class Board extends BaseEntity {
                 .build();
     }
 
-
+    public void update(BoardRequestDto dto) {
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.status = dto.getStatus();
+    }
 }

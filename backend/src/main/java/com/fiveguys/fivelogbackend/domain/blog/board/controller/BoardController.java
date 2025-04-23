@@ -91,8 +91,51 @@ public class BoardController {
                                                                            @PathVariable("nickname") String nickname){
         return ResponseEntity.ok(ApiResponse.success(boardService.sideBoardInfoDto(boardId, nickname), "전, 후 게시판 조회 성공"));
     }
+    //게시글 수정 파트
+    @PutMapping("/api/boards/{boardId}")
+    public ResponseEntity<ApiResponse<Void>> updateBoard(
+            @Parameter(description = "수정할 게시글 ID") @PathVariable Long boardId,
+            @RequestBody BoardRequestDto dto
+    ) {
+        boardService.updateBoard(boardId, dto);
+        return ResponseEntity.ok(new ApiResponse<>(null, "게시글 수정 완료"));
+    }
+    //게시글 수정 Swagger 문서화
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수정 성공"),
+            @ApiResponse(responseCode = "400", description = "게시글을 찾을 수 없음")
+    })
+    @PutMapping("/api/boards/{boardId}")
+    public ResponseEntity<ApiResponse<Void>> updateBoard(
+            @Parameter(description = "게시글 ID", example = "1") @PathVariable Long boardId,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "수정할 게시글 정보", required = true,
+                    content = @Content(schema = @Schema(implementation = BoardRequestDto.class))
+            )
+            @RequestBody BoardRequestDto dto
+    ) {
+        boardService.updateBoard(boardId, dto);
+        return ResponseEntity.ok(new ApiResponse<>(null, "게시글 수정 완료"));
+    }
 
-
-
-
+    //게시글 삭제파트
+    @DeleteMapping("/api/boards/{boardId}")
+    public ResponseEntity<ApiResponse<Void>> deleteBoard(
+            @Parameter(description = "삭제할 게시글 ID") @PathVariable Long boardId
+    ) {
+        boardService.deleteBoard(boardId);
+        return ResponseEntity.ok(new ApiResponse<>(null, "게시글 삭제 완료"));
+    }
+    //게시글 수정 Swagger 문서화
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "게시글을 찾을 수 없음")
+    })
+    @DeleteMapping("/api/boards/{boardId}")
+    public ResponseEntity<ApiResponse<Void>> deleteBoard(
+            @Parameter(description = "게시글 ID", example = "1") @PathVariable Long boardId
+    ) {
+        boardService.deleteBoard(boardId);
+        return ResponseEntity.ok(new ApiResponse<>(null, "게시글 삭제 완료"));
+    }
 }

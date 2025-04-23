@@ -1,3 +1,8 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
 interface BlogPost {
   id: number;
   title: string;
@@ -64,7 +69,29 @@ const getBlogPost = (id: string): BlogPost | null => {
 };
 
 export default function BlogPost({ params }: { params: { id: string } }) {
+  const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
   const post = getBlogPost(params.id);
+
+  const handleEdit = () => {
+    router.push(`/blog/${params.id}/edit`);
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      setIsDeleting(true);
+      try {
+        // TODO: Replace with actual API call
+        // await fetch(`/api/posts/${params.id}`, { method: 'DELETE' });
+        router.push("/blog");
+      } catch (error) {
+        console.error("Failed to delete post:", error);
+        alert("Failed to delete post. Please try again.");
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+  };
 
   if (!post) {
     return (
@@ -89,7 +116,24 @@ export default function BlogPost({ params }: { params: { id: string } }) {
             {post.category}
           </span>
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">{post.title}</h1>
+        <div className="flex justify-between items-center">
+          <h1 className="text-4xl font-bold text-gray-900">{post.title}</h1>
+          <div className="flex space-x-2">
+            <button
+              onClick={handleEdit}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Edit
+            </button>
+            <button
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </button>
+          </div>
+        </div>
       </header>
 
       <div className="prose prose-lg max-w-none">
