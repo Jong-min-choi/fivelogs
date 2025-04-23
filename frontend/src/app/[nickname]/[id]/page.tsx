@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import AuthorProfile from "@/components/common/AuthorProfile";
-
+import CommentList from "@/components/comment/CommentList";
 // BoardDetailDto 타입 정의
 interface BoardDetailDto {
   boardId: number;
@@ -311,6 +311,9 @@ export default function BoardDetail() {
         profileImageLink={board.profileImageLink}
         myIntroduce={board.myIntroduce}
       />
+
+      {/* 댓글 영역 */}
+        <CommentList boardId={Number(boardId)} />
 
       {/* 이전/다음 버튼 */}
       <div className="flex justify-between mt-12 border-t pt-6">

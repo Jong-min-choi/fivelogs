@@ -1,6 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.user.user.entity;
 
-import com.fiveguys.fivelogbackend.domain.blog.follow.entity.Follow;
+import com.fiveguys.fivelogbackend.domain.user.follow.entity.Follow;
 import com.fiveguys.fivelogbackend.domain.image.entity.Image;
 import jakarta.persistence.*;
 import lombok.*;
@@ -43,8 +43,8 @@ public class User {
     @OneToMany(mappedBy = "follower")
     private List<Follow> follower;
 
-    @OneToMany(mappedBy = "following")
-    private List<Follow> following;
+    @OneToMany(mappedBy = "followed")
+    private List<Follow> followed;
 
     public boolean isAdmin() {
         return "admin".equals(email);
