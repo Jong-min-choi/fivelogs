@@ -5,6 +5,7 @@ import com.fiveguys.fivelogbackend.domain.blog.board.repository.BoardRepository;
 
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentRequestDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentResponseDto;
+import com.fiveguys.fivelogbackend.domain.blog.comment.dto.LikeResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.entity.Comment;
 import com.fiveguys.fivelogbackend.domain.blog.comment.entity.LikeComment;
 import com.fiveguys.fivelogbackend.domain.blog.comment.repository.CommentRepository;
@@ -61,9 +62,15 @@ public class CommentService {
     //댓글 조회
     @Transactional(readOnly = true)
     public List<CommentResponseDto> getCommentsByBoard(Long boardId) {
+        User user = rq.getActor();
         List<Comment> topLevelComments = commentRepository.findByBoardIdAndParentIsNull(boardId);
         return topLevelComments.stream()
-                .map(CommentResponseDto::fromEntity)
+                .map(comment -> {
+                    Boolean likedByMe = likeCommentRepository.findByCommentAndUser(comment, user)
+                            .map(LikeComment::isLiked)
+                            .orElse(null);
+                    return CommentResponseDto.fromEntityWithReaction(comment, likedByMe);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -134,43 +141,109 @@ public class CommentService {
 
     //댓글 좋아요
     @Transactional
-    public void reactToComment(Long commentId, boolean isLike) {
+    public LikeResponseDto reactToComment(Long commentId, boolean isLike) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
 
         User user = rq.getActor();
-
         Optional<LikeComment> existing = likeCommentRepository.findByCommentAndUser(comment, user);
+        Boolean finalLikedByMe = null;
 
         if (existing.isPresent()) {
             LikeComment like = existing.get();
-            if (like.isLiked() == isLike) {
+            boolean currentIsLike = like.isLiked();
+
+            if (currentIsLike == isLike) {
+                // 같은 반응을 다시 누르면 취소
                 likeCommentRepository.delete(like);
-                adjustCount(comment, isLike, -1);
+                if (currentIsLike) {
+                    comment.setLikeCount(Math.max(0, comment.getLikeCount() - 1));
+                } else {
+                    comment.setDislikeCount(Math.max(0, comment.getDislikeCount() - 1));
+                }
             } else {
+                // 다른 반응으로 변경
                 like.setLiked(isLike);
-                adjustCount(comment, !isLike, -1);
-                adjustCount(comment, isLike, 1);
+                if (isLike) {
+                    // 싫어요 -> 좋아요로 변경
+                    comment.setDislikeCount(Math.max(0, comment.getDislikeCount() - 1));
+                    comment.setLikeCount(comment.getLikeCount() + 1);
+                } else {
+                    // 좋아요 -> 싫어요로 변경
+                    comment.setLikeCount(Math.max(0, comment.getLikeCount() - 1));
+                    comment.setDislikeCount(comment.getDislikeCount() + 1);
+                }
+                finalLikedByMe = isLike;
+                likeCommentRepository.save(like);
             }
         } else {
-            likeCommentRepository.save(LikeComment.builder()
+            // 새로운 반응
+            LikeComment newReaction = LikeComment.builder()
                     .comment(comment)
                     .user(user)
                     .liked(isLike)
-                    .build());
+                    .build();
+            likeCommentRepository.save(newReaction);
 
-            adjustCount(comment, isLike, 1);
+            if (isLike) {
+                comment.setLikeCount(comment.getLikeCount() + 1);
+            } else {
+                comment.setDislikeCount(comment.getDislikeCount() + 1);
+            }
+            finalLikedByMe = isLike;
         }
-    }
 
+        commentRepository.save(comment);
+
+        return LikeResponseDto.builder()
+                .likeCount(comment.getLikeCount())
+                .dislikeCount(comment.getDislikeCount())
+                .likedByMe(finalLikedByMe)
+                .build();
+    }
 
     //댓글 페이징
-    public Page<CommentResponseDto> getCommentsByBoard(Long boardId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        Page<Comment> commentPage = commentRepository.findByBoardId(boardId, pageable);
+    public Page<CommentResponseDto> getCommentsByBoard(Long boardId, int page, int size, String sort) {
+        String[] sortParts = sort.split(",");
+        String sortBy = sortParts[0];
+        Sort.Direction direction = (sortParts.length > 1 && sortParts[1].equalsIgnoreCase("asc"))
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
 
-        return commentPage.map(CommentResponseDto::fromEntity);
+        // 허용된 정렬 필드만 제한
+        List<String> allowedSortFields = List.of("createdDate", "likeCount", "dislikeCount");
+        if (!allowedSortFields.contains(sortBy)) {
+            throw new IllegalArgumentException("지원하지 않는 정렬 필드입니다: " + sortBy);
+        }
+
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(direction, sortBy));
+        Page<Comment> parentComments = commentRepository.findParentCommentsByBoardId(boardId, pageable);
+
+        return parentComments.map(comment -> {
+            // 현재 로그인 유저가 좋아요/싫어요 눌렀는지 확인
+            Boolean likedByMe = likeCommentRepository.findByCommentAndUser(comment, rq.getActor())
+                    .map(LikeComment::isLiked)
+                    .orElse(null);
+
+            // 좋아요 상태 포함하여 DTO 생성
+            return CommentResponseDto.fromEntityWithReaction(comment, likedByMe);
+        });
     }
+
+    @Transactional(readOnly = true)
+    public List<CommentResponseDto> getRepliesByParent(Long parentId) {
+        List<Comment> replies = commentRepository.findByParentId(parentId);
+        return replies.stream()
+                .map(reply -> {
+                    // 로그인 유저의 반응 정보 포함
+                    Boolean likedByMe = likeCommentRepository.findByCommentAndUser(reply, rq.getActor())
+                            .map(LikeComment::isLiked)
+                            .orElse(null);
+                    return CommentResponseDto.fromEntityWithReaction(reply, likedByMe);
+                })
+                .toList();
+    }
+
 
     // 좋아요/싫어요 수 조절 유틸
     private void adjustCount(Comment comment, boolean isLike, int delta) {
