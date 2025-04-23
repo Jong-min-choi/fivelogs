@@ -15,6 +15,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/blogs")
@@ -59,20 +61,16 @@ public class BlogController {
     }
 
     @GetMapping("/{nickname}")
-    public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBlogMainInfo(@PageableDefault(size=10, direction = Sort.Direction.DESC) Pageable pageable,
+    public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBlogMainInfo(@PageableDefault(size=10, sort = "createdDate",direction = Sort.Direction.DESC) Pageable pageable,
                                                                            @PathVariable(name = "nickname") String nickname){
         Page<Board> pagedBoards = boardService.getBoardsAllWithNickname(nickname,pageable);
 
-        log.info("pagedBoards {}", pagedBoards.getContent().size());
-        for (Board board : pagedBoards) {
-            log.info("pagedBoards {}", board.getTitle());
-        }
         BoardPageResponseDto pageBoardDto =
                 boardService.getBoardMainPageResponseDtoList(pagedBoards);
+
+
         log.info("BoardMainPageResponseDto : {}", pageBoardDto.getBoardDtoList().size());
         return ResponseEntity.ok(ApiResponse.success(pageBoardDto, "게시판 페이징 성공"));
     }
-
-
 
 }

@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -39,7 +41,7 @@ public class DataLoader implements CommandLineRunner {
                             .title("코딩 공부 Day" + (j + i + 1))
                             .status(BoardStatus.PUBLIC)
                             .content("안녕하세요! 오늘은 Java 웹 개발자라면 반드시 익혀야 할 Spring Boot에 대해 알아보려 합니다. 복잡한 설정 없이 빠르게 웹 애플리케이션을 만들 수 있어 많은 개발자들이 애용하는 프레임워크입니다.")
-                            .hashtags(new String[]{"코딩", "공부"})
+                            .hashtags(List.of("코딩", "공부"))
                             .build();
                     boardService.createBoard(dto, (long)j);
                 }
@@ -47,7 +49,5 @@ public class DataLoader implements CommandLineRunner {
             log.info ("✅ 테스트 게시판 등록 완료");
 
         }
-
-
     }
 }

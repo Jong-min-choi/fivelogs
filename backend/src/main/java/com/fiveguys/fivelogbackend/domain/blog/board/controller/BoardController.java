@@ -39,35 +39,33 @@ public class BoardController {
 //    @Operation(summary = "게시글 열람")
 //    }
 
-    @GetMapping("/search-tag")
-    @Operation(summary = "태그 기반 게시글 검색", description = "해시태그에 해당하는 게시글 검색")
-    public ResponseEntity<Page<Board>> searchByTag(
-            @RequestParam String tag,
-            @PageableDefault(size = 10, page = 0) Pageable pageable) {
-        Page<Board> boards = boardService.searchBoardsByHashtag(tag, pageable);
-        return ResponseEntity.ok(boards);
-    }
+//    @GetMapping("/search-tag")
+//    @Operation(summary = "태그 기반 게시글 검색", description = "해시태그에 해당하는 게시글 검색")
+//    public ResponseEntity<Page<Board>> searchByTag(
+//            @RequestParam String tag,
+//            @PageableDefault(size = 10,  sort = "createdDate",page = 0) Pageable pageable) {
+//        Page<Board> boards = boardService.searchBoardsByHashtag(tag, pageable);
+//        return ResponseEntity.ok(boards);
+//    }
     //user는 있고,
     @PostMapping
     @Operation(summary = "게시글 작성")
     public ResponseEntity<ApiResponse<CreateBoardResponseDto>> createBoard(
             @RequestBody CreateBoardRequestDto createBoardRequestDto){
-        log.info("요청이 오나? {}", createBoardRequestDto);
         Board board = boardService.createBoard(createBoardRequestDto, rq.getActor().getId());
         //여기서 boardid와 블로그 주소를 반환하자
         CreateBoardResponseDto responseDto = new CreateBoardResponseDto(board.getId(), board.getTitle());
         //성공하면 board id와
-
         return ResponseEntity.ok(ApiResponse.success(responseDto, "게시글 작성 성공"));
     }
 
     @GetMapping
     @Operation(summary = "게시글 조회")
     //4*4 로간다.
-    public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBoards(@PageableDefault(size=12, direction = Sort.Direction.DESC) Pageable pageable){
+    public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBoards(@PageableDefault(size=12, sort = "createdDate",direction = Sort.Direction.DESC) Pageable pageable){
         Page<Board> pagedBoards = boardService.getBoardsAllWithUser(pageable);
 
-        log.info("pagedBoards {}", pagedBoards.getContent().size());
+//        log.info("pagedBoards {}", pagedBoards.getContent().size());
         for (Board board : pagedBoards) {
             log.info("pagedBoards {}", board.getTitle());
         }
@@ -82,7 +80,6 @@ public class BoardController {
             @PathVariable("boardId")  Long boardId ){
 
         BoardDetailDto boardDetailDto = boardService.getBlogDetailDto(boardId);
-
         return ResponseEntity.ok().body(ApiResponse.success(boardDetailDto, "board 생성 성공"));
     }
 
@@ -117,7 +114,6 @@ public class BoardController {
         boardService.updateBoard(boardId, dto);
         return ResponseEntity.ok(new ApiResponse<>(null, "게시글 수정 완료"));
     }
-
     //게시글 삭제파트
     @DeleteMapping("/api/boards/{boardId}")
     public ResponseEntity<ApiResponse<Void>> deleteBoard(

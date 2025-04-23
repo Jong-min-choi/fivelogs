@@ -3,6 +3,7 @@ package com.fiveguys.fivelogbackend.domain.blog.board.entity;
 
 import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.blog.comment.entity.Comment;
+import com.fiveguys.fivelogbackend.domain.blog.hashtag.entity.Tagging;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.global.jpa.BaseEntity;
 import jakarta.persistence.*;
@@ -20,9 +21,6 @@ import java.util.List;
 @Entity
 @Table(name = "boards")
 public class Board extends BaseEntity {
-
-    @Column(length = 255)
-    private String hashtags;
 
     @Column(length = 100, nullable = false)
     private String title;
@@ -62,4 +60,6 @@ public class Board extends BaseEntity {
         this.content = dto.getContent();
         this.status = dto.getStatus();
     }
+    @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    List<Tagging> taggings;
 }
