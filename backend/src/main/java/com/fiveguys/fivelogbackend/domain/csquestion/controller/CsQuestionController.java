@@ -6,17 +6,21 @@ import com.fiveguys.fivelogbackend.domain.csquestion.dto.ChatCompletionResponseD
 import com.fiveguys.fivelogbackend.domain.csquestion.dto.ChatContent;
 import com.fiveguys.fivelogbackend.domain.csquestion.service.CsQuestionService;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
+import com.fiveguys.fivelogbackend.global.rq.Rq;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/csQuestion")
 @Slf4j
 @RequiredArgsConstructor
 public class CsQuestionController {
@@ -24,7 +28,7 @@ public class CsQuestionController {
 
     private static final int MAX_RETRIES = 3; // 최대 재요청 횟수
 
-    @PostMapping("/chat/completion/content")
+//    @PostMapping("/chat/completion/content")
     public ResponseEntity<ApiResponse<?>> getChatCompletionContent(){
         int retries = 0;
         List<ChatContent> chatContent = new ArrayList<>();
@@ -46,4 +50,12 @@ public class CsQuestionController {
         }
         return ResponseEntity.ok(ApiResponse.success(chatContent, "문제 만들기 성공"));
     }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<ChatContent>>> get3CsQuestion() throws JsonProcessingException {
+        List<ChatContent> csQuestion = csQuestionService.find3CsQuestion();
+
+        return ResponseEntity.ok(ApiResponse.success(csQuestion, "cs 문제 얻어오기 성공"));
+    }
+    //post 요청만 필요
 }
