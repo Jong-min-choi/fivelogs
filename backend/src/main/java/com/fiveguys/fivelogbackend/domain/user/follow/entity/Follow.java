@@ -1,4 +1,4 @@
-package com.fiveguys.fivelogbackend.domain.blog.follow.entity;
+package com.fiveguys.fivelogbackend.domain.user.follow.entity;
 
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.global.jpa.BaseEntity;
@@ -19,11 +19,13 @@ import lombok.experimental.SuperBuilder;
 @Entity
 public class Follow extends BaseEntity {
 
+    // 팔로우 하는사람
     @ManyToOne
     @JoinColumn(name = "follower_id")
     private User follower;
 
+    // 팔로우 당한 사람
     @ManyToOne
-    @JoinColumn(name = "following_id")
-    private User following;
+    @JoinColumn(name = "followed_id")
+    private User followed;
 }
