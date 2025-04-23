@@ -12,9 +12,6 @@ spring:
     username: ${db.datasource.username}
     password: ${db.datasource.password}
     driver-class-name: ${db.datasource.driver-class-name}
-  h2:
-    console:
-      enabled: true
   security:
     oauth2:
       client:
