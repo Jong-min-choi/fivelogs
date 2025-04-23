@@ -49,7 +49,5 @@ public class DataLoader implements CommandLineRunner {
             log.info ("✅ 테스트 게시판 등록 완료");
 
         }
-
-
     }
 }
