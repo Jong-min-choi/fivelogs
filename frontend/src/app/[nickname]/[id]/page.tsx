@@ -313,7 +313,7 @@ export default function BoardDetail() {
       />
 
       {/* 댓글 영역 */}
-        <CommentList boardId={Number(boardId)} />
+      <CommentList boardId={Number(boardId)} />
 
       {/* 이전/다음 버튼 */}
       <div className="flex justify-between mt-12 border-t pt-6">

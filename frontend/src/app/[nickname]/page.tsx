@@ -12,6 +12,7 @@ import {
 import { PageDto } from "@/types/board";
 import Pagination from "@/components/common/Pagination";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import AttendanceCalendar from "@/components/attendance/AttendanceCalendar";
 
 export default function MyBoardPage() {
   const params = useParams();
@@ -32,6 +33,7 @@ export default function MyBoardPage() {
   const [pageInfo, setPageInfo] = useState<PageDto | null>(null);
   const [ownerInfo, setOwnerInfo] = useState<BlogOwnerDto | null>(null);
   const [hashtags, setHashtags] = useState<HashtagCountDto[]>([]);
+  const [showAttendance, setShowAttendance] = useState(false);
   const boardsPerPage = 10; // 한 페이지에 10개 게시글 표시
 
   // 필터링된 게시글 데이터
@@ -182,82 +184,90 @@ export default function MyBoardPage() {
     <div className="flex flex-col md:flex-row md:gap-8">
       {/* 메인 콘텐츠 영역 */}
       <main className="md:w-3/4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">{nickname}의 블로그</h1>
-        </div>
-
-        {/* 로딩 인디케이터 (기존 데이터가 있을 때) */}
-        {loading && boardData.length > 0 && (
-          <div className="fixed inset-0 bg-white bg-opacity-70 flex items-center justify-center z-10">
-            <LoadingSpinner size="md" color="rose-500" height="h-20" />
-          </div>
-        )}
-
-        {/* 블로그 게시글 목록 */}
-        {filteredBoardData.length === 0 && !loading ? (
-          <div className="text-center p-10 bg-gray-50 rounded-lg">
-            <p className="text-gray-500">게시글이 없습니다.</p>
+        {showAttendance ? (
+          // 출석부를 main 영역에 표시
+          <div className="flex justify-center items-start py-10">
+            <AttendanceCalendar />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {filteredBoardData.map((board) => (
-              <div key={board.id} className="border rounded-lg shadow-sm">
-                <div className="p-5">
-                  <div className="flex items-center text-sm text-gray-500 mb-2">
-                    <span>{new Date(board.created).toLocaleDateString()}</span>
-                    <span className="mx-2">•</span>
-                    <span>조회 {board.views}</span>
-                  </div>
-                  <h2 className="text-lg font-bold mb-2">{board.title}</h2>
-                  <p className="text-gray-600 mb-4 line-clamp-2">
-                    {board.content.replace(/<[^>]*>/g, "")}
-                  </p>
-                  {board.hashtags && board.hashtags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {board.hashtags.map((tag, idx) => (
-                        <span
-                          key={idx}
-                          className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
-                        >
-                          {tag.startsWith("#") ? tag : `#${tag}`}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  <Link
-                    href={`/${encodeURIComponent(nickname)}/${board.id}`}
-                    className="text-rose-500 inline-flex items-center group"
-                  >
-                    자세히 보기
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 ml-1 group-hover:translate-x-1 transition"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </Link>
-                </div>
+          <>
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold">{nickname}의 블로그</h1>
+            </div>
+            {/* 로딩 인디케이터 (기존 데이터가 있을 때) */}
+            {loading && boardData.length > 0 && (
+              <div className="fixed inset-0 bg-white bg-opacity-70 flex items-center justify-center z-10">
+                <LoadingSpinner size="md" color="rose-500" height="h-20" />
               </div>
-            ))}
-          </div>
-        )}
-
-        {/* 페이지네이션 */}
-        {filteredPageInfo && (
-          <Pagination
-            pageInfo={filteredPageInfo}
-            onPageChange={handlePageChange}
-          />
+            )}
+            {/* 블로그 게시글 목록 */}
+            {filteredBoardData.length === 0 && !loading ? (
+              <div className="text-center p-10 bg-gray-50 rounded-lg">
+                <p className="text-gray-500">게시글이 없습니다.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                {filteredBoardData.map((board) => (
+                  <div key={board.id} className="border rounded-lg shadow-sm">
+                    <div className="p-5">
+                      <div className="flex items-center text-sm text-gray-500 mb-2">
+                        <span>
+                          {new Date(board.created).toLocaleDateString()}
+                        </span>
+                        <span className="mx-2">•</span>
+                        <span>조회 {board.views}</span>
+                      </div>
+                      <h2 className="text-lg font-bold mb-2">{board.title}</h2>
+                      <p className="text-gray-600 mb-4 line-clamp-2">
+                        {board.content.replace(/<[^>]*>/g, "")}
+                      </p>
+                      {board.hashtags && board.hashtags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {board.hashtags.map((tag, idx) => (
+                            <span
+                              key={idx}
+                              className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
+                            >
+                              {tag.startsWith("#") ? tag : `#${tag}`}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <Link
+                        href={`/${encodeURIComponent(nickname)}/${board.id}`}
+                        className="text-rose-500 inline-flex items-center group"
+                      >
+                        자세히 보기
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 ml-1 group-hover:translate-x-1 transition"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {/* 페이지네이션 */}
+            {filteredPageInfo && (
+              <Pagination
+                pageInfo={filteredPageInfo}
+                onPageChange={handlePageChange}
+              />
+            )}
+          </>
         )}
       </main>
 
-      {/* 오른쪽 사이드바 - 프로필 영역 및 해시태그 목차 */}
+      {/* 오른쪽 사이드바 */}
       <aside className="md:w-1/4 mt-8 md:mt-0">
         <div className="sticky top-8 bg-white rounded-lg shadow-sm p-5">
           {/* 프로필 영역 */}
@@ -377,7 +387,13 @@ export default function MyBoardPage() {
               </span>
             </div>
           </div>
-
+          {/* 출석부 버튼 */}
+          <button
+            className="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded mt-6 mb-4 transition"
+            onClick={() => setShowAttendance((prev) => !prev)}
+          >
+            {showAttendance ? "게시글 보기" : "출석부"}
+          </button>
           {/* 해시태그 목차 */}
           {hashtags.length > 0 && (
             <div className="mt-6">

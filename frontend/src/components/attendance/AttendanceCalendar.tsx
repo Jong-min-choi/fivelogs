@@ -6,25 +6,22 @@ import "react-calendar/dist/Calendar.css";
 import { useGlobalLoginUser } from "@/stores/auth/loginUser";
 type AttendanceData = string[];
 
-const getLocalYMD = (date: Date) => {
-  // 항상 YYYY-MM-DD 형식 반환 (로컬 타임존 기준)
-  return (
-    date.getFullYear() +
-    "-" +
-    String(date.getMonth() + 1).padStart(2, "0") +
-    "-" +
-    String(date.getDate()).padStart(2, "0")
-  );
-};
+const getLocalYMD = (date: Date) =>
+  date.getFullYear() +
+  "-" +
+  String(date.getMonth() + 1).padStart(2, "0") +
+  "-" +
+  String(date.getDate()).padStart(2, "0");
 
-export default function AttendancePage() {
+export default function AttendanceCalendar() {
   const [attendanceDates, setAttendanceDates] = useState<AttendanceData>([]);
   const [loading, setLoading] = useState(false);
   const { isLogin } = useGlobalLoginUser();
 
-  // 2025년 4월의 첫날과 마지막날로 고정
-  const firstDay = new Date(2025, 3, 1); // 4월은 3
-  const lastDay = new Date(2025, 3 + 1, 0);
+  // 현재 날짜 기준으로 달력 범위 설정
+  const now = new Date();
+  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
   useEffect(() => {
     if (!isLogin) return;
@@ -34,17 +31,15 @@ export default function AttendancePage() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("출석 기록:", data); // 👈 확인
         setAttendanceDates(data.data.attendanceDateList || []);
       })
       .finally(() => setLoading(false));
   }, [isLogin]);
 
-  // 출석일에 도장 이모지 표시
   const tileContent = ({ date, view }: { date: Date; view: string }) => {
     if (view === "month") {
       const ymd = getLocalYMD(date);
-      if (attendanceDates.length > 0 && attendanceDates.includes(ymd)) {
+      if (attendanceDates.includes(ymd)) {
         return <span className="calendar-attendance-text">✅ 출석</span>;
       }
     }
@@ -65,14 +60,14 @@ export default function AttendancePage() {
   if (loading) return <div>출석 기록을 불러오는 중...</div>;
 
   return (
-    <div className="max-w-lg mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-6 text-center">출석부</h1>
+    <div className="mb-8">
+      <h3 className="text-lg font-bold mb-3 text-center">출석부</h3>
       <Calendar
         className="custom-calendar"
         tileClassName={tileClassName}
         tileContent={tileContent}
         locale="ko-KR"
-        activeStartDate={firstDay}
+        activeStartDate={firstDay} // 현재 달의 첫날로 시작
         minDate={firstDay}
         maxDate={lastDay}
         prevLabel={null}
@@ -84,59 +79,41 @@ export default function AttendancePage() {
         }
       />
       <style jsx global>{`
-        .custom-calendar .react-calendar__tile {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: flex-start;
-          height: 100px;
-          padding: 8px 0;
-          position: relative;
-        }
-        .custom-calendar .react-calendar__month-view__days__day abbr {
-          margin-bottom: 0.5rem;
-          font-size: 1.1rem;
-        }
-        .calendar-attendance-text {
-          color: #15803d;
-          font-weight: 700;
-          font-size: 0.95rem;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
         .custom-calendar {
           width: 700px !important;
           max-width: 100%;
           background: white;
           border: 1px solid #eee;
           border-radius: 8px;
-          padding: 16px;
+          padding: 12px;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
-
         .custom-calendar .react-calendar__tile {
-          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
           height: 100px;
-          width: 200px; /* 타일 너비를 넓힘 */
-          padding: 8px 0;
+          min-width: 40px;
+          padding: 4px 0;
+          position: relative;
         }
-
+        .custom-calendar .react-calendar__month-view__days__day abbr {
+          margin-bottom: 0.3rem;
+          font-size: 1rem;
+        }
+        .calendar-attendance-text {
+          color: #15803d;
+          font-weight: 700;
+          font-size: 0.9rem;
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
         .react-calendar__tile.bg-green-100 {
           background: #bbf7d0 !important;
           color: #166534 !important;
-        }
-
-        .react-calendar__navigation button {
-          font-size: 1.2rem;
-          font-weight: bold;
-          color: #333;
-        }
-
-        .react-calendar__navigation {
-          margin-bottom: 16px;
         }
       `}</style>
     </div>
