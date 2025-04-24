@@ -18,6 +18,7 @@ interface BoardDetailDto {
   nickName: string;
   profileImageLink: string;
   myIntroduce: string;
+  deleted: boolean;
 }
 
 // 이전/다음 게시글 정보 타입 정의
@@ -73,18 +74,29 @@ export default function BoardDetail() {
 
         if (data.success) {
           setBoard(data.data);
+          console.log("🔍 삭제 상태:", data.data.deleted);
 
-          // 게시글 작성자가 현재 로그인한 사용자인지 확인
-          // 실제로는 로그인 컨텍스트나 상태에서 사용자 정보를 가져와 비교해야 함
-          // 여기서는 예시로 localStorage에서 사용자 정보를 가져와 비교
-          // const loggedInUser = localStorage.getItem("nickName") || "";
-          // setIsMyBoard(data.data.nickName === loggedInUser);
+          // 현재 로그인한 사용자 정보 가져오기
+          const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me`, {
+            credentials: 'include'
+          });
+          
+          if (userResponse.ok) {
+            const userData = await userResponse.json();
+            if (userData.success) {
+              // 게시글 작성자와 현재 로그인한 사용자가 같은지 확인
+              setIsMyBoard(data.data.nickName === userData.data.nickname);
+              console.log('게시글 작성자:', data.data.nickName);
+              console.log('현재 사용자:', userData.data.nickname);
+              console.log('isMyBoard:', data.data.nickName === userData.data.nickname);
+            }
+          }
+
+          // 이전/다음 게시글 정보 가져오기
+          await fetchPrevNextBoard();
         } else {
           throw new Error(data.message || "게시글을 불러오는데 실패했습니다.");
         }
-
-        // 이전/다음 게시글 정보 가져오기
-        await fetchPrevNextBoard();
       } catch (err) {
         console.error("API 요청 중 오류 발생:", err);
         setError("게시글을 불러올 수 없습니다. 잠시 후 다시 시도해주세요.");
@@ -148,9 +160,10 @@ export default function BoardDetail() {
 
     try {
       const response = await fetch(
-        `http://localhost:8090/api/boards/${boardId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}`,
         {
           method: "DELETE",
+          credentials: 'include'
         }
       );
 
@@ -158,7 +171,7 @@ export default function BoardDetail() {
         throw new Error("게시글 삭제에 실패했습니다.");
       }
 
-      // 삭제 성공 시 메인 페이지로 이동
+      alert("게시글이 성공적으로 삭제되었습니다.");
       window.location.href = "/";
     } catch (error) {
       console.error("삭제 중 오류 발생:", error);
@@ -245,8 +258,8 @@ export default function BoardDetail() {
                 </Link>
               </div>
 
-              {/* 수정/삭제 버튼 (로그인 사용자의 게시물인 경우에만 표시) */}
-              {isMyBoard && (
+              {/* 수정/삭제 버튼 (로그인 사용자의 게시물이고 삭제되지 않은 경우에만 표시) */}
+              {isMyBoard && !board.deleted && (
                 <div className="flex space-x-2">
                   <Link
                     href={`/${nickname}/${boardId}/edit`}
@@ -268,6 +281,8 @@ export default function BoardDetail() {
                     </svg>
                     수정
                   </Link>
+                  
+                  {/* 삭제 버튼 */}
                   <button
                     onClick={handleDelete}
                     className="text-white bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-xs font-medium transition-colors flex items-center"

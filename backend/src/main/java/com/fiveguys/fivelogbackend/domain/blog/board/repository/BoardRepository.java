@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
+    Optional<Board> findByIdAndUserId(Long boardId, Long User);
 
     Page<Board> findByTitleContainingIgnoreCaseOrUser_NicknameContainingIgnoreCase(
             String title, String nickname, Pageable pageable
@@ -28,7 +29,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     """)
     Optional<Board> findWithUserById(@Param("boardId") Long boardId);
 
-    @Query("SELECT b FROM Board b JOIN FETCH b.user")
+    @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.deleted = false")
     Page<Board> findAllWithUser(Pageable pageable);
 
     @Query("SELECT b FROM Board b JOIN FETCH b.user where b.user.nickname = :nickname")
@@ -44,7 +45,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("SELECT SUM(b.views) FROM Board b WHERE b.user.nickname = :nickname")
     Long countView(String nickname);
-
-
 
 }

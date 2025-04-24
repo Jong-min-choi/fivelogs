@@ -2,11 +2,12 @@ package com.fiveguys.fivelogbackend.domain.blog.hashtag.repository;
 
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardHashtagDto;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.dto.HashtagCountDto;
-import com.fiveguys.fivelogbackend.domain.blog.hashtag.entity.Hashtag;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.entity.Tagging;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,4 +22,10 @@ public interface TaggingRepository extends JpaRepository<Tagging, Long> {
             "FROM Tagging t WHERE t.board.user.nickname = :nickname " +
             "GROUP BY t.hashtag.name")
     List<HashtagCountDto> findHashtagCountsByNickname(@Param("nickname") String nickname);
+    //중복
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Tagging t WHERE t.board.id = :boardId")
+    void deleteAllByBoardId(@Param("boardId") Long boardId);
 }

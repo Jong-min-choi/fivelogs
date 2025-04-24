@@ -1,6 +1,7 @@
 package com.fiveguys.fivelogbackend.domain.user.user.serivce;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,6 +14,7 @@ import java.time.Duration;
 public class EmailService {
 
     private final JavaMailSender mailSender;
+
     private final RedisTemplate<String, String> redisTemplate;
 
     public void sendVerificationEmail(String email) {
