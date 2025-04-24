@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
+    Optional<Board> findByIdAndUserId(Long boardId, Long User);
 
     Page<Board> findByTitleContainingIgnoreCaseOrUser_NicknameContainingIgnoreCase(
             String title, String nickname, Pageable pageable
@@ -44,7 +45,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("SELECT SUM(b.views) FROM Board b WHERE b.user.nickname = :nickname")
     Long countView(String nickname);
-
-
 
 }

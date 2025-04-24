@@ -6,6 +6,7 @@ import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.blog.blog.repository.BlogRepository;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.*;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
+import com.fiveguys.fivelogbackend.domain.blog.board.entity.BoardStatus;
 import com.fiveguys.fivelogbackend.domain.blog.board.repository.BoardRepository;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.HashtagUtil;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.entity.Hashtag;
@@ -18,6 +19,7 @@ import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import com.fiveguys.fivelogbackend.global.pagination.PageDto;
 import com.fiveguys.fivelogbackend.global.pagination.PageUt;
+import com.fiveguys.fivelogbackend.global.rq.Rq;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -41,6 +43,7 @@ public class BoardService {
     private final HashTagService hashTagService;
     private final TaggingService taggingService;
     private final TrendingBoardService trendingBoardService;
+    private final Rq rq;
 
     @Transactional
     public Board createBoard(CreateBoardRequestDto boardDto, Long id) {
@@ -197,5 +200,42 @@ public class BoardService {
                 .toList();
 
      */
+
+    //게시물 수정
+    @Transactional
+    public CreateBoardResponseDto editBoard(Long boardId, CreateBoardRequestDto dto) {
+        User user = rq.getActor();
+
+        Board board = boardRepository.findByIdAndUserId(boardId, user.getId())
+                .orElseThrow(() -> new RuntimeException("해당 유저의 게시물을 찾을 수 없습니다."));
+
+        board.setTitle(dto.getTitle());
+        board.setContent(dto.getContent());
+        board.setStatus(dto.getStatus());
+        taggingService.updateHashtags(board, dto.getHashtags());
+
+        return CreateBoardResponseDto.fromEntity(board);
+    }
+
+
+
+    //게시물 삭제
+    @Transactional
+    public void deleteBoard(Long boardId) {
+        User user = rq.getActor();
+
+        Board board = boardRepository.findByIdAndUserId(boardId, user.getId())
+                .orElseThrow(() -> new RuntimeException("해당 댓글이 존재하지 않거나 삭제 권한이 없습니다."));
+
+
+//        //전체다 삭제하고 싶을떄
+        boardRepository.delete(board);
+
+        // 소프트 딜리트 처리
+//        board.setTitle("삭제된 게시물입니다.");
+//        board.setContent("");
+//        board.setStatus(BoardStatus.PRIVATE); // 비공개 처리
+    }
+
 
 }

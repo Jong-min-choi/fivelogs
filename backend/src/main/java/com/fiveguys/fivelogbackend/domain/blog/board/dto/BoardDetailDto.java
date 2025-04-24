@@ -29,6 +29,7 @@ public class BoardDetailDto {
     String nickName;
     String profileImageLink;
     String myIntroduce;
+    boolean deleted;
 
     public static BoardDetailDto from (Board board, List<String> hashtagNameList){
         return BoardDetailDto.builder()

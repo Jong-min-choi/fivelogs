@@ -31,6 +31,7 @@ public class Board extends BaseEntity {
     @Column(nullable = false)
     private Long views = 0L;
 
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BoardStatus status; // 공개 여부 (PUBLIC / PRIVATE)

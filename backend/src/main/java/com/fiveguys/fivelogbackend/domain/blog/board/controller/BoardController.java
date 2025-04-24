@@ -63,6 +63,26 @@ public class BoardController {
         return ResponseEntity.ok(ApiResponse.success(responseDto, "게시글 작성 성공"));
     }
 
+    // 게시물 수정
+    @PutMapping("/{boardId}/edit")
+    @Operation(summary = "게시글 수정", description = "게시글 ID로 게시글을 수정합니다.")
+    public ResponseEntity<ApiResponse<CreateBoardResponseDto>> editBoard(
+            @PathVariable("boardId") Long boardId,
+            @RequestBody CreateBoardRequestDto dto) {
+        CreateBoardResponseDto updatedBoard = boardService.editBoard(boardId, dto);
+        return ResponseEntity.ok(ApiResponse.success(updatedBoard, "게시물이 성공적으로 수정되었습니다."));
+    }
+
+
+    // 게시물 삭제
+    @DeleteMapping("/{boardId}")
+    @Operation(summary = "게시물 삭제", description = "게시물 ID를 삭제합니다.")
+    public ResponseEntity<ApiResponse<Void>> deleteBoard(@PathVariable("boardId") Long boardId) {
+        boardService.deleteBoard(boardId);
+        return ResponseEntity.ok(ApiResponse.success(null, "게시물이 성공적으로 삭제되었습니다."));
+    }
+
+
     @GetMapping
     @Operation(summary = "홈 페이지 게시글 조회")
     public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBoards(@PageableDefault(size=12, sort = "createdDate",direction = Sort.Direction.DESC) Pageable pageable){
