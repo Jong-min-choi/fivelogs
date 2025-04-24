@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -170,8 +171,15 @@ public class BoardService {
     public List<BoardSummaryDto> getTrendingBoards(){
         List<Long> boardIds = trendingBoardService.getTopTrendingBoards(10);
         List<Board> boards = boardRepository.findAllById(boardIds);
+        Map<Long, Board> boardMap = boards.stream()
+                .collect(Collectors.toMap(Board::getId, Function.identity()));
 
-        return getBoardSummaryDtos(boards);
+        List<Board> sortedBoards = boardIds.stream()
+                .map(boardMap::get)
+                .filter(Objects::nonNull) // 혹시 모를 null 방지
+                .toList();
+
+        return getBoardSummaryDtos(sortedBoards);
     }
     /*
 
