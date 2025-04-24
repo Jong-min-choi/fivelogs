@@ -9,7 +9,11 @@ interface CommentFormProps {
   onSuccess: () => void;
 }
 
-export default function CommentForm({ boardId, parentId, onSuccess }: CommentFormProps) {
+export default function CommentForm({
+  boardId,
+  parentId,
+  onSuccess,
+}: CommentFormProps) {
   const [comment, setComment] = useState("");
   const { isLogin } = useGlobalLoginUser();
 
@@ -27,18 +31,21 @@ export default function CommentForm({ boardId, parentId, onSuccess }: CommentFor
     }
 
     try {
-      const res = await fetch(`http://localhost:8090/api/comments/boards/${boardId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          comment: comment.trim(),
-          parentId: parentId || null,
-          boardId: boardId
-        }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/boards/${boardId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            comment: comment.trim(),
+            parentId: parentId || null,
+            boardId: boardId,
+          }),
+        }
+      );
 
       if (!res.ok) {
         const errorText = await res.text();
@@ -64,7 +71,9 @@ export default function CommentForm({ boardId, parentId, onSuccess }: CommentFor
       <textarea
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        placeholder={isLogin ? "댓글을 작성해주세요." : "로그인이 필요한 기능입니다."}
+        placeholder={
+          isLogin ? "댓글을 작성해주세요." : "로그인이 필요한 기능입니다."
+        }
         disabled={!isLogin}
         className="w-full p-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
         rows={3}

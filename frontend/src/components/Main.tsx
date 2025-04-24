@@ -44,7 +44,7 @@ export default function Boards({ initialBoards = [] }: BoardsProps) {
   const [error, setError] = useState<string | null>(null);
   const [csQuestions, setCsQuestions] = useState<ChatContent[]>([]);
   const { isLogin } = useGlobalLoginUser();
-
+  console.log(`과연 될까? ${process.env.NEXT_PUBLIC_API_BASE_URL}`);
   const boardsPerPage = 12;
 
   // 최신 게시글 fetch
