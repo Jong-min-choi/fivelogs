@@ -229,13 +229,12 @@ public class BoardService {
 
 
 //        //전체다 삭제하고 싶을떄
-//        boardRepository.delete(board);
+        boardRepository.delete(board);
 
         // 소프트 딜리트 처리
-        board.setDeleted(true);
-        board.setTitle("삭제된 게시물입니다.");
-        board.setContent("");
-        board.setStatus(BoardStatus.PRIVATE); // 비공개 처리
+//        board.setTitle("삭제된 게시물입니다.");
+//        board.setContent("");
+//        board.setStatus(BoardStatus.PRIVATE); // 비공개 처리
     }
 
 

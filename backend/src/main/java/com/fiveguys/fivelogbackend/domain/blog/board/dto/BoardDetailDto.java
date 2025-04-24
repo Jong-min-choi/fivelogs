@@ -44,7 +44,6 @@ public class BoardDetailDto {
                 .profileImageLink(null)
                 .createdDateTime(board.getCreatedDate())
                 .updatedDateTime(board.getUpdatedDate())
-                .deleted(board.isDeleted())
                 .build();
     }
 
