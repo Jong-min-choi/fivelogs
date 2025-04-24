@@ -3,6 +3,7 @@ package com.fiveguys.fivelogbackend.domain.blog.board.controller;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.*;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import com.fiveguys.fivelogbackend.domain.blog.board.service.BoardService;
+import com.fiveguys.fivelogbackend.domain.blog.board.service.TrendingBoardService;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
 import com.fiveguys.fivelogbackend.global.rq.Rq;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/boards")
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 public class BoardController {
 
     private final BoardService boardService;
+    private final TrendingBoardService trendingBoardService;
     private final Rq rq;
 
 //    @PostMapping
@@ -60,8 +64,7 @@ public class BoardController {
     }
 
     @GetMapping
-    @Operation(summary = "게시글 조회")
-    //4*4 로간다.
+    @Operation(summary = "홈 페이지 게시글 조회")
     public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBoards(@PageableDefault(size=12, sort = "createdDate",direction = Sort.Direction.DESC) Pageable pageable){
         Page<Board> pagedBoards = boardService.getBoardsAllWithUser(pageable);
 
@@ -94,6 +97,12 @@ public class BoardController {
         boardService.increaseViewCount(boardId);
 
         return ResponseEntity.ok(ApiResponse.success(null, "조회수 증가 성공"));
+    }
+
+    @GetMapping("/trending")
+    public ResponseEntity<ApiResponse<List<BoardSummaryDto>>> getTrendingBoards(){
+        List<BoardSummaryDto> trendingBoards = boardService.getTrendingBoards();
+        return ResponseEntity.ok().body(ApiResponse.success(trendingBoards, "트랜딩 게시판 조회 성공"));
     }
 
 }
