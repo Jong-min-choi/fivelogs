@@ -79,6 +79,7 @@ export default function Boards({ initialBoards = [] }: BoardsProps) {
       if (!response.ok) throw new Error(`서버 응답 오류: ${response.status}`);
       const responseData = await response.json();
       if (responseData.success) {
+        console.log(responseData.data);
         setTrendingBoards(responseData.data);
       } else {
         throw new Error(
