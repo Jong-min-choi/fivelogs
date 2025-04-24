@@ -1,9 +1,9 @@
-import Boards from "@/components/Boards";
+import Main from "@/components/Main";
 
 export default function Home() {
   return (
     <main>
-      <Boards />
+      <Main />
     </main>
   );
 }
