@@ -77,7 +77,9 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         }
 
         //  GET 요청은 모두 인증 없이 통과, 예외는 필요함 ex) mypage
-        if ("GET".equalsIgnoreCase(method) && !request.getRequestURI().startsWith("/api/users") && !request.getRequestURI().startsWith("/api/attendance")) {
+        if ("GET".equalsIgnoreCase(method) && !request.getRequestURI().startsWith("/api/users")
+                && !request.getRequestURI().startsWith("/api/attendance")
+        ) {
             filterChain.doFilter(request, response);
             return;
         }

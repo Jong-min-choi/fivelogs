@@ -39,7 +39,7 @@ public class BoardService {
     private final HashTagService hashTagService;
     private final TaggingService taggingService;
 
-    //    @Transactional
+    @Transactional
     public Board createBoard(CreateBoardRequestDto boardDto, Long id) {
         User user = userService.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id입니다."));
         Blog blog = blogRepository.findByUserId(user.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 blog id 입니다."));
@@ -67,12 +67,14 @@ public class BoardService {
 
         return savedBoard;
     }
+    @Transactional
 
     public CreateBoardResponseDto getBoard(Long id) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
         return null;
     }
+    @Transactional
 
     public Page<Board> getBoardsAllWithUser(Pageable pageable) {
         return boardRepository.findAllWithUser(pageable);
@@ -88,6 +90,7 @@ public class BoardService {
 //        return boardRepository.findByHashtagsContainingIgnoreCase(searchTagName, pageable);
 //    }
     //dto로 바꿔야함
+    @Transactional
     public BoardPageResponseDto getBoardMainPageResponseDtoList (Page<Board> pageBoards){
         PageDto unitPageInit = PageUt.get10unitPageDto(pageBoards.getNumber(), pageBoards.getTotalPages());
 
@@ -137,44 +140,22 @@ public class BoardService {
         }
         return new SideBoardInfoDto(preBoardDto, nextBoardDto);
     }
+    @Transactional(readOnly = true)
 
     public Long getBlogBoardCount(String nickname){
         return boardRepository.countByUser_Nickname(nickname);
     }
+    @Transactional(readOnly = true)
 
     public Long getAllBoardView(String nickname){
         return boardRepository.countView(nickname);
     }
 
-    public Map<String, List<BoardSummaryDto>> getBoardMainPageByHashtags(List<Board> boardList) {
-        List<Long> boardIds = boardList.stream()
-                .map(Board::getId)
-                .collect(Collectors.toList());
-
-        // 1. boardId - hashtagName 매핑
-        Map<Long, List<String>> hashtagsGroupedByBoardIds = taggingService.getHashtagsGroupedByBoardIds(boardIds);
-
-
-        // 2. Board → BoardSummaryDto 변환
-        List<BoardSummaryDto> boardSummaryList = boardList.stream()
-                .map(board -> {
-                    List<String> hashtags = hashtagsGroupedByBoardIds.getOrDefault(board.getId(), Collections.emptyList());
-                    return BoardSummaryDto.from(board, hashtags);
-                })
-                .toList();
-
-        // 3. hashtagName → BoardSummaryDto 리스트 매핑
-        Map<String, List<BoardSummaryDto>> hashtagToBoardMap = new HashMap<>();
-        for (BoardSummaryDto dto : boardSummaryList) {
-            for (String hashtag : dto.getHashtags()) {
-                hashtagToBoardMap
-                        .computeIfAbsent(hashtag, key -> new ArrayList<>())
-                        .add(dto);
-            }
-        }
-
-        return hashtagToBoardMap;
+    @Transactional
+    public void increaseViewCount(Long boardId){
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 boardId 입니다."));
+        board.setViews(board.getViews() + 1);
+        boardRepository.save(board);
     }
-
 
 }

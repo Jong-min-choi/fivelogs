@@ -89,4 +89,11 @@ public class BoardController {
         return ResponseEntity.ok(ApiResponse.success(boardService.sideBoardInfoDto(boardId, nickname), "전, 후 게시판 조회 성공"));
     }
 
+    @PostMapping("/{boardId}/views")
+    public ResponseEntity<ApiResponse<Void>> increaseViewCount(@PathVariable(name = "boardId") Long boardId){
+        boardService.increaseViewCount(boardId);
+
+        return ResponseEntity.ok(ApiResponse.success(null, "조회수 증가 성공"));
+    }
+
 }
