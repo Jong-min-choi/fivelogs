@@ -2,6 +2,7 @@ import { PageDto } from "./board";
 
 export interface BlogOwnerDto {
   // 아직 미완성이므로 빈 인터페이스로 정의
+  id: number;
   nickname?: string;
   introduce?: string;
   profileImageLink?: string;
