@@ -29,6 +29,7 @@ public class BoardDetailDto {
     String nickName;
     String profileImageLink;
     String myIntroduce;
+    boolean deleted;
 
     public static BoardDetailDto from (Board board, List<String> hashtagNameList){
         return BoardDetailDto.builder()
@@ -43,6 +44,7 @@ public class BoardDetailDto {
                 .profileImageLink(null)
                 .createdDateTime(board.getCreatedDate())
                 .updatedDateTime(board.getUpdatedDate())
+                .deleted(board.isDeleted())
                 .build();
     }
 

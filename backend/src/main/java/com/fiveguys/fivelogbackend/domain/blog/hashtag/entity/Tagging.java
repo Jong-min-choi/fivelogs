@@ -2,6 +2,7 @@ package com.fiveguys.fivelogbackend.domain.blog.hashtag.entity;
 
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
         }
 )
 @NoArgsConstructor
+@Getter
 public class Tagging {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
