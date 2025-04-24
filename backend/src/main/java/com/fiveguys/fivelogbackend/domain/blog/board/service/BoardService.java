@@ -8,6 +8,12 @@ import com.fiveguys.fivelogbackend.domain.blog.board.dto.*;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import com.fiveguys.fivelogbackend.domain.blog.board.repository.BoardRepository;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.HashtagUtil;
+import com.fiveguys.fivelogbackend.domain.blog.hashtag.entity.Hashtag;
+import com.fiveguys.fivelogbackend.domain.blog.hashtag.entity.Tagging;
+import com.fiveguys.fivelogbackend.domain.blog.hashtag.repository.HashTagRepository;
+import com.fiveguys.fivelogbackend.domain.blog.hashtag.repository.TaggingRepository;
+import com.fiveguys.fivelogbackend.domain.blog.hashtag.service.HashTagService;
+import com.fiveguys.fivelogbackend.domain.blog.hashtag.service.TaggingService;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import com.fiveguys.fivelogbackend.global.pagination.PageDto;
@@ -16,11 +22,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,28 +38,46 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserService userService;
     private final BlogRepository blogRepository;
-    //    @Transactional
-    public Board createBoard(CreateBoardRequestDto dto, Long id) {
+    private final HashTagService hashTagService;
+    private final TaggingService taggingService;
+    private final TrendingBoardService trendingBoardService;
+
+    @Transactional
+    public Board createBoard(CreateBoardRequestDto boardDto, Long id) {
         User user = userService.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id입니다."));
         Blog blog = blogRepository.findByUserId(user.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 blog id 입니다."));
+        //hashtags 관련 로직이 이제 들어가야 함
+        //ㅗㅁ
+        List<String> hashtags = boardDto.getHashtags();
+        List<Hashtag> savedHashTagList = hashTagService.createHashtags(hashtags);
+
+
+        // hashtags name이 없다면 새로운 hashTags 이름을 생성
+        // name 이 있다면 그 hash 태그를 가져오기
+        // 가져온 것을
+
         Board board = Board.builder()
-                .title(dto.getTitle())
-                .hashtags(HashtagUtil.joinHashtags(dto.getHashtags()))
-                .content(dto.getContent())
+                .title(boardDto.getTitle())
+                .content(boardDto.getContent())
                 .views(0L)
-                .status(dto.getStatus())
+                .status(boardDto.getStatus())
                 .user(user)
                 .blog(blog)
                 .build();
+        Board savedBoard= boardRepository.save(board);
 
-        return boardRepository.save(board);
+        taggingService.saveAllTaggingList(savedBoard, savedHashTagList);
+
+        return savedBoard;
     }
+    @Transactional
 
     public CreateBoardResponseDto getBoard(Long id) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
         return null;
     }
+    @Transactional
 
     public Page<Board> getBoardsAllWithUser(Pageable pageable) {
         return boardRepository.findAllWithUser(pageable);
@@ -63,25 +88,47 @@ public class BoardService {
 
     // 앞에 자동으로 #붙이고 중복제거 GPT가 만들어줬어요ㅎ
 
-    public Page<Board> searchBoardsByHashtag(String tagName, Pageable pageable) {
-        String searchTagName = tagName.startsWith("#") ? tagName.trim() : "#" + tagName.trim();
-        return boardRepository.findByHashtagsContainingIgnoreCase(searchTagName, pageable);
-    }
+//    public Page<Board> searchBoardsByHashtag(String tagName, Pageable pageable) {
+//        String searchTagName = tagName.startsWith("#") ? tagName.trim() : "#" + tagName.trim();
+//        return boardRepository.findByHashtagsContainingIgnoreCase(searchTagName, pageable);
+//    }
     //dto로 바꿔야함
+    @Transactional
     public BoardPageResponseDto getBoardMainPageResponseDtoList (Page<Board> pageBoards){
         PageDto unitPageInit = PageUt.get10unitPageDto(pageBoards.getNumber(), pageBoards.getTotalPages());
-        List<BoardSummaryDto> boardSummaryDtoList = pageBoards.getContent()
-                .stream()
-                .map(BoardSummaryDto::from)
-                .collect(Collectors.toList());
+
+        List<Board> boards = pageBoards.getContent();
+        List<BoardSummaryDto> boardSummaryDtoList = getBoardSummaryDtos(boards);
+
+
         return new BoardPageResponseDto(boardSummaryDtoList, unitPageInit);
+    }
+
+    private List<BoardSummaryDto> getBoardSummaryDtos(List<Board> boards) {
+        List<Long> boardIds = boards.stream().map(Board::getId).toList();
+
+        // boardId -> [해시태그들] 맵
+        Map<Long, List<String>> hashtagMap = taggingService.getHashtagsGroupedByBoardIds(boardIds);
+
+
+        List<BoardSummaryDto> boardSummaryDtoList = boards.stream()
+                .map(board -> {
+                    List<String> hashtags = hashtagMap.getOrDefault(board.getId(), List.of());
+                    return BoardSummaryDto.from(board, hashtags);
+                })
+                .toList();
+        return boardSummaryDtoList;
     }
 
     @Transactional
     public BoardDetailDto getBlogDetailDto( Long boardId){
         log.info("boardId {}", boardId);
         Board board = boardRepository.findWithUserById (boardId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 boardId 입니다."));
-        return BoardDetailDto.from(board);
+        // board id를 갖고 있는 모든 taggins를 추출하고
+        // taggings 의 tag id를 통해 모든 tag 찾기?
+        List<String> hashtagNameList = taggingService.findAllHashtagNameByBoardId(board.getId());
+
+        return BoardDetailDto.from(board, hashtagNameList);
     }
 
     @Transactional
@@ -101,12 +148,54 @@ public class BoardService {
         }
         return new SideBoardInfoDto(preBoardDto, nextBoardDto);
     }
+    @Transactional(readOnly = true)
 
     public Long getBlogBoardCount(String nickname){
         return boardRepository.countByUser_Nickname(nickname);
     }
+    @Transactional(readOnly = true)
 
     public Long getAllBoardView(String nickname){
         return boardRepository.countView(nickname);
     }
+
+    @Transactional
+    public void increaseViewCount(Long boardId){
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 boardId 입니다."));
+        board.setViews(board.getViews() + 1);
+        Board savedBoard = boardRepository.save(board);
+        trendingBoardService.increaseViewCount(savedBoard.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<BoardSummaryDto> getTrendingBoards(){
+        List<Long> boardIds = trendingBoardService.getTopTrendingBoards(10);
+        List<Board> boards = boardRepository.findAllById(boardIds);
+        Map<Long, Board> boardMap = boards.stream()
+                .collect(Collectors.toMap(Board::getId, Function.identity()));
+
+        List<Board> sortedBoards = boardIds.stream()
+                .map(boardMap::get)
+                .filter(Objects::nonNull) // 혹시 모를 null 방지
+                .toList();
+
+        return getBoardSummaryDtos(sortedBoards);
+    }
+    /*
+
+       List<Long> boardIds = boards.stream().map(Board::getId).toList();
+
+        // boardId -> [해시태그들] 맵
+        Map<Long, List<String>> hashtagMap = taggingService.getHashtagsGroupedByBoardIds(boardIds);
+
+
+        List<BoardSummaryDto> boardSummaryDtoList = boards.stream()
+                .map(board -> {
+                    List<String> hashtags = hashtagMap.getOrDefault(board.getId(), List.of());
+                    return BoardSummaryDto.from(board, hashtags);
+                })
+                .toList();
+
+     */
+
 }

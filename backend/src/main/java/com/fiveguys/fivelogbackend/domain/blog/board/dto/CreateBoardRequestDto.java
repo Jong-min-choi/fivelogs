@@ -3,6 +3,8 @@ package com.fiveguys.fivelogbackend.domain.blog.board.dto;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.BoardStatus;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,5 +15,5 @@ public class CreateBoardRequestDto {
     private String title;
     private String content;
     private BoardStatus status;
-    private String[] hashtags;
+    private List<String> hashtags;
 }

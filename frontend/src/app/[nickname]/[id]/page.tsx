@@ -4,9 +4,10 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import AuthorProfile from "@/components/common/AuthorProfile";
-
+import CommentList from "@/components/comment/CommentList";
 // BoardDetailDto 타입 정의
 interface BoardDetailDto {
+  boardId: number;
   blogTitle: string;
   boardTitle: string;
   content: string;
@@ -124,6 +125,21 @@ export default function BoardDetail() {
     }
   }, [boardId, nickname]);
 
+  useEffect(() => {
+    // 게시글 조회수 증가 API 호출
+    if (boardId) {
+      fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}/views`,
+        {
+          method: "POST",
+        }
+      ).catch((err) => {
+        // 에러는 무시 (조회수 실패해도 화면엔 영향 없음)
+        console.error("조회수 증가 실패:", err);
+      });
+    }
+  }, [boardId]);
+
   // 게시글 삭제 핸들러
   const handleDelete = async () => {
     if (!window.confirm("정말로 이 게시글을 삭제하시겠습니까?")) {
@@ -132,7 +148,7 @@ export default function BoardDetail() {
 
     try {
       const response = await fetch(
-        `http://localhost:8090/api/boards/${boardId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}`,
         {
           method: "DELETE",
         }
@@ -310,6 +326,9 @@ export default function BoardDetail() {
         profileImageLink={board.profileImageLink}
         myIntroduce={board.myIntroduce}
       />
+
+      {/* 댓글 영역 */}
+      <CommentList boardId={Number(boardId)} />
 
       {/* 이전/다음 버튼 */}
       <div className="flex justify-between mt-12 border-t pt-6">

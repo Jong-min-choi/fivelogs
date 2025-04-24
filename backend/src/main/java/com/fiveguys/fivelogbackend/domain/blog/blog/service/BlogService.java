@@ -4,8 +4,11 @@ import com.fiveguys.fivelogbackend.domain.blog.blog.dto.BlogResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardDetailDto;
 import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.blog.blog.repository.BlogRepository;
+import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardHashtagDto;
+import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardSummaryDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import com.fiveguys.fivelogbackend.domain.blog.board.repository.BoardRepository;
+import com.fiveguys.fivelogbackend.domain.blog.hashtag.repository.TaggingRepository;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,13 +17,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BlogService {
     private final BlogRepository blogRepository;
     private final BoardRepository boardRepository;
+    private final TaggingRepository taggingRepository;
+
 
     @Transactional
     public void createBlog(User user) {
@@ -49,7 +55,6 @@ public class BlogService {
     public Optional<Blog> findByUserId(Long userId){
         return blogRepository.findByUserId(userId);
     }
-
 
 
 

@@ -12,9 +12,6 @@ spring:
     username: ${db.datasource.username}
     password: ${db.datasource.password}
     driver-class-name: ${db.datasource.driver-class-name}
-  h2:
-    console:
-      enabled: true
   security:
     oauth2:
       client:
@@ -49,6 +46,25 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ""  # 비밀번호 없으면 생략 가능
+      timeout: 2s   # 초 단위 가능 (권장)
+  cache:
+    type: redis
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${email.username}
+    password: ${email.password}  # Google 계정에서 발급한 앱 비밀번호
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 logging:
   level:
     com.ll.blog: DEBUG

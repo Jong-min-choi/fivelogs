@@ -2,24 +2,30 @@ package com.fiveguys.fivelogbackend.domain.blog.comment.controller;
 
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentRequestDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentResponseDto;
-import com.fiveguys.fivelogbackend.domain.blog.comment.entity.Comment;
+import com.fiveguys.fivelogbackend.domain.blog.comment.dto.LikeRequestDto;
+import com.fiveguys.fivelogbackend.domain.blog.comment.dto.LikeResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.service.CommentService;
-import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
+import com.fiveguys.fivelogbackend.global.pagination.PageDto;
+import com.fiveguys.fivelogbackend.global.pagination.PageUt;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
 import com.fiveguys.fivelogbackend.global.rq.Rq;
 import io.swagger.v3.oas.annotations.Operation;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/comments")
+@Slf4j
 public class CommentController {
     private final CommentService commentService;
     private final Rq rq;
@@ -34,7 +40,7 @@ public class CommentController {
 //    }
 
     //블로그 속 댓글 조회
-    @GetMapping("/blogs/{boardTitle}/boards/{boardId}")
+    @GetMapping("/boards/{boardId}")
     @Operation(summary = "게시글 댓글 조회", description = "게시글 ID로 댓글들을 조회합니다.")
     public ResponseEntity<ApiResponse<List<CommentResponseDto>>> getCommentsByBoard(
             @PathVariable("boardId") Long boardId
@@ -44,16 +50,19 @@ public class CommentController {
     }
 
     // 댓글 작성
-    @PostMapping("blogs/{boardTitle}/boards/{boardId}")
+    @PostMapping("/boards/{boardId}")
     @Operation(summary = "댓글 작성", description = "댓글을 작성합니다.")
-    public ResponseEntity<ApiResponse<CommentResponseDto>> createComment(@RequestBody CommentRequestDto dto) {
+    public ResponseEntity<ApiResponse<CommentResponseDto>> createComment(
+            @PathVariable("boardId") Long boardId,
+            @RequestBody CommentRequestDto dto) {
+        dto.setBoardId(boardId);
         CommentResponseDto savedComment = commentService.createComment(dto);
         return new ResponseEntity<>(ApiResponse.success(savedComment, "댓글 작성을 성공하셨습니다")
                 , HttpStatus.CREATED);
     }
 
     // 댓글 수정
-    @PutMapping("blogs/{boardTitle}/boards/{boardId}/{id}")
+    @PutMapping("/boards/{boardId}/{id}")
     @Operation(summary = "댓글 수정", description = "댓글 ID로 댓글을 수정합니다.")
     public ResponseEntity<ApiResponse<CommentResponseDto>> editComment(
             @PathVariable("id") Long commentId,
@@ -63,7 +72,7 @@ public class CommentController {
     }
 
     // 댓글 삭제
-    @DeleteMapping("blogs/{boardTitle}/boards/{boardId}/{id}")
+    @DeleteMapping("/boards/{boardId}/{id}")
     @Operation(summary = "댓글 삭제", description = "댓글 ID로 댓글을 삭제합니다.")
     public ResponseEntity<ApiResponse<Void>> deleteComment(@PathVariable("id") Long commentId) {
         commentService.deleteComment(commentId);
@@ -71,32 +80,43 @@ public class CommentController {
     }
 
     //댓글 좋아요 싫어요
-    @PostMapping("/blogs/{boardTitle}/boards/{boardId}/{id}/reaction")
-    @Operation(summary = "댓글 좋아요/싫어요", description = "댓글에 좋아요 또는 싫어요를 누릅니다.")
-    public ResponseEntity<ApiResponse<Void>> reactToComment(
+    @PostMapping("/boards/{boardId}/{id}/reaction")
+    public ResponseEntity<ApiResponse<LikeResponseDto>> reactToComment(
             @PathVariable("id") Long commentId,
-            @RequestParam("isLike") boolean isLike) {
-        commentService.reactToComment(commentId, isLike);
-
-        String message;
-        if (isLike) {
-            message = "좋아요를 눌렀습니다.";
-        } else {
-            message = "싫어요를 눌렀습니다.";
-        }
-
-        return ResponseEntity.ok(ApiResponse.success(null, message));
+            @RequestBody LikeRequestDto request) {
+        LikeResponseDto response = commentService.reactToComment(commentId, request.isLike());
+        return ResponseEntity.ok(ApiResponse.success(response, "리액션이 처리되었습니다."));
     }
 
     // 댓글 페이징
-    @GetMapping("blogs/{boardTitle}/boards/{boardId}/page")
+    @GetMapping("/boards/{boardId}/page")
     @Operation(summary = "댓글 목록 조회 (페이징)", description = "게시글 ID 기준으로 페이지별 댓글을 가져옵니다.")
-    public ResponseEntity<ApiResponse<Page<CommentResponseDto>>> getCommentsPageByBoard(
-            @PathVariable Long boardId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Page<CommentResponseDto> comments = commentService.getCommentsByBoard(boardId, page, size);
-        return ResponseEntity.ok(ApiResponse.success(comments, "페이지별 댓글을 조회했습니다."));
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getCommentsPageByBoard(
+            @PathVariable("boardId") Long boardId,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "sort", defaultValue = "createdDate,desc") String sort
+    ) {
+        Page<CommentResponseDto> commentPage = commentService.getCommentsByBoard(boardId, page, size, sort);
+
+
+        int totalPage = commentPage.getTotalPages();
+        PageDto pageDto = PageUt.get10unitPageDto(page - 1, totalPage);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("comments", commentPage.getContent());
+        response.put("pageInfo", pageDto);
+
+        return ResponseEntity.ok(ApiResponse.success(response, "페이지별 댓글을 조회했습니다."));
+    }
+
+    // 특정 댓글의 대댓글 목록 조회
+    @GetMapping("/{parentId}/replies")
+    @Operation(summary = "대댓글 조회", description = "특정 댓글의 대댓글(자식 댓글)을 조회합니다.")
+    public ResponseEntity<ApiResponse<List<CommentResponseDto>>> getRepliesByParent(
+            @PathVariable("parentId") Long parentId
+    ) {
+        List<CommentResponseDto> replies = commentService.getRepliesByParent(parentId);
+        return ResponseEntity.ok(ApiResponse.success(replies, "대댓글을 조회했습니다."));
     }
 }
-

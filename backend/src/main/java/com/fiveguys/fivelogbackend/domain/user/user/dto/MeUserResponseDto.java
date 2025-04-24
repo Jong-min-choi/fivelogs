@@ -8,6 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 public class MeUserResponseDto {
+    Long id;
     String email;
     String nickname;
 }

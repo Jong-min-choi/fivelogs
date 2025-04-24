@@ -3,6 +3,7 @@ package com.fiveguys.fivelogbackend.domain.blog.board.controller;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.*;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import com.fiveguys.fivelogbackend.domain.blog.board.service.BoardService;
+import com.fiveguys.fivelogbackend.domain.blog.board.service.TrendingBoardService;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
 import com.fiveguys.fivelogbackend.global.rq.Rq;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/boards")
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 public class BoardController {
 
     private final BoardService boardService;
+    private final TrendingBoardService trendingBoardService;
     private final Rq rq;
 
 //    @PostMapping
@@ -39,35 +43,32 @@ public class BoardController {
 //    @Operation(summary = "게시글 열람")
 //    }
 
-    @GetMapping("/search-tag")
-    @Operation(summary = "태그 기반 게시글 검색", description = "해시태그에 해당하는 게시글 검색")
-    public ResponseEntity<Page<Board>> searchByTag(
-            @RequestParam String tag,
-            @PageableDefault(size = 10, page = 0) Pageable pageable) {
-        Page<Board> boards = boardService.searchBoardsByHashtag(tag, pageable);
-        return ResponseEntity.ok(boards);
-    }
+//    @GetMapping("/search-tag")
+//    @Operation(summary = "태그 기반 게시글 검색", description = "해시태그에 해당하는 게시글 검색")
+//    public ResponseEntity<Page<Board>> searchByTag(
+//            @RequestParam String tag,
+//            @PageableDefault(size = 10,  sort = "createdDate",page = 0) Pageable pageable) {
+//        Page<Board> boards = boardService.searchBoardsByHashtag(tag, pageable);
+//        return ResponseEntity.ok(boards);
+//    }
     //user는 있고,
     @PostMapping
     @Operation(summary = "게시글 작성")
     public ResponseEntity<ApiResponse<CreateBoardResponseDto>> createBoard(
             @RequestBody CreateBoardRequestDto createBoardRequestDto){
-        log.info("요청이 오나? {}", createBoardRequestDto);
         Board board = boardService.createBoard(createBoardRequestDto, rq.getActor().getId());
         //여기서 boardid와 블로그 주소를 반환하자
         CreateBoardResponseDto responseDto = new CreateBoardResponseDto(board.getId(), board.getTitle());
         //성공하면 board id와
-
         return ResponseEntity.ok(ApiResponse.success(responseDto, "게시글 작성 성공"));
     }
 
     @GetMapping
-    @Operation(summary = "게시글 조회")
-    //4*4 로간다.
-    public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBoards(@PageableDefault(size=12, direction = Sort.Direction.DESC) Pageable pageable){
+    @Operation(summary = "홈 페이지 게시글 조회")
+    public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBoards(@PageableDefault(size=12, sort = "createdDate",direction = Sort.Direction.DESC) Pageable pageable){
         Page<Board> pagedBoards = boardService.getBoardsAllWithUser(pageable);
 
-        log.info("pagedBoards {}", pagedBoards.getContent().size());
+//        log.info("pagedBoards {}", pagedBoards.getContent().size());
         for (Board board : pagedBoards) {
             log.info("pagedBoards {}", board.getTitle());
         }
@@ -82,7 +83,6 @@ public class BoardController {
             @PathVariable("boardId")  Long boardId ){
 
         BoardDetailDto boardDetailDto = boardService.getBlogDetailDto(boardId);
-
         return ResponseEntity.ok().body(ApiResponse.success(boardDetailDto, "board 생성 성공"));
     }
 
@@ -92,7 +92,17 @@ public class BoardController {
         return ResponseEntity.ok(ApiResponse.success(boardService.sideBoardInfoDto(boardId, nickname), "전, 후 게시판 조회 성공"));
     }
 
+    @PostMapping("/{boardId}/views")
+    public ResponseEntity<ApiResponse<Void>> increaseViewCount(@PathVariable(name = "boardId") Long boardId){
+        boardService.increaseViewCount(boardId);
 
+        return ResponseEntity.ok(ApiResponse.success(null, "조회수 증가 성공"));
+    }
 
+    @GetMapping("/trending")
+    public ResponseEntity<ApiResponse<List<BoardSummaryDto>>> getTrendingBoards(){
+        List<BoardSummaryDto> trendingBoards = boardService.getTrendingBoards();
+        return ResponseEntity.ok().body(ApiResponse.success(trendingBoards, "트랜딩 게시판 조회 성공"));
+    }
 
 }

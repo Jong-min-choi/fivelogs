@@ -29,12 +29,12 @@ public class SecurityConfig {
     private final CustomAuthenticationFilter customAuthenticationFilter;
     private final CustomOauth2AuthenticationSuccessHandler customOauth2AuthenticationSuccessHandler;
     private final CustomAuthorizationRequestResolver customAuthorizationRequestResolver;
-    private final String[] permitURL = {"/login",
+    //통과 시킬꺼 넣어야함
+    private final String[] permitURL = {
             "/v3/api-docs/**", "/swagger-ui/**",
             "/swagger-ui.html",
-            "/api/**","/h2-console/**", "/actuator/**",
-            "/user/join","/error", "/css/**", "/js/**",
-            "/user/login"
+            "/h2-console/**", "/actuator/**",
+            "/error", "/css/**", "/js/**","/api/**"
     };
 
     @Bean
@@ -68,7 +68,7 @@ public class SecurityConfig {
     }
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000")); // 프론트 도메인
+        config.setAllowedOrigins(List.of("http://localhost:3000","https://www.fivelogs.site")); // 프론트 도메인
         config.setAllowedMethods(List.of("GET", "POST", "OPTIONS", "PUT", "DELETE"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
