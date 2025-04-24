@@ -125,6 +125,21 @@ export default function BoardDetail() {
     }
   }, [boardId, nickname]);
 
+  useEffect(() => {
+    // 게시글 조회수 증가 API 호출
+    if (boardId) {
+      fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}/views`,
+        {
+          method: "POST",
+        }
+      ).catch((err) => {
+        // 에러는 무시 (조회수 실패해도 화면엔 영향 없음)
+        console.error("조회수 증가 실패:", err);
+      });
+    }
+  }, [boardId]);
+
   // 게시글 삭제 핸들러
   const handleDelete = async () => {
     if (!window.confirm("정말로 이 게시글을 삭제하시겠습니까?")) {

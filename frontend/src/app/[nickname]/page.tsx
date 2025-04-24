@@ -33,7 +33,9 @@ export default function MyBoardPage() {
   const [pageInfo, setPageInfo] = useState<PageDto | null>(null);
   const [ownerInfo, setOwnerInfo] = useState<BlogOwnerDto | null>(null);
   const [hashtags, setHashtags] = useState<HashtagCountDto[]>([]);
-  const [showAttendance, setShowAttendance] = useState(false);
+  const [showAttendance, setShowAttendance] = useState(
+    searchParams.get("showAttendance") || false
+  );
   const boardsPerPage = 10; // 한 페이지에 10개 게시글 표시
 
   // 필터링된 게시글 데이터
@@ -388,12 +390,14 @@ export default function MyBoardPage() {
             </div>
           </div>
           {/* 출석부 버튼 */}
+
           <button
             className="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded mt-6 mb-4 transition"
             onClick={() => setShowAttendance((prev) => !prev)}
           >
             {showAttendance ? "게시글 보기" : "출석부"}
           </button>
+
           {/* 해시태그 목차 */}
           {hashtags.length > 0 && (
             <div className="mt-6">

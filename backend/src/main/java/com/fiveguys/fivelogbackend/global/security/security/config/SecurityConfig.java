@@ -29,12 +29,12 @@ public class SecurityConfig {
     private final CustomAuthenticationFilter customAuthenticationFilter;
     private final CustomOauth2AuthenticationSuccessHandler customOauth2AuthenticationSuccessHandler;
     private final CustomAuthorizationRequestResolver customAuthorizationRequestResolver;
-    private final String[] permitURL = {"/login",
+    //통과 시킬꺼 넣어야함
+    private final String[] permitURL = {
             "/v3/api-docs/**", "/swagger-ui/**",
             "/swagger-ui.html",
-            "/api/**","/h2-console/**", "/actuator/**",
-            "/user/join","/error", "/css/**", "/js/**",
-            "/user/login", "/chat/completion/content"
+            "/h2-console/**", "/actuator/**",
+            "/error", "/css/**", "/js/**","/api/**"
     };
 
     @Bean

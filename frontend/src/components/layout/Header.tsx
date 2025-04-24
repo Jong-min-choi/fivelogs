@@ -100,7 +100,7 @@ export default function Header() {
                   글쓰기
                 </Link>
                 <Link
-                  href="/users/attendance"
+                  href={`/${loginUser.nickname}?showAttendance=true`}
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   출석부
