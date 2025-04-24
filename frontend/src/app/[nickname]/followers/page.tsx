@@ -6,7 +6,7 @@ type FollowerUser = {
   id: number;
   nickname: string;
   username: string;
-  bio: string;
+  introduce: string;
   profileImageUrl?: string;
 };
 
@@ -16,35 +16,35 @@ export default function FollowersPage() {
       id: 1,
       nickname: "김소연",
       username: "soyeon58",
-      bio: "studying AI",
+      introduce: "studying AI",
       profileImageUrl: "https://avatars.githubusercontent.com/u/100?v=4",
     },
     {
       id: 2,
       nickname: "CodeWisp",
       username: "codewisp",
-      bio: "진화를 택하지 못한 이브이같은 프로그래머",
+      introduce: "진화를 택하지 못한 이브이같은 프로그래머",
       profileImageUrl: "https://avatars.githubusercontent.com/u/101?v=4",
     },
     {
       id: 3,
       nickname: "사리미",
       username: "sarimi",
-      bio: "",
+      introduce: "",
       profileImageUrl: "",
     },
     {
       id: 4,
       nickname: "2400",
       username: "espada105",
-      bio: "시즌 2의 공부기록 · Artificial Intelligence & AeroSpace",
+      introduce: "시즌 2의 공부기록 · Artificial Intelligence & AeroSpace",
       profileImageUrl: "https://avatars.githubusercontent.com/u/102?v=4",
     },
     {
       id: 5,
       nickname: "고양이 개발 공화국",
       username: "wjdhgcks6735",
-      bio: "부진은 있어도 몰락은 없다",
+      introduce: "부진은 있어도 몰락은 없다",
       profileImageUrl: "https://avatars.githubusercontent.com/u/103?v=4",
     },
   ]);
@@ -98,7 +98,9 @@ export default function FollowersPage() {
                 {user.nickname}{" "}
                 <span className="text-gray-500">@{user.username}</span>
               </div>
-              <div className="text-gray-500 text-sm truncate">{user.bio}</div>
+              <div className="text-gray-500 text-sm truncate">
+                {user.introduce}
+              </div>
             </div>
             <button
               className="border border-emerald-500 text-emerald-600 px-5 py-1.5 rounded-full font-semibold hover:bg-emerald-50 transition"

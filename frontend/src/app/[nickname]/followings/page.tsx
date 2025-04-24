@@ -6,7 +6,7 @@ type FollowingUser = {
   id: number;
   nickname: string;
   username: string;
-  bio: string;
+  introduce: string;
   profileImageUrl?: string;
 };
 
@@ -20,21 +20,21 @@ export default function FollowingsPage() {
         id: 1,
         nickname: "Yeonghwan",
         username: "jghff700",
-        bio: "Non-volatile Memory",
+        introduce: "Non-volatile Memory",
         profileImageUrl: "https://avatars.githubusercontent.com/u/1?v=4",
       },
       {
         id: 2,
         nickname: "미소",
         username: "reum107",
-        bio: "https://blog.areumsheep.vercel.app/ 으로 이동 중 🏃‍♂️",
+        introduce: "https://blog.areumsheep.vercel.app/ 으로 이동 중 🏃‍♂️",
         profileImageUrl: "https://avatars.githubusercontent.com/u/2?v=4",
       },
       {
         id: 3,
         nickname: "최정민",
         username: "cjm2021401",
-        bio: "DevOps Engineer",
+        introduce: "DevOps Engineer",
         profileImageUrl: "https://avatars.githubusercontent.com/u/3?v=4",
       },
     ]);
@@ -92,7 +92,9 @@ export default function FollowingsPage() {
                   {user.nickname}{" "}
                   <span className="text-gray-500">@{user.username}</span>
                 </div>
-                <div className="text-gray-500 text-sm truncate">{user.bio}</div>
+                <div className="text-gray-500 text-sm truncate">
+                  {user.introduce}
+                </div>
               </div>
               <button
                 className="border border-emerald-500 text-emerald-600 px-5 py-1.5 rounded-full font-semibold hover:bg-emerald-50 transition"

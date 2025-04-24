@@ -13,11 +13,14 @@ import { PageDto } from "@/types/board";
 import Pagination from "@/components/common/Pagination";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import AttendanceCalendar from "@/components/attendance/AttendanceCalendar";
+import { useGlobalLoginUser } from "@/stores/auth/loginUser";
 
 export default function MyBoardPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isLogin, loginUser, logoutAndHome, isLoginUserPending } =
+    useGlobalLoginUser();
 
   // URL에서 받은 닉네임 디코딩
   const encodedNickname = params?.nickname as string;
@@ -37,6 +40,91 @@ export default function MyBoardPage() {
     searchParams.get("showAttendance") || false
   );
   const boardsPerPage = 10; // 한 페이지에 10개 게시글 표시
+
+  // 팔로우 상태 (ownerInfo?.isFollowing 등 실제 값으로 대체)
+  const [isFollowing, setIsFollowing] = useState(
+    ownerInfo?.isFollowing ?? false
+  );
+  //그냥 닉네임 가져오면 되는 문제제
+  // 블로그 주인 여부 (ownerInfo?.isOwner 등 실제 값으로 대체)
+  const isOwner = loginUser?.nickname === nickname ? true : false;
+  const loginUserId = loginUser?.id ?? 0; // 로그인한 사용자 ID
+
+  useEffect(() => {
+    const fetchFollowStatus = async () => {
+      if (!ownerInfo?.id) return;
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/followStatus/${ownerInfo.id}`,
+          {
+            credentials: "include",
+          }
+        );
+        if (!response.ok) throw new Error("팔로우 상태 조회 실패");
+        const data = await response.json();
+        console.log("팔로우 상태 API 응답 데이터:", data);
+        // 서버 응답이 { isFollowing: true/false } 형태라고 가정
+        setIsFollowing(data.isFollowing);
+      } catch (err) {
+        setIsFollowing(false);
+      }
+    };
+    fetchFollowStatus();
+  }, [ownerInfo?.id]);
+
+  // 팔로우/언팔로우 버튼 클릭 핸들러
+
+  const handleFollowToggle = async () => {
+    if (!isLogin) {
+      router.push("/login");
+      return;
+    }
+    if (!ownerInfo) {
+      alert("정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+    if (!isFollowing) {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/follow/${ownerInfo.id}`,
+          {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("팔로우 요청 실패");
+        }
+        // 성공 시 팔로우 상태 토글
+        setIsFollowing((prev) => !prev);
+      } catch (err) {
+        alert("팔로우 처리 중 오류가 발생했습니다.");
+      }
+    } else {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/unfollow/${ownerInfo.id}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("언팔로우 요청 실패");
+        }
+        // 성공 시 팔로우 상태 토글
+        setIsFollowing((prev) => !prev);
+      } catch (err) {
+        alert("언팔로우 처리 중 오류가 발생했습니다.");
+      }
+    }
+  };
 
   // 필터링된 게시글 데이터
   const filteredBoardData =
@@ -168,6 +256,10 @@ export default function MyBoardPage() {
     fetchHashtags();
   }, [nickname, currentPage, selectedTag]);
 
+  useEffect(() => {
+    setIsFollowing(ownerInfo?.isFollowing ?? false);
+  }, [ownerInfo]);
+
   // 로딩 중 표시
   if (loading && boardData.length === 0) {
     return <LoadingSpinner size="md" color="rose-500" height="h-60" />;
@@ -290,6 +382,21 @@ export default function MyBoardPage() {
               </p>
             </div>
           </div>
+
+          {/* 팔로우/언팔로우 버튼: 블로그 주인이 아닐 때만 노출 */}
+          {!isOwner && (
+            <button
+              disabled={!ownerInfo}
+              className={`w-full ${
+                isFollowing
+                  ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  : "bg-emerald-50 text-emerald-600 border border-emerald-500 hover:bg-emerald-100"
+              } font-bold py-2 px-4 rounded mb-4 transition`}
+              onClick={handleFollowToggle}
+            >
+              {isFollowing ? "언팔로우" : "팔로우"}
+            </button>
+          )}
 
           {/* 통계 정보 */}
           <div className="space-y-2 border-t pt-4">
