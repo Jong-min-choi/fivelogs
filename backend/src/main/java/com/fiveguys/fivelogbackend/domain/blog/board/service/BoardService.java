@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,7 @@ public class BoardService {
     private final BlogRepository blogRepository;
     private final HashTagService hashTagService;
     private final TaggingService taggingService;
+    private final TrendingBoardService trendingBoardService;
 
     @Transactional
     public Board createBoard(CreateBoardRequestDto boardDto, Long id) {
@@ -95,6 +97,13 @@ public class BoardService {
         PageDto unitPageInit = PageUt.get10unitPageDto(pageBoards.getNumber(), pageBoards.getTotalPages());
 
         List<Board> boards = pageBoards.getContent();
+        List<BoardSummaryDto> boardSummaryDtoList = getBoardSummaryDtos(boards);
+
+
+        return new BoardPageResponseDto(boardSummaryDtoList, unitPageInit);
+    }
+
+    private List<BoardSummaryDto> getBoardSummaryDtos(List<Board> boards) {
         List<Long> boardIds = boards.stream().map(Board::getId).toList();
 
         // boardId -> [해시태그들] 맵
@@ -107,9 +116,7 @@ public class BoardService {
                     return BoardSummaryDto.from(board, hashtags);
                 })
                 .toList();
-
-
-        return new BoardPageResponseDto(boardSummaryDtoList, unitPageInit);
+        return boardSummaryDtoList;
     }
 
     @Transactional
@@ -155,7 +162,32 @@ public class BoardService {
     public void increaseViewCount(Long boardId){
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 boardId 입니다."));
         board.setViews(board.getViews() + 1);
-        boardRepository.save(board);
+        Board savedBoard = boardRepository.save(board);
+        trendingBoardService.increaseViewCount(savedBoard.getId());
     }
+
+    @Transactional(readOnly = true)
+    public List<BoardSummaryDto> getTrendingBoards(){
+        List<Long> boardIds = trendingBoardService.getTopTrendingBoards(10);
+        List<Board> boards = boardRepository.findAllById(boardIds);
+
+        return getBoardSummaryDtos(boards);
+    }
+    /*
+
+       List<Long> boardIds = boards.stream().map(Board::getId).toList();
+
+        // boardId -> [해시태그들] 맵
+        Map<Long, List<String>> hashtagMap = taggingService.getHashtagsGroupedByBoardIds(boardIds);
+
+
+        List<BoardSummaryDto> boardSummaryDtoList = boards.stream()
+                .map(board -> {
+                    List<String> hashtags = hashtagMap.getOrDefault(board.getId(), List.of());
+                    return BoardSummaryDto.from(board, hashtags);
+                })
+                .toList();
+
+     */
 
 }
