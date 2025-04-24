@@ -88,6 +88,30 @@ export default function ChangePasswordPage() {
       <div className="text-center text-xs text-gray-400 mt-8">
         © 2024 FIVE Log. All rights reserved.
       </div>
+
+      <style jsx>{`
+        .custom-calendar {
+          width: 900px !important; /* 전체 달력 너비를 넓힘 */
+          max-width: 100%;
+          background: white;
+          border: 1px solid #eee;
+          border-radius: 8px;
+          padding: 16px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .custom-calendar .react-calendar__tile {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          min-width: 110px; /* 타일 최소 너비를 넓힘 */
+          height: 100px;
+          padding: 8px 0;
+          position: relative;
+          /* margin: 0 4px; ← margin은 주지 마세요! (달력 깨짐 방지) */
+        }
+      `}</style>
     </>
   );
 }

@@ -148,7 +148,7 @@ export default function BoardDetail() {
 
     try {
       const response = await fetch(
-        `http://localhost:8090/api/boards/${boardId}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}`,
         {
           method: "DELETE",
         }
