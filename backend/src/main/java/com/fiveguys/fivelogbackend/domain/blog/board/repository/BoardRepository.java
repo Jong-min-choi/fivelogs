@@ -29,7 +29,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     """)
     Optional<Board> findWithUserById(@Param("boardId") Long boardId);
 
-    @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.deleted = false")
+    @Query("SELECT b FROM Board b JOIN FETCH b.user")
     Page<Board> findAllWithUser(Pageable pageable);
 
     @Query("SELECT b FROM Board b JOIN FETCH b.user where b.user.nickname = :nickname")

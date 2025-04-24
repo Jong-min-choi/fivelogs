@@ -39,7 +39,6 @@ public class CreateBoardResponseDto {
         dto.createdDate = board.getCreatedDate();
         dto.blogTitle = board.getTitle();
         dto.status = board.getStatus();
-        dto.deleted = board.isDeleted();
         //수정할때 나오게
         if (!board.getUpdatedDate().isEqual(board.getCreatedDate())) {
             dto.updatedDate = board.getUpdatedDate();
