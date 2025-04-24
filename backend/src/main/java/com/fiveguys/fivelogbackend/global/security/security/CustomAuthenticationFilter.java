@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -23,6 +24,16 @@ import java.util.Optional;
 public class CustomAuthenticationFilter extends OncePerRequestFilter {
     private final UserService userService;
     private final Rq rq;
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private final String[] permitURL = {
+             "/api/users/login", "/api/users/join",
+            "/api/boards/*/views"
+
+    };
+    //GET 예외
+    private final String[] requestGetExceptionURL = {
+            "/api/users/me", "/api/attendance", "/api/users/me/mypage",
+    };
 
     record AuthTokens(String refreshToken, String accessToken) {
     }
@@ -68,24 +79,38 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         return user;
     }
 
+    private boolean basicFilterPath(String requestURI){
+        for (String condition : permitURL) {
+            if(pathMatcher.match(condition, requestURI)) return true;
+
+        }
+        return false;
+    }
+    private boolean requestGetExceptionPath(String requestURI){
+        for (String condition : requestGetExceptionURL) {
+            if(pathMatcher.match(condition, requestURI)) return false;
+        }
+        return true;
+    }
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String method = request.getMethod();
-        if (!request.getRequestURI().startsWith("/api/")) {
+        String requestURI = request.getRequestURI();
+        if (!requestURI.startsWith("/api/")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        //  GET 요청은 모두 인증 없이 통과, 예외는 필요함 ex) mypage
-        if ("GET".equalsIgnoreCase(method) && !request.getRequestURI().startsWith("/api/users")
-                && !request.getRequestURI().startsWith("/api/attendance")
-        ) {
+        // /users/... 의 get은 전부다 인증이 요구됨
+        if (basicFilterPath(requestURI)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-
-        if (List.of("/api/users/login",  "/api/users/join").contains(request.getRequestURI())) {
+        //  GET 요청은 모두 인증 없이 통과, requestGetExceptionPath 통해 예외는 인증 필요
+        if ("GET".equalsIgnoreCase(method) && requestGetExceptionPath(requestURI) ) {
             filterChain.doFilter(request, response);
             return;
         }
