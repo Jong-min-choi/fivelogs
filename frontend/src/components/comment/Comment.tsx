@@ -74,7 +74,7 @@ export default function Comment({
     const fetchReplyCount = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8090/api/comments/${comment.id}/replies`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/comments/${comment.id}/replies`,
           {
             credentials: "include",
           }
@@ -99,7 +99,7 @@ export default function Comment({
 
     try {
       const res = await fetch(
-        `http://localhost:8090/api/comments/boards/${boardId}/${comment.id}/reaction`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/boards/${boardId}/${comment.id}/reaction`,
         {
           method: "POST",
           headers: {
@@ -150,7 +150,7 @@ export default function Comment({
     setLoadingReplies(true);
     try {
       const res = await fetch(
-        `http://localhost:8090/api/comments/${comment.id}/replies`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/${comment.id}/replies`,
         {
           method: "GET",
           credentials: "include",
@@ -195,7 +195,7 @@ export default function Comment({
 
     try {
       const res = await fetch(
-        `http://localhost:8090/api/comments/boards/${boardId}/${comment.id}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/boards/${boardId}/${comment.id}`,
         {
           method: "PUT",
           headers: {
@@ -233,7 +233,7 @@ export default function Comment({
 
     try {
       const res = await fetch(
-        `http://localhost:8090/api/comments/boards/${boardId}/${comment.id}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/boards/${boardId}/${comment.id}`,
         {
           method: "DELETE",
           credentials: "include",

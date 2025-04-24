@@ -33,7 +33,9 @@ export default function CommentList({ boardId }: CommentListProps) {
   const fetchComments = async (page: number = 1) => {
     setLoading(true);
     try {
-      const url = new URL(`http://localhost:8090/api/comments/boards/${boardId}/page`);
+      const url = new URL(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/boards/${boardId}/page`
+      );
       url.searchParams.set("page", page.toString());
       url.searchParams.set("size", "10");
       url.searchParams.set("sort", sortBy);
@@ -42,9 +44,9 @@ export default function CommentList({ boardId }: CommentListProps) {
         method: "GET",
         credentials: "include",
         headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
-        }
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
       });
 
       if (!res.ok) {
@@ -56,12 +58,12 @@ export default function CommentList({ boardId }: CommentListProps) {
       const json: CommentResponse = await res.json();
       console.log(json.data.comments[0]);
       if (json.success) {
-        const processedComments = json.data.comments.map(comment => ({
+        const processedComments = json.data.comments.map((comment) => ({
           ...comment,
           deleted: comment.deleted,
           comment: comment.deleted ? "삭제된 댓글입니다." : comment.comment,
           nickname: comment.deleted ? "삭제된 사용자" : comment.nickname,
-          likedByMe: comment.likedByMe
+          likedByMe: comment.likedByMe,
         }));
         setComments(processedComments);
         setPageInfo(json.data.pageInfo);
@@ -94,10 +96,15 @@ export default function CommentList({ boardId }: CommentListProps) {
   };
 
   const handleCommentDelete = (deletedCommentId: number) => {
-    setComments(prevComments => 
-      prevComments.map(comment => 
+    setComments((prevComments) =>
+      prevComments.map((comment) =>
         comment.id === deletedCommentId
-          ? { ...comment, deleted: true, comment: "삭제된 댓글입니다.", nickname: "삭제된 사용자" }
+          ? {
+              ...comment,
+              deleted: true,
+              comment: "삭제된 댓글입니다.",
+              nickname: "삭제된 사용자",
+            }
           : comment
       )
     );

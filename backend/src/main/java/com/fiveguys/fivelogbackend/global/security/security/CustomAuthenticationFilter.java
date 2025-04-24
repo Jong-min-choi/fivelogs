@@ -28,7 +28,6 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     private final String[] permitURL = {
              "/api/users/login", "/api/users/join",
             "/api/boards/*/views"
-
     };
     //GET 예외
     private final String[] requestGetExceptionURL = {
