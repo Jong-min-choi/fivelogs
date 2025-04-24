@@ -20,7 +20,9 @@ public class ChatContentScheduler {
     private final CsQuestionService csQuestionService;
 
     // 매일 자정마다 실행 (필요시 cron 변경)
-//    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
+    //30초 마다 실행
+//    @Scheduled(cron = "*/30 * * * * *")
     public void generateChatContents() throws JsonProcessingException {
         int retries = 0;
         List<ChatContent> chatContent = new ArrayList<>();

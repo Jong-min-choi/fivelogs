@@ -18,12 +18,11 @@ public class HashtagController {
 
     private final TaggingService taggingService;
 
-    @GetMapping("/{nickname}/list")
+    @GetMapping("/{nickname}")
     public ResponseEntity<ApiResponse<List<HashtagCountDto>>>  getHashtagListByNickname(@PathVariable("nickname") String nickname){
         List<HashtagCountDto> hashtagCountDtoList = taggingService.getHashtagCountDtoList(nickname);
 
         return ResponseEntity.ok (ApiResponse.success(hashtagCountDtoList,"hashTag 리스트 만들기 성공"));
     }
-
 
 }

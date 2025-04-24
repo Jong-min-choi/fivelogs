@@ -12,7 +12,7 @@ type LayoutProps = {
 
 export default function ClientLayout({ children }: LayoutProps) {
   const fetchUser = useEffect(() => {
-    fetch("http://localhost:8090/api/users/me", {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me`, {
       method: "GET",
       credentials: "include",
     })
