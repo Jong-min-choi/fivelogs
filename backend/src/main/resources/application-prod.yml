@@ -10,4 +10,5 @@ db:
     password: "${rds.password}"
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-
+cookie:
+  domain: ".fivelogs.site"

@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,6 +30,8 @@ public class Rq {
     private final HttpServletResponse resp;
     private final UserService userService;
     private final RoleService roleService;
+    @Value("${cookie.domain}")
+    private String cookieDomain;
 
     public void setLogin(User user) {
         List<String> roleNames = roleService.getRoleNames(user.getId());
@@ -64,7 +67,7 @@ public class Rq {
     public void setCookie(String name, String value) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .path("/")
-                .domain("localhost")
+                .domain(cookieDomain)
                 .sameSite("Strict")
                 .secure(true)
                 .httpOnly(true)
