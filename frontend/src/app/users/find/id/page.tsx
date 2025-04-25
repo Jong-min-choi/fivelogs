@@ -1,35 +1,34 @@
 "use client";
 import { useState } from "react";
-import Layout from "@/app/ClientLayout";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function FindIdPage() {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [authCode, setAuthCode] = useState("");
-  const [isAuthCodeSent, setIsAuthCodeSent] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
-
-  const handleSendAuthCode = () => {
-    if (phoneNumber) {
-      // 인증번호 전송 로직 구현
-      setIsAuthCodeSent(true);
-      console.log("인증번호 전송: ", phoneNumber);
-    }
-  };
-
-  const handleVerifyAuthCode = () => {
-    if (authCode) {
-      // 인증번호 확인 로직 구현
-      setIsVerified(true);
-      console.log("인증번호 확인: ", authCode);
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const [nickname, setNickname] = useState("");
+  const router = useRouter();
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 아이디 찾기 로직 구현
-    console.log("아이디 찾기 제출");
+    try {
+      const response = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_BASE_URL
+        }/api/users/nickname/${encodeURIComponent(nickname)}/email`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("아이디(이메일) 찾기 요청 실패");
+      }
+      const data = await response.json();
+      // 예시: data.email이 아이디(이메일)라고 가정
+      alert(`아이디(이메일): ${data.data.email}`);
+      router.push("/users/login");
+    } catch (err) {
+      alert("아이디(이메일) 찾기에 실패했습니다.");
+    }
   };
 
   return (
@@ -38,63 +37,27 @@ export default function FindIdPage() {
         <h1 className="text-2xl font-bold text-center mb-8">아이디 찾기</h1>
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label
-              htmlFor="phoneNumber"
-              className="block mb-2 text-sm font-medium"
-            >
-              휴대폰 번호
-            </label>
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                id="phoneNumber"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-rose-300"
-                placeholder="휴대폰 번호를 입력하세요"
-                required
-              />
-              <button
-                type="button"
-                onClick={handleSendAuthCode}
-                className="px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
-              >
-                인증요청
-              </button>
-            </div>
-          </div>
-
           <div className="mb-6">
             <label
-              htmlFor="authCode"
+              htmlFor="nickname"
               className="block mb-2 text-sm font-medium"
             >
-              인증코드
+              닉네임
             </label>
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                id="authCode"
-                value={authCode}
-                onChange={(e) => setAuthCode(e.target.value)}
-                className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-rose-300"
-                placeholder="인증코드를 입력하세요"
-                required
-              />
-              <button
-                type="button"
-                onClick={handleVerifyAuthCode}
-                className="px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
-              >
-                코드 확인
-              </button>
-            </div>
+            <input
+              type="text"
+              id="nickname"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-rose-300"
+              placeholder="닉네임을 입력하세요"
+              required
+            />
           </div>
 
           <button
             type="submit"
-            className="w-full py-3 bg-rose-400 text-white rounded hover:bg-rose-500 transition mb-4"
+            className="w-full py-3  bg-rose-400 text-white rounded hover:bg-rose-500 transition mb-4"
           >
             아이디 찾기
           </button>

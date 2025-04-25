@@ -37,7 +37,7 @@ public class EmailService {
         return code.equals(savedCode);
     }
 
-    private String generateRandomCode() {
+    public String generateRandomCode() {
         return String.valueOf((int)(Math.random() * 899999) + 100000); // 6자리 숫자
     }
 }

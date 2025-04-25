@@ -9,10 +9,15 @@ import com.fiveguys.fivelogbackend.domain.user.follow.repository.FollowRepositor
 import com.fiveguys.fivelogbackend.domain.user.role.service.RoleService;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.BlogOwnerDto;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.MyPageDto;
+import com.fiveguys.fivelogbackend.domain.user.user.dto.ResetPasswordDto;
+import com.fiveguys.fivelogbackend.domain.user.user.dto.UserEmailDto;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
+import com.fiveguys.fivelogbackend.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Optional;
 
@@ -24,7 +29,7 @@ public class UserCommandService {
     private final BlogService blogService;
     private final BoardService boardService;
     private final FollowRepository followRepository;
-
+    private final EmailService emailService;
     /*
     두 가지 방법
     1. user와 result를 동시에 리턴 ,< 별로임
@@ -83,6 +88,16 @@ public class UserCommandService {
         Blog blog = blogService.findByUserId(user.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id입니다."));
 
         return MyPageDto.from(user, blog.getTitle());
+    }
+
+    // 임의의 비밀번호 설정
+    @Transactional
+    public ResetPasswordDto resetPassword(String email, String code){
+        boolean result = emailService.verifyCode(email, code);
+        if(!result) throw new IllegalArgumentException ("email 혹은 code가 잘 못되었습니다.");
+        String resetPassword = emailService.generateRandomCode();
+        String newPassword = userService.changePassword(email, resetPassword);
+        return new ResetPasswordDto(newPassword);
     }
 
 

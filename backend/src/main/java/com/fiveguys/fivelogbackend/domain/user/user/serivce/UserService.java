@@ -1,5 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.user.user.serivce;
 
+import com.fiveguys.fivelogbackend.domain.user.user.dto.ResetPasswordDto;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.repository.UserRepository;
 import com.fiveguys.fivelogbackend.global.rq.Rq;
@@ -132,5 +133,14 @@ public class UserService {
     public Long countUsers(){
         return userRepository.count();
     }
+
+    @Transactional
+    public String changePassword(String email, String newPassword){
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 email입니다."));
+        String encode = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encode);
+        return newPassword;
+    }
+
 
 }
