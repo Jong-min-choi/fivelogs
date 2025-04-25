@@ -60,8 +60,9 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<MeUserResponseDto>> getMe() {
         User user = rq.getActor();
-
+        log.info("user {}", user);
         MeUserResponseDto me = MeUserResponseDto.builder()
+                .id(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .build();

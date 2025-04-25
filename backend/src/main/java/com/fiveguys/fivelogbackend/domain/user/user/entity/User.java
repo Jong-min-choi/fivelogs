@@ -40,10 +40,10 @@ public class User {
     @JoinColumn(name = "image_id", nullable = true)
     Image profileImage;
 
-    @OneToMany(mappedBy = "follower")
+    @OneToMany(mappedBy = "follow", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> follower;
 
-    @OneToMany(mappedBy = "followed")
+    @OneToMany(mappedBy = "followed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> followed;
 
     public boolean isAdmin() {

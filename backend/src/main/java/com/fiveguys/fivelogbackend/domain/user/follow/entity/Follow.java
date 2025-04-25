@@ -21,8 +21,8 @@ public class Follow extends BaseEntity {
 
     // 팔로우 하는사람
     @ManyToOne
-    @JoinColumn(name = "follower_id")
-    private User follower;
+    @JoinColumn(name = "follow_id")
+    private User follow;
 
     // 팔로우 당한 사람
     @ManyToOne
