@@ -116,12 +116,9 @@ export default function JoinPage() {
       setError("");
       alert("인증 코드가 이메일로 전송되었습니다.");
     } catch (err) {
-      console.log(err.message);
-      if (err.message === "이미 사용 중인 이메일입니다.") {
-        setError("이미 사용 중인 이메일입니다.");
-      } else {
-        setError("인증 코드 발송에 실패했습니다. 다시 시도해주세요.");
-      }
+      console.log(err);
+
+      setError("인증 코드 발송에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsLoading(false);
     }
