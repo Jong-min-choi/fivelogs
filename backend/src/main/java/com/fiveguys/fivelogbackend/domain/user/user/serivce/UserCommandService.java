@@ -5,6 +5,7 @@ import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.blog.blog.service.BlogService;
 import com.fiveguys.fivelogbackend.domain.blog.board.service.BoardService;
 import com.fiveguys.fivelogbackend.domain.blog.comment.service.CommentService;
+import com.fiveguys.fivelogbackend.domain.user.follow.repository.FollowRepository;
 import com.fiveguys.fivelogbackend.domain.user.role.service.RoleService;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.BlogOwnerDto;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.MyPageDto;
@@ -22,6 +23,7 @@ public class UserCommandService {
     private final RoleService roleService;
     private final BlogService blogService;
     private final BoardService boardService;
+    private final FollowRepository followRepository;
 
     /*
     두 가지 방법
@@ -56,18 +58,22 @@ public class UserCommandService {
      */
     @Transactional(readOnly = true)
     public BlogOwnerDto getBlogOwnerDto(String nickname){
-        User user = userService.findByNickname(nickname).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 nickname 입니다."));
+        User owner = userService.findByNickname(nickname).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 nickname 입니다."));
 
         Long blogBoardCount = boardService.getBlogBoardCount(nickname);
         Long viewCount = boardService.getAllBoardView(nickname);
 
+        long followCount = followRepository.countByFollowId(owner.getId());
+        long followedCount = followRepository.countByFollowedId(owner.getId());
+
         return BlogOwnerDto.builder()
-                .nickname(user.getNickname())
-                .introduce(user.getIntroduce())
+                .id(owner.getId())
+                .nickname(owner.getNickname())
+                .introduce(owner.getIntroduce())
                 .boardCount(blogBoardCount)
                 .viewCount(viewCount)
-                .followerCount(0L)
-                .followingCount(0L)
+                .followingCount(followCount)
+                .followerCount(followedCount)
                 .build();
     }
 
