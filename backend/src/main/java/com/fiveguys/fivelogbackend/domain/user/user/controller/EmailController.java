@@ -44,4 +44,6 @@ public class EmailController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.success(null, "인증 실패"));
         }
     }
+
+
 }

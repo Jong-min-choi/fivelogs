@@ -2,6 +2,7 @@ package com.fiveguys.fivelogbackend.domain.user.user.controller;
 
 import com.fiveguys.fivelogbackend.domain.user.user.dto.*;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
+import com.fiveguys.fivelogbackend.domain.user.user.serivce.EmailService;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserCommandService;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -89,5 +91,19 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(blogOwnerDto,"success get owner info"));
     }
 
+    @GetMapping("/nickname/{nickname}/email")
+    public ResponseEntity<ApiResponse<UserEmailDto>> getEmail(@PathVariable("nickname") String nickname ){
+        User user = userService.findByNickname(nickname).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 nickname 입니다."));
+        UserEmailDto userEmailDto = new UserEmailDto(user.getEmail());
+        return ResponseEntity.ok(ApiResponse.success(userEmailDto, "이메일 얻기 성공"));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse<ResetPasswordDto>> resetPassword(@RequestBody Map<String, String> body){
+        String email = body.get("email");
+        String code = body.get("code");
+        ResetPasswordDto resetPasswordDto = userCommandService.resetPassword(email, code);
+        return ResponseEntity.ok(ApiResponse.success(resetPasswordDto, "비밀번호 초기화 성공"));
+    }
 
 }
