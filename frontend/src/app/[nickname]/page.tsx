@@ -366,11 +366,24 @@ export default function MyBoardPage() {
         <div className="sticky top-8 bg-white rounded-lg shadow-sm p-5">
           {/* 프로필 영역 */}
           <div className="flex items-start mb-5">
-            <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden mr-4">
-              <div className="w-full h-full flex items-center justify-center text-gray-400 text-2xl font-bold">
-                {nickname.charAt(0).toUpperCase()}
+            {ownerInfo?.profileImageUrl ? (
+              <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden mr-4">
+                <img
+                  src={
+                    process.env.NEXT_PUBLIC_API_BASE_URL +
+                    ownerInfo.profileImageUrl
+                  }
+                  alt="프로필 이미지"
+                  className="w-full h-full object-cover"
+                />
               </div>
-            </div>
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden mr-4">
+                <div className="w-full h-full flex items-center justify-center text-gray-400 text-2xl font-bold">
+                  {nickname.charAt(0).toUpperCase()}
+                </div>
+              </div>
+            )}
             <div className="flex-1">
               <h2 className="text-xl font-bold">
                 {ownerInfo?.nickname || nickname}
