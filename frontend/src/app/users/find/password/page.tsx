@@ -3,13 +3,14 @@ import { useState } from "react";
 import Layout from "@/app/ClientLayout";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function FindPasswordPage() {
   const [email, setEmail] = useState("");
   const [authCode, setAuthCode] = useState("");
   const [isAuthCodeSent, setIsAuthCodeSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-
+  const router = useRouter();
   const handleSendAuthCode = async () => {
     if (!email || !email.includes("@")) {
       alert("유효한 이메일을 입력해주세요.");
@@ -17,7 +18,7 @@ export default function FindPasswordPage() {
     }
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/email/send`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/email/password/send`,
         {
           method: "POST",
           headers: {
@@ -93,7 +94,7 @@ export default function FindPasswordPage() {
       const data = await response.json();
       alert("비밀번호 초기화 성공: " + data.data.password);
       // 필요하다면 로그인 페이지 등으로 이동
-      // router.push("/users/login");
+      router.push("/users/login");
     } catch (err) {
       alert("비밀번호 초기화에 실패했습니다.");
     }
