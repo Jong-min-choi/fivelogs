@@ -97,7 +97,7 @@ export default function JoinPage() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/email/send`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/email/join/send`,
         {
           method: "POST",
           headers: {

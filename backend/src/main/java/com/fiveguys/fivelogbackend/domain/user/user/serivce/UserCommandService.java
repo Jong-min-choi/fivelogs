@@ -94,7 +94,7 @@ public class UserCommandService {
     @Transactional
     public ResetPasswordDto resetPassword(String email, String code){
         boolean result = emailService.verifyCode(email, code);
-        if(!result) throw new IllegalArgumentException ("email 혹은 code가 잘 못되었습니다.");
+        if(!result) throw new IllegalArgumentException ("email 혹은 code가 잘못되었습니다.");
         String resetPassword = emailService.generateRandomCode();
         String newPassword = userService.changePassword(email, resetPassword);
         return new ResetPasswordDto(newPassword);

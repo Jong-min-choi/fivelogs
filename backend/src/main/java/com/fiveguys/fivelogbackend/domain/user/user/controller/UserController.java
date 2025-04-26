@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -106,4 +107,16 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(resetPasswordDto, "비밀번호 초기화 성공"));
     }
 
+    @PostMapping("/change-password")
+    public ResponseEntity<ApiResponse<Void>> changePassword(@RequestBody ChangePasswordDto changePasswordDto){
+        String newPassword = changePasswordDto.getNewPassword();
+        String confirmPassword = changePasswordDto.getConfirmPassword();
+        if (!newPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+        }
+        User actor = rq.getActor();
+        String currentPassword = changePasswordDto.getCurrentPassword();
+        userService.changePassword(actor.getEmail(), currentPassword,newPassword);
+        return ResponseEntity.ok(ApiResponse.success(null,"비밀번호 변경 성공"));
+    }
 }

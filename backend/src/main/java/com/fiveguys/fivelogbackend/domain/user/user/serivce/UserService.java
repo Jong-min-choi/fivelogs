@@ -1,5 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.user.user.serivce;
 
+import com.fiveguys.fivelogbackend.domain.user.user.dto.ChangePasswordDto;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.ResetPasswordDto;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.repository.UserRepository;
@@ -137,10 +138,28 @@ public class UserService {
     @Transactional
     public String changePassword(String email, String newPassword){
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 email입니다."));
-        String encode = passwordEncoder.encode(user.getPassword());
+        String encode = passwordEncoder.encode(newPassword);
         user.setPassword(encode);
         return newPassword;
     }
 
+    @Transactional
+    public void changePassword(String email, String currentPassword, String newPassword) {
+        if (!StringUtils.hasText(currentPassword) || !StringUtils.hasText(newPassword)) {
+            throw new IllegalArgumentException("비밀번호는 필수 입력입니다.");
+        }
 
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 email입니다."));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new IllegalArgumentException("기존 비밀번호와 새 비밀번호가 같습니다.");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+    }
 }
