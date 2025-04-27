@@ -125,4 +125,17 @@ public class BoardController {
         return ResponseEntity.ok().body(ApiResponse.success(trendingBoards, "트랜딩 게시판 조회 성공"));
     }
 
+    @GetMapping("/search")
+    @Operation(summary = "게시글 제목 검색", description = "제목에 keyword가 포함된 게시글 검색 (공개글만)")
+    public ResponseEntity<ApiResponse<List<BoardSearchResponseDto>>> searchBoardsByTitle(
+            @RequestParam("keyword") String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        List<BoardSearchResponseDto> result = boardService.searchBoardsByTitle(keyword, page, size);
+        return ResponseEntity.ok(ApiResponse.success(result, "게시물 제목으로 검색합니다."));
+    }
+
+
+
 }

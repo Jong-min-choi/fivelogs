@@ -30,8 +30,13 @@ public class User {
     String nickname;
     @Column(length = 50, nullable = false)
     String introduce;
-    @Column(name = "SNS_link")
-    SNSLinks SNSLink;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "githubLink", column = @Column(name = "github_link")),
+            @AttributeOverride(name = "instagramLink", column = @Column(name = "instagram_link")),
+            @AttributeOverride(name = "twitterLink", column = @Column(name = "twitter_link"))
+    })
+    private SNSLinks snsLink;
     @Column(length = 255)
     String refreshToken;
     @Column(length = 20)
@@ -82,6 +87,4 @@ public class User {
 
         return authorities;
     }
-
-
 }

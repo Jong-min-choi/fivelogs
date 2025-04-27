@@ -1,9 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.blog.comment.controller;
 
-import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentRequestDto;
-import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentResponseDto;
-import com.fiveguys.fivelogbackend.domain.blog.comment.dto.LikeRequestDto;
-import com.fiveguys.fivelogbackend.domain.blog.comment.dto.LikeResponseDto;
+import com.fiveguys.fivelogbackend.domain.blog.comment.dto.*;
 import com.fiveguys.fivelogbackend.domain.blog.comment.service.CommentService;
 import com.fiveguys.fivelogbackend.global.pagination.PageDto;
 import com.fiveguys.fivelogbackend.global.pagination.PageUt;
@@ -14,6 +11,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +46,7 @@ public class CommentController {
             @PathVariable("boardId") Long boardId
     ) {
         List<CommentResponseDto> comments = commentService.getCommentsByBoard(boardId);
+        comments.forEach(c -> System.out.println("commentId: " + c.getId() + ", likedByMe: " + c.getLikedByMe()));
         return ResponseEntity.ok(ApiResponse.success(comments, "게시글의 모든 댓글을 조회했습니다."));
     }
 
@@ -85,6 +86,7 @@ public class CommentController {
             @PathVariable("id") Long commentId,
             @RequestBody LikeRequestDto request) {
         LikeResponseDto response = commentService.reactToComment(commentId, request.isLike());
+
         return ResponseEntity.ok(ApiResponse.success(response, "리액션이 처리되었습니다."));
     }
 
@@ -119,4 +121,25 @@ public class CommentController {
         List<CommentResponseDto> replies = commentService.getRepliesByParent(parentId);
         return ResponseEntity.ok(ApiResponse.success(replies, "대댓글을 조회했습니다."));
     }
+
+//    //검색기능
+//    @GetMapping("/boards/search-by-comment")
+//    @Operation(summary = "댓글 키워드로 게시글+댓글 검색", description = "댓글에 키워드가 포함된 게시글 제목과 댓글을 검색합니다.")
+//    public ResponseEntity<ApiResponse<?>> searchCommentsWithBoardTitle(
+//            @RequestParam("keyword") String keyword,
+//            @RequestParam(defaultValue = "1") int page,  // ⚡ 1부터 시작
+//            @RequestParam(defaultValue = "10") int size
+//    ) {
+//        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "board.title"));
+//        Page<CommentWithBoardDto> commentPage = commentService
+//                .searchCommentsWithBoardTitle(keyword, pageable);
+//
+//        // PageDto 만들기 (global에 있는거 그대로)
+//        PageDto pageDto = PageUt.get10unitPageDto(commentPage.getNumber(), commentPage.getTotalPages());
+//
+//        return ResponseEntity.ok(ApiResponse.success(Map.of(
+//                "comments", commentPage,
+//                "page", pageDto
+//        ), "댓글을 검색했습니다"));
+//    }
 }

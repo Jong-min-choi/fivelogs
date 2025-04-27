@@ -26,6 +26,8 @@ public class Comment {
     @Column(nullable = false)
     private LocalDateTime updatedDate;
 
+
+
     //좋아요 싫어요 추가
     @Column(nullable = false)
     private int likeCount = 0;
@@ -53,5 +55,6 @@ public class Comment {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Comment> children = new ArrayList<>();
 
-
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<LikeComment> islike = new ArrayList<>();
 }

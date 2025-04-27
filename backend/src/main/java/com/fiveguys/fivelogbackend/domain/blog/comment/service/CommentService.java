@@ -5,6 +5,7 @@ import com.fiveguys.fivelogbackend.domain.blog.board.repository.BoardRepository;
 
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentRequestDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentResponseDto;
+import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentWithBoardDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.LikeResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.entity.Comment;
 import com.fiveguys.fivelogbackend.domain.blog.comment.entity.LikeComment;
@@ -62,13 +63,17 @@ public class CommentService {
     //댓글 조회
     @Transactional(readOnly = true)
     public List<CommentResponseDto> getCommentsByBoard(Long boardId) {
-        User user = rq.getActor();
         List<Comment> topLevelComments = commentRepository.findByBoardIdAndParentIsNull(boardId);
+        User user = rq.getActor();
         return topLevelComments.stream()
                 .map(comment -> {
-                    Boolean likedByMe = likeCommentRepository.findByCommentAndUser(comment, user)
-                            .map(LikeComment::isLiked)
-                            .orElse(null);
+                    Boolean likedByMe = null;
+                    if (user != null) {
+                        likedByMe = likeCommentRepository
+                                .findByCommentAndUser(comment, user)
+                                .map(LikeComment::isLiked)
+                                .orElse(null);
+                    }
                     return CommentResponseDto.fromEntityWithReaction(comment, likedByMe);
                 })
                 .collect(Collectors.toList());
@@ -232,11 +237,13 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public List<CommentResponseDto> getRepliesByParent(Long parentId) {
+        User user= rq.getActor();
         List<Comment> replies = commentRepository.findByParentId(parentId);
         return replies.stream()
                 .map(reply -> {
                     // 로그인 유저의 반응 정보 포함
-                    Boolean likedByMe = likeCommentRepository.findByCommentAndUser(reply, rq.getActor())
+                    Boolean likedByMe = likeCommentRepository
+                            .findByCommentAndUser(reply, user)
                             .map(LikeComment::isLiked)
                             .orElse(null);
                     return CommentResponseDto.fromEntityWithReaction(reply, likedByMe);
@@ -251,5 +258,9 @@ public class CommentService {
         else comment.setDislikeCount(comment.getDislikeCount() + delta);
     }
 
-
+//    // 댓글 검색(게시물 제목 밑에 댓글이 있는 형식)
+//    @Transactional(readOnly = true)
+//    public Page<CommentWithBoardDto> searchCommentsWithBoardTitle(String keyword, Pageable pageable) {
+//        return commentRepository.searchCommentsWithBoardTitle(keyword, pageable);
+//    }
 }

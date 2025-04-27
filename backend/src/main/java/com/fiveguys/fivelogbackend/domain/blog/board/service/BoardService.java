@@ -23,6 +23,7 @@ import com.fiveguys.fivelogbackend.global.rq.Rq;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -227,7 +228,6 @@ public class BoardService {
         Board board = boardRepository.findByIdAndUserId(boardId, user.getId())
                 .orElseThrow(() -> new RuntimeException("해당 댓글이 존재하지 않거나 삭제 권한이 없습니다."));
 
-
 //        //전체다 삭제하고 싶을떄
         boardRepository.delete(board);
 
@@ -237,5 +237,11 @@ public class BoardService {
 //        board.setStatus(BoardStatus.PRIVATE); // 비공개 처리
     }
 
+    public List<BoardSearchResponseDto> searchBoardsByTitle(String keyword, int page, int size) {
+        Page<Board> boards = boardRepository.searchByTitle(keyword, PageRequest.of(page, size));
 
+        return boards.stream()
+                .map(BoardSearchResponseDto::fromEntity)
+                .toList();
+    }
 }
