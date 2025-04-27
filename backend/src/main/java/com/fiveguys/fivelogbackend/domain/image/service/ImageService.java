@@ -227,15 +227,15 @@ public class ImageService {
     }
 
     @Transactional(readOnly = true)
-    public String getImageProfileUrl(Image image){
+    public  String getImageProfileUrl(Image image){
         boolean useS3 = imageProperties.isUseS3();
+        if(Objects.isNull(image)) return null;
         String profileUrl;
         if(useS3){
             profileUrl = s3Service.getViewUrl(image.getPath());
         } else {
             profileUrl = "http://localhost:8090" + imageProperties.getViewUrl()+ image.getId();
         }
-
 
         return profileUrl;
     }

@@ -8,7 +8,6 @@ export interface BlogOwnerDto {
   profileImageLink?: string;
   myIntroduce?: string;
   isMyBlog?: boolean;
-  isFollowing?: boolean;
   followerCount?: number;
   followingCount?: number;
   boardCount?: number;

@@ -24,10 +24,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("""
     SELECT b FROM Board b
     JOIN FETCH b.user u
+    LEFT JOIN FETCH u.profileImage
     JOIN FETCH b.blog bl
     WHERE b.id = :boardId
     """)
-    Optional<Board> findWithUserById(@Param("boardId") Long boardId);
+    Optional<Board> findWithUserAndProfileImageById(@Param("boardId") Long boardId);
 
     @Query("SELECT b FROM Board b JOIN FETCH b.user")
     Page<Board> findAllWithUser(Pageable pageable);

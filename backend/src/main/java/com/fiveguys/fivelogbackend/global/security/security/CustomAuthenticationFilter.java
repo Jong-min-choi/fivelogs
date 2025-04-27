@@ -32,7 +32,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     //GET 요청 예외 검사 링크
     private final String[] requestGetExceptionURL = {
             "/api/users/me", "/api/attendance", "/api/users/me/mypage",
-            "/api/followStatus/*", "/api/users/nickname/*/email"
+            "/api/followStatus/**", "/api/users/nickname/*/email",
     };
 
     record AuthTokens(String refreshToken, String accessToken) {

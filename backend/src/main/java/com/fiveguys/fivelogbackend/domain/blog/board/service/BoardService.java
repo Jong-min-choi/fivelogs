@@ -15,6 +15,9 @@ import com.fiveguys.fivelogbackend.domain.blog.hashtag.repository.HashTagReposit
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.repository.TaggingRepository;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.service.HashTagService;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.service.TaggingService;
+import com.fiveguys.fivelogbackend.domain.image.config.ImageProperties;
+import com.fiveguys.fivelogbackend.domain.image.entity.Image;
+import com.fiveguys.fivelogbackend.domain.image.service.ImageService;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import com.fiveguys.fivelogbackend.global.pagination.PageDto;
@@ -44,6 +47,7 @@ public class BoardService {
     private final HashTagService hashTagService;
     private final TaggingService taggingService;
     private final TrendingBoardService trendingBoardService;
+    private final ImageService imageService;
     private final Rq rq;
 
     @Transactional
@@ -127,12 +131,15 @@ public class BoardService {
     @Transactional
     public BoardDetailDto getBlogDetailDto( Long boardId){
         log.info("boardId {}", boardId);
-        Board board = boardRepository.findWithUserById (boardId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 boardId 입니다."));
+        Board board = boardRepository.findWithUserAndProfileImageById(boardId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 boardId 입니다."));
         // board id를 갖고 있는 모든 taggins를 추출하고
         // taggings 의 tag id를 통해 모든 tag 찾기?
         List<String> hashtagNameList = taggingService.findAllHashtagNameByBoardId(board.getId());
 
-        return BoardDetailDto.from(board, hashtagNameList);
+        Image profileImage = board.getUser().getProfileImage();
+        String imageProfileUrl = imageService.getImageProfileUrl(profileImage);
+
+        return BoardDetailDto.from(board, hashtagNameList, imageProfileUrl);
     }
 
     @Transactional
