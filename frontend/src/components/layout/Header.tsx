@@ -1,47 +1,52 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useGlobalLoginUser } from "@/stores/auth/loginUser";
 
 export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { isLogin, loginUser, logoutAndHome, isLoginUserPending } =
-    useGlobalLoginUser();
+  const router = useRouter();
+  const { isLogin, loginUser, logoutAndHome, isLoginUserPending } = useGlobalLoginUser();
   // console.log(loginUser);
   // console.log(isLogin);
+
+  const handleSearchClick = () => {
+    router.push('/search');
+  };
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+
   if (isLoginUserPending) {
     return <div>로딩중...</div>;
   }
+
   return (
     <header className="flex justify-between items-center mb-8">
       <div className="flex items-center gap-2">
         <Image src="/next.svg" alt="Five Guys 로고" width={30} height={30} />
         <span className="text-rose-500 font-bold">마이페이지</span>
       </div>
-      <div className="flex gap-2 items-center">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="검색"
-            className="border rounded-md py-1 px-3 pr-8 focus:outline-none w-64"
-          />
-          <button className="absolute right-2 top-1/2 transform -translate-y-1/2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              className="bi bi-search"
-              viewBox="0 0 16 16"
-            >
-              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-            </svg>
-          </button>
-        </div>
+      <div className="flex gap-4 items-center">
+        <button
+          onClick={handleSearchClick}
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          title="검색"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="currentColor"
+            className="text-gray-600"
+            viewBox="0 0 16 16"
+          >
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+          </svg>
+        </button>
 
         {isLogin ? (
           <div className="relative">
