@@ -12,6 +12,7 @@ interface MyPageDto {
   githubLink: string;
   instagramLink: string;
   twitterLink: string;
+  profileImageUrl: string;
 }
 
 interface ApiResponse<T> {
@@ -23,6 +24,7 @@ interface ApiResponse<T> {
 export default function MyPage() {
   const [nickname, setNickname] = useState("사용자님");
   const [profileImage, setProfileImage] = useState("");
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [introduction, setIntroduction] = useState("소개글이 없습니다.");
   const [blogTitle, setBlogTitle] = useState("블로그 제목이 없습니다.");
   const [email, setEmail] = useState("");
@@ -60,12 +62,14 @@ export default function MyPage() {
       console.log("마이페이지 데이터:", data);
 
       if (data.success && data.data) {
-        // 받은 데이터로 상태 업데이트
         const myPageData = data.data;
         setNickname(myPageData.nickname || "사용자님");
         setIntroduction(myPageData.introduce || "소개글이 없습니다.");
         setBlogTitle(myPageData.blogTitle || "블로그 제목이 없습니다.");
         setEmail(myPageData.email || "");
+
+        setProfileImage(myPageData.profileImageUrl || ""); // 프로필 이미지 URL 세팅
+        console.log("프로필 이미지 URL:", myPageData.profileImageUrl);
         setGithubLink(myPageData.githubLink || "");
         setInstagramLink(myPageData.instagramLink || "");
         setTwitterLink(myPageData.twitterLink || "");
@@ -75,6 +79,7 @@ export default function MyPage() {
           !!myPageData.instagramLink ||
           !!myPageData.twitterLink;
         setHasSNSLinks(snsExists);
+
 
       } else {
         throw new Error(
@@ -86,6 +91,47 @@ export default function MyPage() {
       setError(err.message || "마이페이지 데이터를 불러올 수 없습니다.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // 프로필 이미지 업로드 핸들러
+  const handleProfileImageChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setProfileImageFile(file);
+
+    // 미리보기
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfileImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // 서버 업로드 예시
+    const formData = new FormData();
+    formData.append("profileImage", file);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/images/profile/upload`,
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        }
+      );
+      if (!response.ok) throw new Error("프로필 이미지 업로드 실패");
+      // 업로드 성공 후 서버에서 받은 이미지 URL로 갱신 (예시)
+      const data = await response.json();
+      if (data.data?.profileImageUrl) {
+        console.log(data.data);
+        setProfileImage(data.data.profileImageUrl);
+      }
+      console.log("프로필 이미지 업로드 성공:", data.data);
+      alert("프로필 이미지가 변경되었습니다.");
+    } catch (err) {
+      alert("프로필 이미지 업로드에 실패했습니다.");
     }
   };
 
@@ -169,9 +215,22 @@ export default function MyPage() {
               </span>
             )}
           </div>
-          <button className="text-rose-400 text-sm mb-4">
+          <button
+            className="text-rose-400 text-sm mb-4"
+            onClick={() =>
+              document.getElementById("profileImageInput")?.click()
+            }
+            type="button"
+          >
             프로필 사진 변경
           </button>
+          <input
+            id="profileImageInput"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleProfileImageChange}
+          />
           <h2 className="text-xl font-bold mb-1">{nickname}</h2>
           <p className="text-gray-600 mb-4">Frontend Developer</p>
 

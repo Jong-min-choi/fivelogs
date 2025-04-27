@@ -1,6 +1,8 @@
 package com.fiveguys.fivelogbackend.domain.user.user.serivce;
 
-<<<<<<< HEAD
+import com.fiveguys.fivelogbackend.domain.image.config.ImageProperties;
+import com.fiveguys.fivelogbackend.domain.image.service.ImageService;
+import com.fiveguys.fivelogbackend.domain.user.user.dto.MeUserResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentRequestDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.entity.Comment;
@@ -8,16 +10,17 @@ import com.fiveguys.fivelogbackend.domain.user.user.dto.MyPageDto;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.SNSLinkRequestDto;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.SNSLinkResponseDto;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.SNSLinks;
-=======
+
 import com.fiveguys.fivelogbackend.domain.user.user.dto.ChangePasswordDto;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.ResetPasswordDto;
->>>>>>> f3ec6c4c07ba176264408e92864c2fea81414630
+
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.repository.UserRepository;
 import com.fiveguys.fivelogbackend.global.rq.Rq;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jmx.access.InvalidInvocationException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -88,9 +91,17 @@ public class UserService {
     public Optional<User> findByNickname(String nickname) {
         return userRepository.findByNickname(nickname);
     }
+    public Optional<User> findByNicknameWithProfileImage(String nickname){
+        return userRepository.findByNicknameWithProfileImage(nickname);
+    }
 
     public Optional<User> findById(long authorId) {
         return userRepository.findById(authorId);
+    }
+    @Transactional(readOnly = true)
+    public User findByIdWithProfileImage(Long id) {
+        return userRepository.findByIdWithProfileImage(id)
+                .orElseThrow(() -> new InvalidInvocationException("존재하지 않는 userId 입니다."));
     }
 
     public String genAccessToken(User user) {
@@ -212,4 +223,10 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(newPassword));
     }
+    @Transactional(readOnly = true)
+    public List<User> findAllByProfileImageId(Long imageId){
+        return userRepository.findAllByProfileImageId(imageId);
+    }
+
+
 }

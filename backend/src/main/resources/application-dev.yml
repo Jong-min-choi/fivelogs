@@ -17,3 +17,12 @@ custom:
 
 cookie:
   domain: "localhost"
+
+profile:
+    use_s3: false
+    view_url: "/api/images/view/"
+
+cloud:
+  aws:
+    s3:
+      bucket: fivelogs-bucket

@@ -55,18 +55,18 @@ export default function Header() {
               onClick={toggleDropdown}
             >
               <div className="w-8 h-8 rounded-full bg-gray-300 overflow-hidden flex items-center justify-center">
-                {loginUser.nickname ? (
-                  <span className="text-lg font-bold text-gray-600">
-                    {loginUser.nickname.charAt(0)}
-                  </span>
-                ) : (
+                {loginUser.profileImageUrl ? (
                   <Image
-                    src="/next.svg"
+                    src={`${loginUser.profileImageUrl}`}
                     alt="프로필 이미지"
                     width={32}
                     height={32}
                     className="object-cover"
                   />
+                ) : (
+                  <span className="text-lg font-bold text-gray-600">
+                    {loginUser.nickname.charAt(0)}
+                  </span>
                 )}
               </div>
               <span className="font-medium">{loginUser.nickname}</span>

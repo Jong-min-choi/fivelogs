@@ -41,6 +41,7 @@ application-secret.yml
 
 .idea
 
+## 이미지 파일 저장소
 .images
 
 ## h2 db ##

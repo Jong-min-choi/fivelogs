@@ -5,6 +5,7 @@ type User = {
   id: number;
   email: string;
   nickname: string;
+  profileImageUrl: string;
 };
 // 전역적으로 관리하기 위해 사용
 export const LoginUserContext = createContext<{

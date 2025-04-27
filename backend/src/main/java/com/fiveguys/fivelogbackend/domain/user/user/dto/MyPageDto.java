@@ -27,10 +27,11 @@ public class MyPageDto {
                 .blogTitle(blogTitle)
                 .email(user.getEmail())
                 .nickname(user.getNickname())
-                .introduce(user.getIntroduce())
+                .introduce(user.getIntroduce())  
                 .githubLink(snsLinks != null ? user.getSnsLink().getGithubLink() : null)
                 .instagramLink(snsLinks != null ?user.getSnsLink().getInstagramLink() : null)
                 .twitterLink(snsLinks != null ? user.getSnsLink().getTwitterLink() : null)
+                .profileImageUrl(profileImageUrl)
                 .build();
 
 

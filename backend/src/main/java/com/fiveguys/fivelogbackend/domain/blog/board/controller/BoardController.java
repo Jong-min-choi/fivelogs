@@ -35,22 +35,6 @@ public class BoardController {
     private final TrendingBoardService trendingBoardService;
     private final Rq rq;
 
-//    @PostMapping
-//    @Operation(summary = "게시글 작성")
-//        return ResponseEntity.ok(boardService.createBoard(requestDto));
-//    }
-
-//    @Operation(summary = "게시글 열람")
-//    }
-
-//    @GetMapping("/search-tag")
-//    @Operation(summary = "태그 기반 게시글 검색", description = "해시태그에 해당하는 게시글 검색")
-//    public ResponseEntity<Page<Board>> searchByTag(
-//            @RequestParam String tag,
-//            @PageableDefault(size = 10,  sort = "createdDate",page = 0) Pageable pageable) {
-//        Page<Board> boards = boardService.searchBoardsByHashtag(tag, pageable);
-//        return ResponseEntity.ok(boards);
-//    }
     //user는 있고,
     @PostMapping
     @Operation(summary = "게시글 작성")

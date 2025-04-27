@@ -41,7 +41,7 @@ public class User {
     String refreshToken;
     @Column(length = 20)
     String provider;
-    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id", nullable = true)
     Image profileImage;
 

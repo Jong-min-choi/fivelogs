@@ -13,6 +13,7 @@ export interface BlogOwnerDto {
   followingCount?: number;
   boardCount?: number;
   viewCount?: number;
+  profileImageUrl?: string;
 }
 
 export interface BoardSummaryDto {
