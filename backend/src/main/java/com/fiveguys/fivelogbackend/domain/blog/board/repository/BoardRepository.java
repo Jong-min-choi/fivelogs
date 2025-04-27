@@ -46,4 +46,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("SELECT SUM(b.views) FROM Board b WHERE b.user.nickname = :nickname")
     Long countView(String nickname);
 
+    @Query("""
+        SELECT b FROM Board b
+        WHERE LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        AND b.status = 'PUBLIC'
+    """)
+    Page<Board> searchByTitle(@Param("keyword") String keyword, Pageable pageable);
+
 }

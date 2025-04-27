@@ -19,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -88,6 +89,15 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(blogOwnerDto,"success get owner info"));
     }
 
+    //snslink
+
+    @PostMapping("/me/mypage/sns")
+    @Operation(summary = "SNS 링크 추가/수정", description = "SNS 링크를 추가하거나 수정합니다.")
+    public ResponseEntity<ApiResponse<SNSLinkResponseDto>> saveSNSLink(
+            @RequestBody SNSLinkRequestDto dto) {
+        SNSLinkResponseDto responseDto = userService.updateSNSLink(dto);
+        return ResponseEntity.ok(ApiResponse.success(responseDto, "SNS 링크가 저장되었습니다"));
+    }
     @GetMapping("/nickname/{nickname}/email")
     public ResponseEntity<ApiResponse<UserEmailDto>> getEmail(@PathVariable("nickname") String nickname ){
         User user = userService.findByNickname(nickname).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 nickname 입니다."));

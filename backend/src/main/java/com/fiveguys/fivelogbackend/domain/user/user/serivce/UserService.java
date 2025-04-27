@@ -3,6 +3,17 @@ package com.fiveguys.fivelogbackend.domain.user.user.serivce;
 import com.fiveguys.fivelogbackend.domain.image.config.ImageProperties;
 import com.fiveguys.fivelogbackend.domain.image.service.ImageService;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.MeUserResponseDto;
+import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentRequestDto;
+import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentResponseDto;
+import com.fiveguys.fivelogbackend.domain.blog.comment.entity.Comment;
+import com.fiveguys.fivelogbackend.domain.user.user.dto.MyPageDto;
+import com.fiveguys.fivelogbackend.domain.user.user.dto.SNSLinkRequestDto;
+import com.fiveguys.fivelogbackend.domain.user.user.dto.SNSLinkResponseDto;
+import com.fiveguys.fivelogbackend.domain.user.user.entity.SNSLinks;
+
+import com.fiveguys.fivelogbackend.domain.user.user.dto.ChangePasswordDto;
+import com.fiveguys.fivelogbackend.domain.user.user.dto.ResetPasswordDto;
+
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.repository.UserRepository;
 import com.fiveguys.fivelogbackend.global.rq.Rq;
@@ -16,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +46,7 @@ public class UserService {
     public Optional<User> findByRefreshToken(String refreshToken) {
         return userRepository.findByRefreshToken(refreshToken);
     }
+
     @Transactional
     public User join(String email, String password, String nickname, String provider) {
         userRepository
@@ -41,13 +54,13 @@ public class UserService {
                 .ifPresent(member -> {
                     throw new RuntimeException("해당 email은 이미 사용중입니다.");
                 });
-        if(StringUtils.hasText(password)) password = passwordEncoder.encode(password);
-        if (userRepository.existsByEmail(email)){
+        if (StringUtils.hasText(password)) password = passwordEncoder.encode(password);
+        if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("이미 가입한 email 입니다.");
         }
         int count = 1;
-        if(userRepository.existsByNickname(nickname)){
-            while(userRepository.existsByNickname(nickname + "_" + count)){
+        if (userRepository.existsByNickname(nickname)) {
+            while (userRepository.existsByNickname(nickname + "_" + count)) {
                 count++;
             }
         }
@@ -55,7 +68,7 @@ public class UserService {
                 .email(email)
                 .password(password)
                 .introduce("안녕하세요 " + nickname + "입니다.")
-                .SNSLink(null)
+                .snsLink(null)
                 .nickname(nickname)
                 .provider(provider)
                 .refreshToken(UUID.randomUUID().toString())
@@ -63,17 +76,19 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
     @Transactional
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id))
             throw new IllegalArgumentException("이미 탈퇴 된 ID입니다 ");
         userRepository.deleteById(id);
     }
+
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    public Optional<User> findByNickname(String nickname){
+    public Optional<User> findByNickname(String nickname) {
         return userRepository.findByNickname(nickname);
     }
     public Optional<User> findByNicknameWithProfileImage(String nickname){
@@ -115,7 +130,7 @@ public class UserService {
     }
 
     @Transactional
-    public User modifyOrJoin(String email,String password,String nickname, String provider) {
+    public User modifyOrJoin(String email, String password, String nickname, String provider) {
         Optional<User> opUser = findByEmail(email);
 
         if (opUser.isPresent()) {
@@ -125,12 +140,12 @@ public class UserService {
             return user;
         }
 
-        return join (email, password, nickname, provider);
+        return join(email, password, nickname, provider);
     }
 
-    public String login(String email, String password){
+    public String login(String email, String password) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isPresent()) {
+        if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if (passwordEncoder.matches(password, user.getPassword())) {
                 return rq.makeAuthCookie(user);
@@ -138,13 +153,48 @@ public class UserService {
         }
         throw new BadCredentialsException("Invalid email or password");
     }
-    public boolean emailExists(String email){return userRepository.existsByEmail(email);}
 
-    public boolean nicknameExists(String nickname){return userRepository.existsByNickname(nickname);}
+    public boolean emailExists(String email) {
+        return userRepository.existsByEmail(email);
+    }
 
-    public Long countUsers(){
+    public boolean nicknameExists(String nickname) {
+        return userRepository.existsByNickname(nickname);
+    }
+
+    public Long countUsers() {
         return userRepository.count();
     }
+
+
+    //SNSLink 추가/수정
+    @Transactional
+    public SNSLinkResponseDto updateSNSLink(SNSLinkRequestDto dto) {
+        User user = userRepository.findById(rq.getActor().getId())
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+//        System.out.println("유저 닉네임: " + user.getNickname());
+        SNSLinks snsLinks = user.getSnsLink();
+//        System.out.println("snsLinks is null? " + (snsLinks == null));
+
+        if (snsLinks == null) {
+            // 링크가 없으면 새로 생성
+            snsLinks = SNSLinks.builder()
+                    .githubLink(dto.getGithubLink())
+                    .instagramLink(dto.getInstagramLink())
+                    .twitterLink(dto.getTwitterLink())
+                    .build();
+            user.setSnsLink(snsLinks);
+        } else {
+            // 링크가 있으면 업데이트
+            snsLinks.setGithubLink(dto.getGithubLink());
+            snsLinks.setInstagramLink(dto.getInstagramLink());
+            snsLinks.setTwitterLink(dto.getTwitterLink());
+        }
+
+        userRepository.save(user);
+        return SNSLinkResponseDto.fromEntity(user.getSnsLink());
+    }
+
 
     @Transactional
     public String changePassword(String email, String newPassword){

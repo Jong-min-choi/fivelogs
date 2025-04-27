@@ -24,7 +24,6 @@ import java.util.List;
 @Entity
 public class Blog extends BaseEntity {
 
-
     @Column(nullable = false)
     private String title;
 

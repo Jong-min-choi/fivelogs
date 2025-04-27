@@ -13,5 +13,4 @@ public class FiveLogBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FiveLogBackendApplication.class, args);
 	}
-
 }

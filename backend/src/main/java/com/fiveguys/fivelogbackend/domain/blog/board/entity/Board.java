@@ -49,5 +49,4 @@ public class Board extends BaseEntity {
 
     @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE, orphanRemoval = true)
     List<Tagging> taggings;
-
 }

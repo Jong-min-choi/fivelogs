@@ -25,7 +25,6 @@ public class CreateBoardResponseDto {
     private LocalDateTime updatedDate;
     private BoardStatus status;
     private List<String> hashtags;
-    private boolean deleted;
 
     public CreateBoardResponseDto(Long boardId, String blogTitle) {
         this.boardId = boardId;

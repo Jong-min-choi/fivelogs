@@ -9,4 +9,5 @@ export interface CommentType {
     likedByUser?: boolean;
     deleted?: boolean;
     replies: CommentType[];
+    likedByMe?: boolean | null;
   }

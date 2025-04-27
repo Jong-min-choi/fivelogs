@@ -18,7 +18,6 @@ interface BoardDetailDto {
   nickName: string;
   profileImageLink: string;
   myIntroduce: string;
-  deleted: boolean;
 }
 
 // 이전/다음 게시글 정보 타입 정의
@@ -259,7 +258,7 @@ export default function BoardDetail() {
               </div>
 
               {/* 수정/삭제 버튼 (로그인 사용자의 게시물이고 삭제되지 않은 경우에만 표시) */}
-              {isMyBoard && !board.deleted && (
+              {isMyBoard && (
                 <div className="flex space-x-2">
                   <Link
                     href={`/${nickname}/${boardId}/edit`}
