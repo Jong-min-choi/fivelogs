@@ -19,7 +19,7 @@ cookie:
   domain: "localhost"
 
 profile:
-    use_s3: true
+    use_s3: false
     view_url: "/api/images/view/"
 
 cloud:
