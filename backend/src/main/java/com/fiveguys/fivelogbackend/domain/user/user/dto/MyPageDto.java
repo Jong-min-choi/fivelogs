@@ -19,8 +19,9 @@ public class MyPageDto {
     String githubLink;
     String instagramLink;
     String twitterLink;
+    String profileImageUrl;
 
-    public static MyPageDto from (User user,String blogTitle){
+    public static MyPageDto from (User user,String blogTitle, String profileImageUrl){
         SNSLinks snsLinks = user.getSnsLink();
 
         return MyPageDto.builder()
