@@ -8,7 +8,6 @@ import com.fiveguys.fivelogbackend.global.response.ApiResponse;
 import com.fiveguys.fivelogbackend.global.rq.Rq;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -31,10 +30,9 @@ public class ImageController {
     //  이미지 업로드
     @Operation(summary = "이미지 업로드", description = "json형태로 받기 + 이미지 파일 꼭 있어야 작동.")
     @PostMapping(value = "/profile/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-
     public ResponseEntity<ApiResponse<ImageResponseDto>> uploadImage(@RequestPart("profileImage") MultipartFile file) {
         User actor = rq.getActor();
-        ImageResponseDto savedImage = imageService.saveImage(file, actor.getId());
+        ImageResponseDto savedImage = imageService.saveImageWithStorageChoice(file, actor.getId());
         ApiResponse<ImageResponseDto> response = ApiResponse.success(savedImage, "이미지 업로드 성공");
         return ResponseEntity.ok(response);
     }

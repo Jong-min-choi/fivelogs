@@ -69,10 +69,8 @@ export default function MyPage() {
         setGithubUrl(myPageData.githubUrl || "");
         setInstagramUrl(myPageData.instagramUrl || "");
         setTwitterUrl(myPageData.twitterUrl || "");
-        setProfileImage(
-          process.env.NEXT_PUBLIC_API_BASE_URL + myPageData.profileImageUrl ||
-            ""
-        ); // 프로필 이미지 URL 세팅
+        setProfileImage(myPageData.profileImageUrl || ""); // 프로필 이미지 URL 세팅
+        console.log("프로필 이미지 URL:", myPageData.profileImageUrl);
       } else {
         throw new Error(
           data.message || "마이페이지 데이터를 불러오는데 실패했습니다."
@@ -117,9 +115,8 @@ export default function MyPage() {
       // 업로드 성공 후 서버에서 받은 이미지 URL로 갱신 (예시)
       const data = await response.json();
       if (data.data?.profileImageUrl) {
-        setProfileImage(
-          process.env.NEXT_PUBLIC_API_BASE_URL + data.data.profileImageUrl
-        );
+        console.log(data.data);
+        setProfileImage(data.data.profileImageUrl);
       }
       console.log("프로필 이미지 업로드 성공:", data.data);
       alert("프로필 이미지가 변경되었습니다.");

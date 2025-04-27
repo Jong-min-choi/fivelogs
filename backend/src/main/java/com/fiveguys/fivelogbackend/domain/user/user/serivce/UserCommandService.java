@@ -84,7 +84,7 @@ public class UserCommandService {
                 .viewCount(viewCount)
                 .followingCount(followCount)
                 .followerCount(followedCount)
-                .profileImageUrl(imageService.getImageProfileUrl(owner.getProfileImage().Id))
+                .profileImageUrl(imageService.getImageProfileUrl(owner.getProfileImage()))
                 .build();
     }
 
@@ -92,9 +92,9 @@ public class UserCommandService {
     public MyPageDto getMyPageDto(Long userId){
         User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 user Id 입니다."));
         Blog blog = blogService.findByUserId(user.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id입니다."));
-        Long imageId = user.getProfileImage().getId();
 
-        String imageUrl = imageService.getImageProfileUrl(imageId);
+
+        String imageUrl = imageService.getImageProfileUrl(user.getProfileImage());
         return MyPageDto.from(user, blog.getTitle(), imageUrl);
     }
 
@@ -114,13 +114,12 @@ public class UserCommandService {
     public MeUserResponseDto getMeUserResponseDto(Long userId){
         User user = userService.findByIdWithProfileImage(userId);
 
-        Image profileImage = user.getProfileImage();
-        log.info("profileImage id: ", profileImage.getId());
+
         return MeUserResponseDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
-                .profileImageUrl(imageService.getImageProfileUrl(profileImage.Id))
+                .profileImageUrl(imageService.getImageProfileUrl(user.getProfileImage()))
                 .build();
     }
 

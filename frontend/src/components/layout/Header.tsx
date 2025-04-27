@@ -52,7 +52,7 @@ export default function Header() {
               <div className="w-8 h-8 rounded-full bg-gray-300 overflow-hidden flex items-center justify-center">
                 {loginUser.profileImageUrl ? (
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_API_BASE_URL}${loginUser.profileImageUrl}`}
+                    src={`${loginUser.profileImageUrl}`}
                     alt="프로필 이미지"
                     width={32}
                     height={32}

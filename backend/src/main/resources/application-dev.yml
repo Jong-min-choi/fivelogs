@@ -19,5 +19,10 @@ cookie:
   domain: "localhost"
 
 profile:
-    use_s3: false
+    use_s3: true
     view_url: "/api/images/view/"
+
+cloud:
+  aws:
+    s3:
+      bucket: fivelogs-bucket

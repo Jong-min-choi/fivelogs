@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 
 @Service
@@ -31,61 +33,115 @@ public class ImageService {
     private final ImageRepository imageRepository;
     private final UserService userService;
     private final ImageProperties imageProperties;
+    private final S3Service s3Service;
+
+    private record ImageFileInfo(String originalName, String serverFileName, String savedPath) {
+
+    }
+    
+    private ImageFileInfo getImageFileInfo(MultipartFile file, String uploadPath){
+        String originalName = file.getOriginalFilename();
+        String serverFileName = UUID.randomUUID().toString() + "_" + originalName;
+        
+        String savedPath = uploadPath + "/" + serverFileName;
+        return new ImageFileInfo(originalName, serverFileName, savedPath);
+    }
+
     // 이미지 저장
     @Transactional
-    public ImageResponseDto saveImage(MultipartFile file, Long userId) {
+    public ImageResponseDto saveImageLocal(MultipartFile file, Long userId) {
 
         if (file.isEmpty()) {
             throw new IllegalArgumentException("파일이 비어 있습니다.");
         }
-
+        
         try {
-            String originalName = file.getOriginalFilename();
-            String serverFileName = UUID.randomUUID().toString() + "_" + originalName;
+            String uploadPath = imageProperties.getUploadPath();
+            ImageFileInfo imageFileInfo = getImageFileInfo(file, uploadPath);
+            
+            String originalName = imageFileInfo.originalName;
+            String serverFileName = imageFileInfo.serverFileName;
+            String savedPath = imageFileInfo.savedPath;
+            
+            // 로컬 저장 경로
+            File destinationDir = new File(System.getProperty("user.dir"), uploadPath);
 
-            // 저장 방식 결정 (로컬 or S3)
-
-            String savedPath = null;
-            if (imageProperties.isUseS3()) {
-                // S3 저장 로직 (예시)
-//                savedPath = s3Uploader.upload(file, "images"); // S3 업로더가 저장 후 URL 반환
-            } else {
-                // 로컬 저장 로직
-                String uploadPath = imageProperties.getUploadPath();
-                File destinationDir = new File(System.getProperty("user.dir"), uploadPath);
-
-                if (!destinationDir.exists()) {
-                    destinationDir.mkdirs();
-                }
-
-                File destination = new File(destinationDir, serverFileName);
-                file.transferTo(destination);
-
-                savedPath = uploadPath + File.separator + serverFileName;
+            if (!destinationDir.exists()) {
+                destinationDir.mkdirs();
             }
 
-            Image image = new Image();
-            image.originalName = originalName;
-            image.serverImageName = serverFileName;
-            image.path = savedPath;
+            File newFile = new File(destinationDir, serverFileName);
+            file.transferTo(newFile);
 
             User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id입니다."));
-
-            Image savedImage = imageRepository.save(image);
+            //기존 이미지 삭제
             Image profileImage = user.getProfileImage();
             File preFile = new File(System.getProperty("user.dir"), profileImage.getPath());
             deleteFile(preFile);
-
-            user.setProfileImage(savedImage);
+            //이미지 저장
+            Image savedImage = saveImage(originalName, serverFileName, savedPath, user);
 
             return ImageResponseDto.builder()
                     .id(savedImage.getId())
                     .originalName(savedImage.originalName)
-                    .path(getImageProfileUrl(savedImage.getId()))
+                    .profileImageUrl(getImageProfileUrl(savedImage))
                     .build();
 
         } catch (IOException e) {
             throw new RuntimeException("파일 저장 중 오류 발생", e);
+        }
+    }
+    @Transactional
+    public Image saveImage(String originalName, String serverFileName, String savedPath, User user) {
+        Image image = new Image();
+        image.originalName = originalName;
+        image.serverImageName = serverFileName;
+        image.path = savedPath;
+
+        Image savedImage = imageRepository.save(image);
+        user.setProfileImage(savedImage);
+        return savedImage;
+    }
+
+    @Transactional
+    public ImageResponseDto saveImageS3(MultipartFile file, Long userId)  {
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("파일이 비어 있습니다.");
+        }
+        try {
+            String uploadPath = imageProperties.getUploadPath();
+            ImageFileInfo imageFileInfo = getImageFileInfo(file, uploadPath);
+
+            String originalName = imageFileInfo.originalName;
+            String serverFileName = imageFileInfo.serverFileName;
+            String savedPath = imageFileInfo.savedPath;
+
+            s3Service.uploadFile(savedPath,file.getInputStream(),file.getSize(), file.getContentType());
+
+            User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id입니다."));
+            Image preProfileImage = user.getProfileImage();
+            s3Service.deleteFile(preProfileImage.getPath());
+            Image savedImage = saveImage(originalName, serverFileName, savedPath, user);
+
+
+            return ImageResponseDto.builder()
+                    .id(savedImage.getId())
+                    .originalName(savedImage.originalName)
+                    .profileImageUrl(getImageProfileUrl(savedImage))
+                    .build();
+        } catch (IOException e) {
+            throw new RuntimeException("파일 저장 중 오류 발생", e);
+        }
+
+    }
+    @Transactional
+    public ImageResponseDto saveImageWithStorageChoice(MultipartFile file, Long userId) {
+        boolean useS3 = imageProperties.isUseS3();
+        // 로컬 저장 또는 S3 저장 선택
+        if (useS3) {
+            return saveImageS3(file, userId);  // S3 저장 로직
+        } else {
+            return saveImageLocal(file, userId);  // 로컬 저장 로직
         }
     }
 
@@ -170,8 +226,18 @@ public class ImageService {
                 .body(resource);
     }
 
-    public String getImageProfileUrl(Long imageId){
-        return imageProperties.getViewUrl() + imageId;
+    @Transactional(readOnly = true)
+    public String getImageProfileUrl(Image image){
+        boolean useS3 = imageProperties.isUseS3();
+        String profileUrl;
+        if(useS3){
+            profileUrl = s3Service.getViewUrl(image.getPath());
+        } else {
+            profileUrl = "http://localhost:8090" + imageProperties.getViewUrl()+ image.getId();
+        }
+
+
+        return profileUrl;
     }
 
 }
