@@ -8,13 +8,17 @@ import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
     // 팔로워 아이디와 팔로잉 아이디를 찾음
-    Optional<Follow> findByFollowerIdAndFollowedId(Long loginUserId, Long targetId);
-
-
+    Optional<Follow> findByFollowIdAndFollowedId(Long loginUserId, Long targetId);
 
     // 파라미터가 팔로우하고있는 사람들을 조회
-    public List<Follow> findByFollowerId(Long blogUserId);
+    public List<Follow> findByFollowId(Long blogUserId);
     // 파라미터가 팔로우하고있는 사람들을 조회
     public List<Follow> findByFollowedId(Long blogUserId);
+
+    // 내가 몇 명을 팔로우하고 있는가? (팔로잉 수)
+    public long countByFollowId(Long blogUserId);
+
+    // 나를 몇 명이 팔로우하고 있는가? (팔로워 수)
+    public long countByFollowedId(Long blogUserId);
 
 }

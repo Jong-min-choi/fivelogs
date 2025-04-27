@@ -1,5 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.user.user.serivce;
 
+<<<<<<< HEAD
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentRequestDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.entity.Comment;
@@ -7,6 +8,10 @@ import com.fiveguys.fivelogbackend.domain.user.user.dto.MyPageDto;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.SNSLinkRequestDto;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.SNSLinkResponseDto;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.SNSLinks;
+=======
+import com.fiveguys.fivelogbackend.domain.user.user.dto.ChangePasswordDto;
+import com.fiveguys.fivelogbackend.domain.user.user.dto.ResetPasswordDto;
+>>>>>>> f3ec6c4c07ba176264408e92864c2fea81414630
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.repository.UserRepository;
 import com.fiveguys.fivelogbackend.global.rq.Rq;
@@ -150,6 +155,7 @@ public class UserService {
         return userRepository.count();
     }
 
+
     //SNSLink 추가/수정
     @Transactional
     public SNSLinkResponseDto updateSNSLink(SNSLinkRequestDto dto) {
@@ -176,5 +182,34 @@ public class UserService {
 
         userRepository.save(user);
         return SNSLinkResponseDto.fromEntity(user.getSnsLink());
+    }
+
+
+    @Transactional
+    public String changePassword(String email, String newPassword){
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 email입니다."));
+        String encode = passwordEncoder.encode(newPassword);
+        user.setPassword(encode);
+        return newPassword;
+    }
+
+    @Transactional
+    public void changePassword(String email, String currentPassword, String newPassword) {
+        if (!StringUtils.hasText(currentPassword) || !StringUtils.hasText(newPassword)) {
+            throw new IllegalArgumentException("비밀번호는 필수 입력입니다.");
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 email입니다."));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new IllegalArgumentException("기존 비밀번호와 새 비밀번호가 같습니다.");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
     }
 }

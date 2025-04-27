@@ -8,10 +8,11 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BlogOwnerDto {
+    private Long id;
     private String nickname;
     private String introduce;
     private Long boardCount;
     private Long viewCount;
-    private Long followerCount;
     private Long followingCount;
+    private Long followerCount;
 }

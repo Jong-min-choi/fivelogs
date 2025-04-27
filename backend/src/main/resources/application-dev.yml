@@ -9,3 +9,11 @@ db:
 
 redis:
   host: localhost
+
+custom:
+  site:
+    frontUrl: "http://localhost:3000"
+    backUrl: "http://localhost:${server.port}"
+
+cookie:
+  domain: "localhost"

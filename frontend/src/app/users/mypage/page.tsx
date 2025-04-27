@@ -320,7 +320,13 @@ export default function MyPage() {
                 />
               </div>
             </div>
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-end mt-4 gap-2">
+              <Link
+                href="/users/change/password"
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition flex items-center"
+              >
+                비밀번호 변경
+              </Link>
               <button
                 type="submit"
                 className="px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"

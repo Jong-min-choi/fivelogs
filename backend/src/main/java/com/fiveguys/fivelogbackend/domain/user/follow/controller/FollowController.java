@@ -1,5 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.user.follow.controller;
 
+import com.fiveguys.fivelogbackend.domain.user.follow.dto.FollowStatusDto;
 import com.fiveguys.fivelogbackend.domain.user.follow.service.FollowService;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.MeUserResponseDto;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
@@ -27,7 +28,7 @@ public class FollowController {
     }
 
     @Operation(summary = "언팔로우", description = "유저가 팔로우한 유저를 언팔로우합니다.")
-    @PostMapping("/unfollow/{followId}")
+    @DeleteMapping("/unfollow/{followId}")
     public ResponseEntity<Void> unfollow(@PathVariable("followId") Long followId) {
         User user = rq.getActor();
         followService.unfollow(user.getId(),followId);
@@ -37,10 +38,11 @@ public class FollowController {
     // 상대 프로필을 봤을때 팔로우했는지 안했는지 띄워주기
     @Operation(summary = "팔로우 상태 확인", description = "유저가 다른 유저를 팔로우했는지 확인.")
     @GetMapping("/followStatus/{followId}")
-    public ResponseEntity<Boolean> followStatus(@PathVariable("followId") Long followId) {
+    public ResponseEntity<FollowStatusDto> followStatus(@PathVariable("followId") Long followId) {
         User user = rq.getActor();
         boolean followStatus = followService.followStatus(user.getId(), followId);
-        return ResponseEntity.ok(followStatus);
+        FollowStatusDto followStatusDto = new FollowStatusDto(followStatus);
+        return ResponseEntity.ok(followStatusDto);
     }
 
     // 내 팔로워 목록 보기

@@ -1,9 +1,7 @@
 custom:
   site:
-    name: "BLOG"
-    cookieDomain: "${custom.prod.cookieDomain}"
-    frontUrl: "${custom.prod.frontUrl}"
-    backUrl: "${custom.prod.backUrl}"
+    frontUrl: "https://www.fivelogs.site"
+    backUrl: "https://api.fivelogs.site"
 
 db:
   datasource:
@@ -11,3 +9,6 @@ db:
     username: "${rds.username}"
     password: "${rds.password}"
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+cookie:
+  domain: ".fivelogs.site"

@@ -4,6 +4,9 @@ import com.fiveguys.fivelogbackend.domain.blog.blog.service.BlogService;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardPageResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import com.fiveguys.fivelogbackend.domain.blog.board.service.BoardService;
+import com.fiveguys.fivelogbackend.domain.user.user.dto.BlogOwnerDto;
+import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
+import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ import java.util.List;
 public class BlogController {
     private final BlogService blogService;
     private final BoardService boardService;
+    private final UserService userService;
 
 //     블로그 이메일 "@" 앞대가리로 조회 응답이니까 응답 dto 사용
 //    @GetMapping("/{userId}")
@@ -72,5 +76,7 @@ public class BlogController {
         log.info("BoardMainPageResponseDto : {}", pageBoardDto.getBoardDtoList().size());
         return ResponseEntity.ok(ApiResponse.success(pageBoardDto, "게시판 페이징 성공"));
     }
+
+
 
 }

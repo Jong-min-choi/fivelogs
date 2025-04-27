@@ -29,9 +29,10 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
              "/api/users/login", "/api/users/join",
             "/api/boards/*/views"
     };
-    //GET 예외
+    //GET 요청 예외 검사 링크
     private final String[] requestGetExceptionURL = {
             "/api/users/me", "/api/attendance", "/api/users/me/mypage",
+            "/api/followStatus/*", "/api/users/nickname/*/email"
     };
 
     record AuthTokens(String refreshToken, String accessToken) {

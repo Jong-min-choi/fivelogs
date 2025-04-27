@@ -2,6 +2,7 @@ package com.fiveguys.fivelogbackend.domain.user.user.controller;
 
 import com.fiveguys.fivelogbackend.domain.user.user.dto.*;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
+import com.fiveguys.fivelogbackend.domain.user.user.serivce.EmailService;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserCommandService;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
@@ -12,8 +13,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -61,8 +64,9 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<MeUserResponseDto>> getMe() {
         User user = rq.getActor();
-
+        log.info("user {}", user);
         MeUserResponseDto me = MeUserResponseDto.builder()
+                .id(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .build();
@@ -97,5 +101,32 @@ public class UserController {
             @RequestBody SNSLinkRequestDto dto) {
         SNSLinkResponseDto responseDto = userService.updateSNSLink(dto);
         return ResponseEntity.ok(ApiResponse.success(responseDto, "SNS 링크가 저장되었습니다"));
+    }
+    @GetMapping("/nickname/{nickname}/email")
+    public ResponseEntity<ApiResponse<UserEmailDto>> getEmail(@PathVariable("nickname") String nickname ){
+        User user = userService.findByNickname(nickname).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 nickname 입니다."));
+        UserEmailDto userEmailDto = new UserEmailDto(user.getEmail());
+        return ResponseEntity.ok(ApiResponse.success(userEmailDto, "이메일 얻기 성공"));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse<ResetPasswordDto>> resetPassword(@RequestBody Map<String, String> body){
+        String email = body.get("email");
+        String code = body.get("code");
+        ResetPasswordDto resetPasswordDto = userCommandService.resetPassword(email, code);
+        return ResponseEntity.ok(ApiResponse.success(resetPasswordDto, "비밀번호 초기화 성공"));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<ApiResponse<Void>> changePassword(@RequestBody ChangePasswordDto changePasswordDto){
+        String newPassword = changePasswordDto.getNewPassword();
+        String confirmPassword = changePasswordDto.getConfirmPassword();
+        if (!newPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+        }
+        User actor = rq.getActor();
+        String currentPassword = changePasswordDto.getCurrentPassword();
+        userService.changePassword(actor.getEmail(), currentPassword,newPassword);
+        return ResponseEntity.ok(ApiResponse.success(null,"비밀번호 변경 성공"));
     }
 }

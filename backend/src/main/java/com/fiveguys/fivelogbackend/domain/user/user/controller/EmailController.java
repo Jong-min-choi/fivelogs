@@ -1,5 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.user.user.controller;
 
+import com.fiveguys.fivelogbackend.domain.user.user.dto.UserEmailDto;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.EmailService;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
@@ -23,13 +24,25 @@ public class EmailController {
     private final EmailService emailService;
     private final UserService userService;
 
-    @PostMapping("/send")
-    public ResponseEntity<ApiResponse<String>> sendCode(@RequestBody Map<String, String> body) {
-        String email = body.get("email");
+    @PostMapping("/join/send")
+    public ResponseEntity<ApiResponse<String>> sendCodeByJoin(@RequestBody UserEmailDto userEmailDto) {
+        String email = userEmailDto.getEmail();
         if(userService.emailExists(email)) {
             return ResponseEntity
                     .badRequest()
                     .body(ApiResponse.fail("이미 사용 중인 이메일입니다."));
+        }
+        emailService.sendVerificationEmail(email);
+        return ResponseEntity.ok(ApiResponse.success(null, "이메일 전송 성공"));
+    }
+//    비밀번호 찾기용 send
+    @PostMapping("/password/send")
+    public ResponseEntity<ApiResponse<String>> sendCodeByFindPassword(@RequestBody UserEmailDto userEmailDto){
+        String email = userEmailDto.getEmail();
+        if(!userService.emailExists(email)) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(ApiResponse.fail("존재하지 않는 email 입니다."));
         }
         emailService.sendVerificationEmail(email);
         return ResponseEntity.ok(ApiResponse.success(null, "이메일 전송 성공"));
