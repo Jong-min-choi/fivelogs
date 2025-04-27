@@ -1,5 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.blog.comment.repository;
 
+import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentWithBoardDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.entity.Comment;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import org.springframework.data.domain.Page;
@@ -27,4 +28,16 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findByParentId(Long parentId);
 
+//    //검색기능
+//    @Query("""
+//    SELECT new com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentWithBoardDto(
+//        c.board.title,
+//        c.comment
+//    )
+//    FROM Comment c
+//    WHERE LOWER(c.comment) LIKE LOWER(CONCAT('%', :keyword, '%'))
+//    AND c.deleted = false
+//    ORDER BY c.board.title DESC
+//""")
+//    Page<CommentWithBoardDto> searchCommentsWithBoardTitle(@Param("keyword") String keyword, Pageable pageable);
 }

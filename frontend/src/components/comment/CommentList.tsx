@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CommentForm from "./CommentForm";
 import Comment, { CommentType } from "./Comment";
 import Pagination from "../common/Pagination";
 import { PageDto } from "@/types/board";
+import MainCommentForm from "./MainCommentForm";
 
 interface CommentListProps {
   boardId: number;
@@ -56,7 +56,7 @@ export default function CommentList({ boardId }: CommentListProps) {
       }
 
       const json: CommentResponse = await res.json();
-      console.log(json.data.comments[0]);
+      
       if (json.success) {
         const processedComments = json.data.comments.map((comment) => ({
           ...comment,
@@ -202,7 +202,7 @@ export default function CommentList({ boardId }: CommentListProps) {
 
           {/* 댓글 작성 폼 - 하단에 배치 */}
           <div className="mt-8 pt-6 border-t">
-            <CommentForm boardId={boardId} onSuccess={handleCommentSuccess} />
+            <MainCommentForm boardId={boardId} onSuccess={handleCommentSuccess} />
           </div>
         </div>
       )}
