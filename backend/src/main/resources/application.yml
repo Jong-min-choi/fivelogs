@@ -74,3 +74,8 @@ logging:
     org.springframework.transaction.interceptor: TRACE
     org.springframework.security: TRACE
 
+image:
+  profile:
+    upload_path: "/image/profile"  # 항상 공통
+    use_s3: ${profile.use_s3}
+    view_url: ${profile.view_url} # 이미지를 보는용, s3는 버킷 저장소 url

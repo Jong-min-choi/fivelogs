@@ -64,11 +64,7 @@ public class UserController {
     public ResponseEntity<ApiResponse<MeUserResponseDto>> getMe() {
         User user = rq.getActor();
         log.info("user {}", user);
-        MeUserResponseDto me = MeUserResponseDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .build();
+        MeUserResponseDto me = userCommandService.getMeUserResponseDto(user.getId());
         return ResponseEntity.ok(ApiResponse.success(me,"인가 성공"));
     }
 

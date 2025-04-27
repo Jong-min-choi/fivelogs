@@ -15,4 +15,5 @@ public class BlogOwnerDto {
     private Long viewCount;
     private Long followingCount;
     private Long followerCount;
+    private String profileImageUrl;
 }
