@@ -15,7 +15,7 @@ type FollowDto = {
 export default function FollowingsPage() {
   const params = useParams();
   const router = useRouter();
-  const blogUserNickname = params.nickname as string;
+  const blogUserNickname = decodeURIComponent(params.nickname as string);
 
   const [followings, setFollowings] = useState<FollowDto[]>([]);
   const [myFollowings, setMyFollowings] = useState<FollowDto[]>([]);
