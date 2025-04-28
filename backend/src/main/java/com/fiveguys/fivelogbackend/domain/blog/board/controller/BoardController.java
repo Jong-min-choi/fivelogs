@@ -29,7 +29,6 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final TrendingBoardService trendingBoardService;
     private final Rq rq;
 
     //user는 있고,
@@ -126,8 +125,6 @@ public class BoardController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate"));
         return ResponseEntity.ok(boardService.searchByKeyword(keyword, pageable));
     }
-
-
 
 
 }
