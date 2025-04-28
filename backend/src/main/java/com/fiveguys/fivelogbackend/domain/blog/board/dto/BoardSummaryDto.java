@@ -24,6 +24,9 @@ public class BoardSummaryDto {
     LocalDateTime updated;
     String nickname;
 
+    String githubLink;
+    String instagramLink;
+    String twitterLink;
 
     public static BoardSummaryDto from(Board board, List<String> hashtagNames){
         return BoardSummaryDto.builder()
@@ -32,6 +35,9 @@ public class BoardSummaryDto {
                 .content(board.getContent())
                 .views(board.getViews())
                 .nickname(board.getUser().getNickname())
+                .githubLink(board.getUser().getSnsLink().getGithubLink())
+                .instagramLink(board.getUser().getSnsLink().getInstagramLink())
+                .twitterLink(board.getUser().getSnsLink().getTwitterLink())
                 .hashtags(hashtagNames)
                 .created(board.getCreatedDate())
                 .updated(board.getUpdatedDate())

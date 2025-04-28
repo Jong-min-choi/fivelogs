@@ -30,6 +30,9 @@ public class BoardDetailDto {
     String nickName;
     String profileImageUrl;
     String myIntroduce;
+    String githubLink;
+    String instagramLink;
+    String twitterLink;
 
     public static BoardDetailDto from (Board board, List<String> hashtagNameList, String viewPath){
         return BoardDetailDto.builder()
@@ -45,6 +48,9 @@ public class BoardDetailDto {
                 .profileImageUrl(viewPath)
                 .createdDateTime(board.getCreatedDate())
                 .updatedDateTime(board.getUpdatedDate())
+                .githubLink(board.getUser().getSnsLink().getGithubLink())
+                .instagramLink(board.getUser().getSnsLink().getInstagramLink())
+                .twitterLink(board.getUser().getSnsLink().getTwitterLink())
                 .build();
     }
 
