@@ -53,6 +53,8 @@ public class UserController {
         String token = userService.login(user.getEmail(), user.getPassword());
         return ResponseEntity.ok(ApiResponse.success(token, "login success"));
     }
+
+
     //유저삭제
     @DeleteMapping("/logout")
     public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal SecurityUser securityUser) {
@@ -125,4 +127,5 @@ public class UserController {
         userService.changePassword(actor.getEmail(), currentPassword,newPassword);
         return ResponseEntity.ok(ApiResponse.success(null,"비밀번호 변경 성공"));
     }
+
 }

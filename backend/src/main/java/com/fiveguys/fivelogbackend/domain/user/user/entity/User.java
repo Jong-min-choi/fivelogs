@@ -51,9 +51,13 @@ public class User {
     @OneToMany(mappedBy = "followed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> followed;
 
-    public boolean isAdmin() {
-        return "admin".equals(email);
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    private UserStatus userStatus;
+
+//    public boolean isAdmin() {
+//        return "admin".equals(email);
+//    }
 
     public boolean matchPassword(String password) {
         return this.password.equals(password);
@@ -82,8 +86,8 @@ public class User {
     public List<String> getAuthoritiesAsStringList() {
         List<String> authorities = new ArrayList<>();
 
-        if (isAdmin())
-            authorities.add("ROLE_ADMIN");
+//        if (isAdmin())
+//            authorities.add("ROLE_ADMIN");
 
         return authorities;
     }
