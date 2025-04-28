@@ -2,6 +2,7 @@ package com.fiveguys.fivelogbackend.global.rq;
 
 import com.fiveguys.fivelogbackend.domain.user.role.service.RoleService;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
+import com.fiveguys.fivelogbackend.domain.user.user.entity.UserStatus;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import com.fiveguys.fivelogbackend.global.security.security.SecurityUser;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,12 +37,17 @@ public class Rq {
 
     public void setLogin(User user) {
         List<String> roleNames = roleService.getRoleNames(user.getId());
+        User contextUser = userService.findById(user.getId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 userId 입니다."));
+        if (contextUser.getUserStatus() == UserStatus.BANNED) {
+            throw new AccessDeniedException("정지된 회원입니다."); // 403 에러 발생
+        }
+
         UserDetails securityUser = new SecurityUser(
-                user.getId(),
-                user.getEmail(),
+                contextUser.getId(),
+                contextUser.getEmail(),
                 "",
-                user.getNickname(),
-                user.getAuthorities(roleNames)
+                contextUser.getNickname(),
+                contextUser.getAuthorities(roleNames)
         );
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(

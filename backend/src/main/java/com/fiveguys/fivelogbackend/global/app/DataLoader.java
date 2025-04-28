@@ -4,6 +4,8 @@ package com.fiveguys.fivelogbackend.global.app;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.CreateBoardRequestDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.BoardStatus;
 import com.fiveguys.fivelogbackend.domain.blog.board.service.BoardService;
+import com.fiveguys.fivelogbackend.domain.user.role.entity.RoleType;
+import com.fiveguys.fivelogbackend.domain.user.role.service.RoleService;
 import com.fiveguys.fivelogbackend.domain.user.user.controller.UserController;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.JoinUserDto;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
@@ -12,6 +14,7 @@ import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserCommandService;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -24,15 +27,25 @@ public class DataLoader implements CommandLineRunner {
     private final UserService userService;
     private final BoardService boardService;
     private final UserCommandService userCommandService;
+    private final RoleService roleService;
+    @Value("${admin.password}")
+    private String adminPassword;
     @Override
     public void run(String... args) throws Exception {
+        if(!roleService.existByName(RoleType.ADMIN)){
+            User join = userService.join("admin@fivelogs.com", adminPassword, "admin", "");
+            roleService.createUserRole(join, RoleType.ADMIN);
+        }
+
         if(userService.countUsers() == 0){
+
             for (int i = 1; i < 11; i++) {
                 String email = "join@test.com" + i;
                 String password = "1234";
                 String nickname = "joinUser_" + i;
                 userCommandService.joinAndCreateBlog ( email, password, nickname, "");
             }
+
             log.info ("✅ 테스트 사용자 10명 등록 완료");
 
             for (int i = 0; i < 15; i++) {

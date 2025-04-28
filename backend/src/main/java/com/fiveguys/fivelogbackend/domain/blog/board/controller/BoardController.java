@@ -32,7 +32,6 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final TrendingBoardService trendingBoardService;
     private final Rq rq;
 
     //user는 있고,
@@ -119,7 +118,5 @@ public class BoardController {
         List<BoardSearchResponseDto> result = boardService.searchBoardsByTitle(keyword, page, size);
         return ResponseEntity.ok(ApiResponse.success(result, "게시물 제목으로 검색합니다."));
     }
-
-
 
 }

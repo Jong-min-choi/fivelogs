@@ -1,5 +1,6 @@
 package com.fiveguys.fivelogbackend.domain.user.user.repository;
 
+import com.fiveguys.fivelogbackend.domain.user.user.dto.AdminUserResponseDto;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -34,5 +35,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
         WHERE LOWER(u.nickname) LIKE LOWER(CONCAT('%', :nickname, '%'))
     """)
     List<User> searchUsersByNickname(@Param("nickname") String nickname);
+
+
 
 }
