@@ -30,13 +30,18 @@ public class User {
     String nickname;
     @Column(length = 50, nullable = false)
     String introduce;
-    @Column(name = "SNS_link")
-    SNSLinks SNSLink;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "githubLink", column = @Column(name = "github_link")),
+            @AttributeOverride(name = "instagramLink", column = @Column(name = "instagram_link")),
+            @AttributeOverride(name = "twitterLink", column = @Column(name = "twitter_link"))
+    })
+    private SNSLinks snsLink;
     @Column(length = 255)
     String refreshToken;
     @Column(length = 20)
     String provider;
-    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id", nullable = true)
     Image profileImage;
 
@@ -46,9 +51,13 @@ public class User {
     @OneToMany(mappedBy = "followed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> followed;
 
-    public boolean isAdmin() {
-        return "admin".equals(email);
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    private UserStatus userStatus;
+
+//    public boolean isAdmin() {
+//        return "admin".equals(email);
+//    }
 
     public boolean matchPassword(String password) {
         return this.password.equals(password);
@@ -77,11 +86,9 @@ public class User {
     public List<String> getAuthoritiesAsStringList() {
         List<String> authorities = new ArrayList<>();
 
-        if (isAdmin())
-            authorities.add("ROLE_ADMIN");
+//        if (isAdmin())
+//            authorities.add("ROLE_ADMIN");
 
         return authorities;
     }
-
-
 }

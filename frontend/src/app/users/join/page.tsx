@@ -97,7 +97,7 @@ export default function JoinPage() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/email/send`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/email/join/send`,
         {
           method: "POST",
           headers: {
@@ -116,8 +116,6 @@ export default function JoinPage() {
       setError("");
       alert("인증 코드가 이메일로 전송되었습니다.");
     } catch (err) {
-      console.log(err);
-
       setError("인증 코드 발송에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsLoading(false);

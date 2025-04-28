@@ -15,6 +15,9 @@ import com.fiveguys.fivelogbackend.domain.blog.hashtag.repository.HashTagReposit
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.repository.TaggingRepository;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.service.HashTagService;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.service.TaggingService;
+import com.fiveguys.fivelogbackend.domain.image.config.ImageProperties;
+import com.fiveguys.fivelogbackend.domain.image.entity.Image;
+import com.fiveguys.fivelogbackend.domain.image.service.ImageService;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import com.fiveguys.fivelogbackend.global.pagination.PageDto;
@@ -23,6 +26,7 @@ import com.fiveguys.fivelogbackend.global.rq.Rq;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -43,6 +47,7 @@ public class BoardService {
     private final HashTagService hashTagService;
     private final TaggingService taggingService;
     private final TrendingBoardService trendingBoardService;
+    private final ImageService imageService;
     private final Rq rq;
 
     @Transactional
@@ -126,12 +131,15 @@ public class BoardService {
     @Transactional
     public BoardDetailDto getBlogDetailDto( Long boardId){
         log.info("boardId {}", boardId);
-        Board board = boardRepository.findWithUserById (boardId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 boardId 입니다."));
+        Board board = boardRepository.findWithUserAndProfileImageById(boardId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 boardId 입니다."));
         // board id를 갖고 있는 모든 taggins를 추출하고
         // taggings 의 tag id를 통해 모든 tag 찾기?
         List<String> hashtagNameList = taggingService.findAllHashtagNameByBoardId(board.getId());
 
-        return BoardDetailDto.from(board, hashtagNameList);
+        Image profileImage = board.getUser().getProfileImage();
+        String imageProfileUrl = imageService.getImageProfileUrl(profileImage);
+
+        return BoardDetailDto.from(board, hashtagNameList, imageProfileUrl);
     }
 
     @Transactional
@@ -227,7 +235,6 @@ public class BoardService {
         Board board = boardRepository.findByIdAndUserId(boardId, user.getId())
                 .orElseThrow(() -> new RuntimeException("해당 댓글이 존재하지 않거나 삭제 권한이 없습니다."));
 
-
 //        //전체다 삭제하고 싶을떄
         boardRepository.delete(board);
 
@@ -237,5 +244,11 @@ public class BoardService {
 //        board.setStatus(BoardStatus.PRIVATE); // 비공개 처리
     }
 
+    public List<BoardSearchResponseDto> searchBoardsByTitle(String keyword, int page, int size) {
+        Page<Board> boards = boardRepository.searchByTitle(keyword, PageRequest.of(page, size));
 
+        return boards.stream()
+                .map(BoardSearchResponseDto::fromEntity)
+                .toList();
+    }
 }

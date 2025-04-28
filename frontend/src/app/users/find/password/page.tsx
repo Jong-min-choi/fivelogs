@@ -3,33 +3,101 @@ import { useState } from "react";
 import Layout from "@/app/ClientLayout";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function FindPasswordPage() {
   const [email, setEmail] = useState("");
   const [authCode, setAuthCode] = useState("");
   const [isAuthCodeSent, setIsAuthCodeSent] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
+  const router = useRouter();
+  const handleSendAuthCode = async () => {
+    if (!email || !email.includes("@")) {
+      alert("유효한 이메일을 입력해주세요.");
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/email/password/send`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("인증 코드 발송에 실패했습니다.");
+      }
 
-  const handleSendAuthCode = () => {
-    if (email) {
-      // 인증번호 전송 로직 구현
+      alert("인증 코드가 이메일로 전송되었습니다.");
       setIsAuthCodeSent(true);
-      console.log("인증번호 전송: ", email);
+    } catch (err) {
+      alert("인증 코드 발송에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
-  const handleVerifyAuthCode = () => {
-    if (authCode) {
-      // 인증번호 확인 로직 구현
+  const handleVerifyAuthCode = async () => {
+    if (!email || !authCode) {
+      alert("이메일과 인증코드를 모두 입력해주세요.");
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/email/verify`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            code: authCode,
+          }),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) {
+        alert(data.message || "인증 실패");
+        setIsVerified(false);
+        return;
+      }
+      alert(data.message || "인증 성공");
       setIsVerified(true);
-      console.log("인증번호 확인: ", authCode);
+    } catch (err) {
+      alert("인증 요청 중 오류가 발생했습니다.");
+      setIsVerified(false);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 비밀번호 찾기 로직 구현
-    console.log("비밀번호 찾기 제출");
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/reset-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            email,
+            code: authCode,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("비밀번호 초기화 요청 실패");
+      }
+      const data = await response.json();
+      alert("비밀번호 초기화 성공: " + data.data.password);
+      // 필요하다면 로그인 페이지 등으로 이동
+      router.push("/users/login");
+    } catch (err) {
+      alert("비밀번호 초기화에 실패했습니다.");
+    }
   };
 
   return (

@@ -7,7 +7,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -24,7 +23,9 @@ public class CommentResponseDto {
 
     private int likeCount;
     private int dislikeCount;
+    //소프트 딜리트
     private boolean deleted;
+    //좋아요를 눌렀는지에 대한 여부
 
     @Schema(description = "작성 날짜", example = "2025-04-14T10:30:00")
     private LocalDateTime createdDate;
@@ -78,11 +79,26 @@ public class CommentResponseDto {
     }
 
     //좋아요 유지
-    public static CommentResponseDto fromEntityWithReaction(Comment comment, Boolean likedByMe) {
-        CommentResponseDto dto = fromEntity(comment);
-        dto.setLikedByMe(likedByMe);
+    public static CommentResponseDto fromEntityWithReaction(Comment comment, Boolean liked) {
+        CommentResponseDto dto = new CommentResponseDto();
+
+        dto.id = comment.getId();
+        dto.comment = comment.isDeleted() ? "삭제된 댓글입니다." : comment.getComment();
+        dto.nickname = comment.getUser().getNickname();
+        dto.likeCount = comment.getLikeCount();
+        dto.dislikeCount = comment.getDislikeCount();
+        dto.deleted = comment.isDeleted();
+        dto.likedByMe = liked; // 여기에서만 가능
+        dto.createdDate = comment.getCreatedDate();
+
+        if (!comment.getUpdatedDate().isEqual(comment.getCreatedDate())) {
+            dto.updatedDate = comment.getUpdatedDate();
+        } else {
+            dto.updatedDate = null;
+        }
+
+        dto.replies = null;
+
         return dto;
     }
-
-
 }

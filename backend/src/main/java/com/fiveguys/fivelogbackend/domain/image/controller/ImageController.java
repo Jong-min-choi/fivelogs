@@ -1,12 +1,14 @@
 package com.fiveguys.fivelogbackend.domain.image.controller;
 
-import com.fiveguys.fivelogbackend.domain.image.dto.ImageRequestDto;
 import com.fiveguys.fivelogbackend.domain.image.dto.ImageResponseDto;
 import com.fiveguys.fivelogbackend.domain.image.entity.Image;
 import com.fiveguys.fivelogbackend.domain.image.service.ImageService;
+import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
+import com.fiveguys.fivelogbackend.global.rq.Rq;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +21,18 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/images")
+@Slf4j
 public class ImageController {
 
     private final ImageService imageService;
+    private final Rq rq;
 
     //  이미지 업로드
     @Operation(summary = "이미지 업로드", description = "json형태로 받기 + 이미지 파일 꼭 있어야 작동.")
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<ImageResponseDto>> uploadImage(@RequestPart("file") MultipartFile file) {
-        ImageRequestDto dto = new ImageRequestDto();
-        dto.setFile(file);
-        ImageResponseDto savedImage = imageService.saveImage(dto);
+    @PostMapping(value = "/profile/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<ImageResponseDto>> uploadImage(@RequestPart("profileImage") MultipartFile file) {
+        User actor = rq.getActor();
+        ImageResponseDto savedImage = imageService.saveImageWithStorageChoice(file, actor.getId());
         ApiResponse<ImageResponseDto> response = ApiResponse.success(savedImage, "이미지 업로드 성공");
         return ResponseEntity.ok(response);
     }
@@ -62,8 +65,10 @@ public class ImageController {
     // 이미지 삭제
     @DeleteMapping("/{id}")
     @Operation(summary = "이미지 삭제", description = "ID로 이미지를 삭제합니다.")
-    public ResponseEntity<ApiResponse<String>> deleteImage(@PathVariable("id") Long id) {
-        String result = imageService.deleteImage(id);
+    public ResponseEntity<ApiResponse<String>> deleteImage(@PathVariable("id") Long imageId) {
+        Long userId = rq.getActor().getId();
+        String result = imageService.deleteImage(imageId, userId);
+
         return ResponseEntity.ok(ApiResponse.success(result, "이미지 삭제 성공"));
     }
 

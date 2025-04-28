@@ -19,8 +19,7 @@ export default function MyBoardPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isLogin, loginUser, logoutAndHome, isLoginUserPending } =
-    useGlobalLoginUser();
+  const { isLogin, loginUser } = useGlobalLoginUser();
 
   // URL에서 받은 닉네임 디코딩
   const encodedNickname = params?.nickname as string;
@@ -42,9 +41,7 @@ export default function MyBoardPage() {
   const boardsPerPage = 10; // 한 페이지에 10개 게시글 표시
 
   // 팔로우 상태 (ownerInfo?.isFollowing 등 실제 값으로 대체)
-  const [isFollowing, setIsFollowing] = useState(
-    ownerInfo?.isFollowing ?? false
-  );
+  const [isFollowing, setIsFollowing] = useState(false); // 팔로우 상태 초기값);
   //그냥 닉네임 가져오면 되는 문제제
   // 블로그 주인 여부 (ownerInfo?.isOwner 등 실제 값으로 대체)
   const isOwner = loginUser?.nickname === nickname ? true : false;
@@ -52,25 +49,23 @@ export default function MyBoardPage() {
 
   useEffect(() => {
     const fetchFollowStatus = async () => {
-      if (!ownerInfo?.id) return;
+      if (!nickname) return;
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/followStatus/${ownerInfo.id}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/followStatus/nickname/${nickname}`,
           {
             credentials: "include",
           }
         );
         if (!response.ok) throw new Error("팔로우 상태 조회 실패");
         const data = await response.json();
-        console.log("팔로우 상태 API 응답 데이터:", data);
-        // 서버 응답이 { isFollowing: true/false } 형태라고 가정
-        setIsFollowing(data.isFollowing);
+        setIsFollowing(data.data.following);
       } catch (err) {
         setIsFollowing(false);
       }
     };
     fetchFollowStatus();
-  }, [ownerInfo?.id]);
+  }, [nickname]);
 
   // 팔로우/언팔로우 버튼 클릭 핸들러
 
@@ -256,10 +251,6 @@ export default function MyBoardPage() {
     fetchHashtags();
   }, [nickname, currentPage, selectedTag]);
 
-  useEffect(() => {
-    setIsFollowing(ownerInfo?.isFollowing ?? false);
-  }, [ownerInfo]);
-
   // 로딩 중 표시
   if (loading && boardData.length === 0) {
     return <LoadingSpinner size="md" color="rose-500" height="h-60" />;
@@ -366,11 +357,21 @@ export default function MyBoardPage() {
         <div className="sticky top-8 bg-white rounded-lg shadow-sm p-5">
           {/* 프로필 영역 */}
           <div className="flex items-start mb-5">
-            <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden mr-4">
-              <div className="w-full h-full flex items-center justify-center text-gray-400 text-2xl font-bold">
-                {nickname.charAt(0).toUpperCase()}
+            {ownerInfo?.profileImageUrl ? (
+              <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden mr-4">
+                <img
+                  src={ownerInfo.profileImageUrl}
+                  alt="프로필 이미지"
+                  className="w-full h-full object-cover"
+                />
               </div>
-            </div>
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden mr-4">
+                <div className="w-full h-full flex items-center justify-center text-gray-400 text-2xl font-bold">
+                  {nickname.charAt(0).toUpperCase()}
+                </div>
+              </div>
+            )}
             <div className="flex-1">
               <h2 className="text-xl font-bold">
                 {ownerInfo?.nickname || nickname}
@@ -451,49 +452,57 @@ export default function MyBoardPage() {
             </div>
 
             <div className="flex justify-between items-center">
-              <span className="text-gray-600 flex items-center">
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                  ></path>
-                </svg>
-                팔로잉
-              </span>
-              <span className="font-medium">
-                {ownerInfo?.followingCount || 0}명
-              </span>
+              <Link href={`/${nickname}/followings`}>
+                <span className="text-gray-600 flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                    ></path>
+                  </svg>
+                  팔로잉
+                </span>
+              </Link>
+              <Link href={`/${nickname}/followings`}>
+                <span className="font-medium">
+                  {ownerInfo?.followingCount || 0}명
+                </span>
+              </Link>
             </div>
 
             <div className="flex justify-between items-center">
-              <span className="text-gray-600 flex items-center">
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  ></path>
-                </svg>
-                팔로워
-              </span>
-              <span className="font-medium">
-                {ownerInfo?.followerCount || 0}명
-              </span>
+              <Link href={`/${nickname}/followers`}>
+                <span className="text-gray-600 flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    ></path>
+                  </svg>
+                  팔로워
+                </span>
+              </Link>
+              <Link href={`/${nickname}/followers`}>
+                <span className="font-medium">
+                  {ownerInfo?.followerCount || 0}명
+                </span>
+              </Link>
             </div>
           </div>
           {/* 출석부 버튼 */}

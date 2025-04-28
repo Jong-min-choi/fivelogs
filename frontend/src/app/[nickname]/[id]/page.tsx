@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
-import AuthorProfile from "@/components/common/AuthorProfile";
 import CommentList from "@/components/comment/CommentList";
+import { useGlobalLoginUser } from "@/stores/auth/loginUser";
+import Image from "next/image";
+
 // BoardDetailDto 타입 정의
 interface BoardDetailDto {
   boardId: number;
@@ -16,9 +18,8 @@ interface BoardDetailDto {
   views: number;
   hashtags: string[];
   nickName: string;
-  profileImageLink: string;
+  profileImageUrl: string;
   myIntroduce: string;
-  deleted: boolean;
 }
 
 // 이전/다음 게시글 정보 타입 정의
@@ -43,9 +44,7 @@ export default function BoardDetail() {
   const [loading, setLoading] = useState(true);
   const [board, setBoard] = useState<BoardDetailDto | null>(null);
   const [error, setError] = useState<string | null>(null);
-  // 임시 로그인 사용자 정보 (실제로는 로그인 컨텍스트나 상태에서 가져와야 함)
   const [isMyBoard, setIsMyBoard] = useState(false);
-  // 이전/다음 게시글 정보
   const [prevNext, setPrevNext] = useState<{
     prev: SimpleBoardDto | null;
     next: SimpleBoardDto | null;
@@ -53,6 +52,11 @@ export default function BoardDetail() {
     prev: null,
     next: null,
   });
+  const { isLogin, loginUser } = useGlobalLoginUser();
+
+  // 팔로우 상태 관리
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
+  const [followId, setFollowId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchBoardDetail = async () => {
@@ -74,23 +78,7 @@ export default function BoardDetail() {
 
         if (data.success) {
           setBoard(data.data);
-          console.log("🔍 삭제 상태:", data.data.deleted);
-
-          // 현재 로그인한 사용자 정보 가져오기
-          const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me`, {
-            credentials: 'include'
-          });
-          
-          if (userResponse.ok) {
-            const userData = await userResponse.json();
-            if (userData.success) {
-              // 게시글 작성자와 현재 로그인한 사용자가 같은지 확인
-              setIsMyBoard(data.data.nickName === userData.data.nickname);
-              console.log('게시글 작성자:', data.data.nickName);
-              console.log('현재 사용자:', userData.data.nickname);
-              console.log('isMyBoard:', data.data.nickName === userData.data.nickname);
-            }
-          }
+          setFollowId(data.data.userId); // userId(팔로우 대상) 세팅
 
           // 이전/다음 게시글 정보 가져오기
           await fetchPrevNextBoard();
@@ -137,6 +125,77 @@ export default function BoardDetail() {
     }
   }, [boardId, nickname]);
 
+  // 로그인 유저 정보와 게시글 정보가 모두 있을 때만 비교
+  useEffect(() => {
+    if (loginUser && board) {
+      setIsMyBoard(loginUser.nickname === board.nickName);
+    }
+  }, [loginUser, board]);
+
+  // 팔로우 상태 요청
+  useEffect(() => {
+    const fetchFollowStatus = async () => {
+      if (!followId) return;
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/followStatus/${followId}`,
+          { credentials: "include" }
+        );
+        if (!res.ok) {
+          setIsFollowing(false);
+          return;
+        }
+        const data = await res.json();
+        // FollowStatusDto: { isFollowing: boolean }
+        console.log("follow status {}", data);
+        setIsFollowing(!!data.data?.following);
+      } catch {
+        setIsFollowing(false);
+      }
+    };
+    fetchFollowStatus();
+  }, [followId]);
+
+  // 팔로우/언팔로우 버튼 핸들러
+  const handleFollow = async () => {
+    if (!isLogin) {
+      alert("로그인 후 이용해주세요.");
+      window.location.href = "/users/login";
+      return;
+    }
+    if (!followId) return;
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/follow/${followId}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      if (!res.ok) throw new Error("팔로우 실패");
+      setIsFollowing(true);
+    } catch {
+      alert("팔로우에 실패했습니다.");
+    }
+  };
+
+  const handleUnfollow = async () => {
+    if (!followId) return;
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/unfollow/${followId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+      if (!res.ok) throw new Error("언팔로우 실패");
+      setIsFollowing(false);
+    } catch {
+      alert("언팔로우에 실패했습니다.");
+    }
+  };
+
   useEffect(() => {
     // 게시글 조회수 증가 API 호출
     if (boardId) {
@@ -163,7 +222,7 @@ export default function BoardDetail() {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}`,
         {
           method: "DELETE",
-          credentials: 'include'
+          credentials: "include",
         }
       );
 
@@ -258,8 +317,29 @@ export default function BoardDetail() {
                 </Link>
               </div>
 
+              {/* 팔로우/언팔로우 버튼 (본인 블로그가 아닐 때만) */}
+              {!isMyBoard &&
+                followId &&
+                (isFollowing ? (
+                  <button
+                    className="border border-rose-400 text-rose-500 px-5 py-1.5 rounded-full font-semibold hover:bg-rose-50 transition ml-2"
+                    type="button"
+                    onClick={handleUnfollow}
+                  >
+                    언팔로우
+                  </button>
+                ) : (
+                  <button
+                    className="border border-emerald-500 text-emerald-600 px-5 py-1.5 rounded-full font-semibold hover:bg-emerald-50 transition ml-2"
+                    type="button"
+                    onClick={handleFollow}
+                  >
+                    팔로우
+                  </button>
+                ))}
+
               {/* 수정/삭제 버튼 (로그인 사용자의 게시물이고 삭제되지 않은 경우에만 표시) */}
-              {isMyBoard && !board.deleted && (
+              {isMyBoard && (
                 <div className="flex space-x-2">
                   <Link
                     href={`/${nickname}/${boardId}/edit`}
@@ -281,7 +361,7 @@ export default function BoardDetail() {
                     </svg>
                     수정
                   </Link>
-                  
+
                   {/* 삭제 버튼 */}
                   <button
                     onClick={handleDelete}
@@ -336,11 +416,31 @@ export default function BoardDetail() {
       ></div>
 
       {/* 작성자 프로필 영역 */}
-      <AuthorProfile
-        nickName={board.nickName}
-        profileImageLink={board.profileImageLink}
-        myIntroduce={board.myIntroduce}
-      />
+      <div className="bg-gray-50 p-6 rounded-lg mb-8 border">
+        <div className="flex items-center">
+          <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 mr-4 overflow-hidden">
+            {board.profileImageUrl ? (
+              <Image
+                src={board.profileImageUrl}
+                alt={board.nickName}
+                width={64}
+                height={64}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-2xl font-bold">
+                {board.nickName.charAt(0)}
+              </span>
+            )}
+          </div>
+          <div>
+            <div className="text-lg font-bold mb-1">{board.nickName}</div>
+            {board.myIntroduce && (
+              <div className="text-gray-600">{board.myIntroduce}</div>
+            )}
+          </div>
+        </div>
+      </div>
 
       {/* 댓글 영역 */}
       <CommentList boardId={Number(boardId)} />

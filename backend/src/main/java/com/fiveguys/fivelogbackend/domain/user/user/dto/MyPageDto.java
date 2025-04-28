@@ -16,21 +16,23 @@ public class MyPageDto {
     String nickname;
     String email;
     String blogTitle;
-    String githubUrl;
-    String instagramUrl;
-    String twitterUrl;
+    String githubLink;
+    String instagramLink;
+    String twitterLink;
+    String profileImageUrl;
 
-    public static MyPageDto from (User user,String blogTitle){
-        SNSLinks snsLinks = user.getSNSLink();
+    public static MyPageDto from (User user,String blogTitle, String profileImageUrl){
+        SNSLinks snsLinks = user.getSnsLink();
 
         return MyPageDto.builder()
                 .blogTitle(blogTitle)
                 .email(user.getEmail())
                 .nickname(user.getNickname())
-                .introduce(user.getIntroduce())
-                .githubUrl(snsLinks != null ? user.getSNSLink().getGithubLink() : null)
-                .instagramUrl(snsLinks != null ?user.getSNSLink().getInstagramLink() : null)
-                .twitterUrl(snsLinks != null ? user.getSNSLink().getTwitterLink() : null)
+                .introduce(user.getIntroduce())  
+                .githubLink(snsLinks != null ? user.getSnsLink().getGithubLink() : null)
+                .instagramLink(snsLinks != null ?user.getSnsLink().getInstagramLink() : null)
+                .twitterLink(snsLinks != null ? user.getSnsLink().getTwitterLink() : null)
+                .profileImageUrl(profileImageUrl)
                 .build();
 
 

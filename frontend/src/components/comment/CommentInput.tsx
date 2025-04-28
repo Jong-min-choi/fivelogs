@@ -3,17 +3,17 @@
 import { useState } from "react";
 import { useGlobalLoginUser } from "@/stores/auth/loginUser";
 
-interface CommentFormProps {
-  boardId: number;
-  parentId?: number;
-  onSuccess: () => void;
+interface CommentInputProps {
+  placeholder?: string;
+  onSubmit: (comment: string) => Promise<void>;
+  submitButtonText?: string;
 }
 
-export default function CommentForm({
-  boardId,
-  parentId,
-  onSuccess,
-}: CommentFormProps) {
+export default function CommentInput({
+  placeholder = "댓글을 작성해주세요.",
+  onSubmit,
+  submitButtonText = "댓글 작성"
+}: CommentInputProps) {
   const [comment, setComment] = useState("");
   const { isLogin } = useGlobalLoginUser();
 
@@ -31,35 +31,8 @@ export default function CommentForm({
     }
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/boards/${boardId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            comment: comment.trim(),
-            parentId: parentId || null,
-            boardId: boardId,
-          }),
-        }
-      );
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error("서버 응답:", errorText);
-        throw new Error("댓글 작성 실패");
-      }
-
-      const json = await res.json();
-      if (json.success) {
-        setComment("");
-        onSuccess();
-      } else {
-        throw new Error(json.message || "댓글 작성 실패");
-      }
+      await onSubmit(comment.trim());
+      setComment("");
     } catch (err) {
       console.error("❌ 댓글 작성 실패:", err);
       alert("댓글 작성에 실패했습니다.");
@@ -72,7 +45,7 @@ export default function CommentForm({
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         placeholder={
-          isLogin ? "댓글을 작성해주세요." : "로그인이 필요한 기능입니다."
+          isLogin ? placeholder : "로그인이 필요한 기능입니다."
         }
         disabled={!isLogin}
         className="w-full p-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
@@ -88,9 +61,9 @@ export default function CommentForm({
               : "bg-gray-300 cursor-not-allowed"
           }`}
         >
-          댓글 작성
+          {submitButtonText}
         </button>
       </div>
     </form>
   );
-}
+} 

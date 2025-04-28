@@ -16,6 +16,7 @@ public class BlogResponseDto {
     private String title;
     private Long userId;
     private List<Long> boardIds;
+    private String ownerNickname;
 
     public static BlogResponseDto fromEntity(Blog blog) {
         return BlogResponseDto.builder()

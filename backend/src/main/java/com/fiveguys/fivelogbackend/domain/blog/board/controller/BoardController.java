@@ -32,25 +32,8 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final TrendingBoardService trendingBoardService;
     private final Rq rq;
 
-//    @PostMapping
-//    @Operation(summary = "게시글 작성")
-//        return ResponseEntity.ok(boardService.createBoard(requestDto));
-//    }
-
-//    @Operation(summary = "게시글 열람")
-//    }
-
-//    @GetMapping("/search-tag")
-//    @Operation(summary = "태그 기반 게시글 검색", description = "해시태그에 해당하는 게시글 검색")
-//    public ResponseEntity<Page<Board>> searchByTag(
-//            @RequestParam String tag,
-//            @PageableDefault(size = 10,  sort = "createdDate",page = 0) Pageable pageable) {
-//        Page<Board> boards = boardService.searchBoardsByHashtag(tag, pageable);
-//        return ResponseEntity.ok(boards);
-//    }
     //user는 있고,
     @PostMapping
     @Operation(summary = "게시글 작성")
@@ -123,6 +106,17 @@ public class BoardController {
     public ResponseEntity<ApiResponse<List<BoardSummaryDto>>> getTrendingBoards(){
         List<BoardSummaryDto> trendingBoards = boardService.getTrendingBoards();
         return ResponseEntity.ok().body(ApiResponse.success(trendingBoards, "트랜딩 게시판 조회 성공"));
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "게시글 제목 검색", description = "제목에 keyword가 포함된 게시글 검색 (공개글만)")
+    public ResponseEntity<ApiResponse<List<BoardSearchResponseDto>>> searchBoardsByTitle(
+            @RequestParam("keyword") String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        List<BoardSearchResponseDto> result = boardService.searchBoardsByTitle(keyword, page, size);
+        return ResponseEntity.ok(ApiResponse.success(result, "게시물 제목으로 검색합니다."));
     }
 
 }

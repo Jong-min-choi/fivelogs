@@ -9,9 +9,10 @@ interface MyPageDto {
   nickname: string;
   email: string;
   blogTitle: string;
-  githubUrl: string;
-  instagramUrl: string;
-  twitterUrl: string;
+  githubLink: string;
+  instagramLink: string;
+  twitterLink: string;
+  profileImageUrl: string;
 }
 
 interface ApiResponse<T> {
@@ -23,12 +24,16 @@ interface ApiResponse<T> {
 export default function MyPage() {
   const [nickname, setNickname] = useState("사용자님");
   const [profileImage, setProfileImage] = useState("");
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [introduction, setIntroduction] = useState("소개글이 없습니다.");
   const [blogTitle, setBlogTitle] = useState("블로그 제목이 없습니다.");
+  const [isEditingBlogTitle, setIsEditingBlogTitle] = useState(false);
+  const [tempBlogTitle, setTempBlogTitle] = useState("");
   const [email, setEmail] = useState("");
-  const [githubUrl, setGithubUrl] = useState("");
-  const [instagramUrl, setInstagramUrl] = useState("");
-  const [twitterUrl, setTwitterUrl] = useState("");
+  const [githubLink, setGithubLink] = useState("");
+  const [instagramLink, setInstagramLink] = useState("");
+  const [twitterLink, setTwitterLink] = useState("");
+  const [hasSNSLinks, setHasSNSLinks] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -59,15 +64,25 @@ export default function MyPage() {
       console.log("마이페이지 데이터:", data);
 
       if (data.success && data.data) {
-        // 받은 데이터로 상태 업데이트
         const myPageData = data.data;
         setNickname(myPageData.nickname || "사용자님");
         setIntroduction(myPageData.introduce || "소개글이 없습니다.");
         setBlogTitle(myPageData.blogTitle || "블로그 제목이 없습니다.");
         setEmail(myPageData.email || "");
-        setGithubUrl(myPageData.githubUrl || "");
-        setInstagramUrl(myPageData.instagramUrl || "");
-        setTwitterUrl(myPageData.twitterUrl || "");
+
+        setProfileImage(myPageData.profileImageUrl || ""); // 프로필 이미지 URL 세팅
+        console.log("프로필 이미지 URL:", myPageData.profileImageUrl);
+        setGithubLink(myPageData.githubLink || "");
+        setInstagramLink(myPageData.instagramLink || "");
+        setTwitterLink(myPageData.twitterLink || "");
+
+        const snsExists =
+          !!myPageData.githubLink ||
+          !!myPageData.instagramLink ||
+          !!myPageData.twitterLink;
+        setHasSNSLinks(snsExists);
+
+
       } else {
         throw new Error(
           data.message || "마이페이지 데이터를 불러오는데 실패했습니다."
@@ -81,11 +96,130 @@ export default function MyPage() {
     }
   };
 
+  // 프로필 이미지 업로드 핸들러
+  const handleProfileImageChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setProfileImageFile(file);
+
+    // 미리보기
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfileImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // 서버 업로드 예시
+    const formData = new FormData();
+    formData.append("profileImage", file);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/images/profile/upload`,
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        }
+      );
+      if (!response.ok) throw new Error("프로필 이미지 업로드 실패");
+      // 업로드 성공 후 서버에서 받은 이미지 URL로 갱신 (예시)
+      const data = await response.json();
+      if (data.data?.profileImageUrl) {
+        console.log(data.data);
+        setProfileImage(data.data.profileImageUrl);
+      }
+      console.log("프로필 이미지 업로드 성공:", data.data);
+      alert("프로필 이미지가 변경되었습니다.");
+    } catch (err) {
+      alert("프로필 이미지 업로드에 실패했습니다.");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: 프로필 업데이트 API 호출 로직 추가
-    console.log({ introduction, githubUrl, instagramUrl, twitterUrl });
-    setIsEditing(false);
+    console.log({ introduction, githubLink, instagramLink, twitterLink });
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me/mypage/sns`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            githubLink,
+            instagramLink,
+            twitterLink,
+          }),
+        }
+      );
+    
+      if (!response.ok) {
+        throw new Error(`수정 실패: ${response.status}`);
+      }
+  
+      const data = (await response.json()) as ApiResponse<MyPageDto>;
+      console.log("수정 완료 응답:", data);
+      
+      if (data.success) {
+        alert( hasSNSLinks
+          ? "SNS 링크가 성공적으로 수정되었습니다."
+          : "SNS 링크가 성공적으로 추가되었습니다.");
+        // 최신 상태 반영
+        fetchMyPageData();
+      } else {
+        throw new Error(data.message || "SNS 링크 수정 실패");
+      }
+    } catch (err: any) {
+      console.error("SNS 링크 수정 중 오류:", err);
+      alert(err.message || "오류가 발생했습니다.");
+    } finally {
+      setIsEditing(false);
+    }
+  };
+
+  // 블로그 제목 수정 함수
+  const handleUpdateBlogTitle = async () => {
+    if (!tempBlogTitle.trim()) {
+      alert("블로그 제목을 입력해주세요.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${nickname}`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: tempBlogTitle,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("블로그 제목 수정 실패");
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        setBlogTitle(tempBlogTitle);
+        setIsEditingBlogTitle(false);
+        alert("블로그 제목이 수정되었습니다.");
+      } else {
+        throw new Error(data.message || "블로그 제목 수정 실패");
+      }
+    } catch (err: any) {
+      console.error("블로그 제목 수정 중 오류:", err);
+      alert(err.message || "블로그 제목 수정 중 오류가 발생했습니다.");
+    }
   };
 
   if (isLoading) {
@@ -123,16 +257,29 @@ export default function MyPage() {
               </span>
             )}
           </div>
-          <button className="text-rose-400 text-sm mb-4">
+          <button
+            className="text-rose-400 text-sm mb-4"
+            onClick={() =>
+              document.getElementById("profileImageInput")?.click()
+            }
+            type="button"
+          >
             프로필 사진 변경
           </button>
+          <input
+            id="profileImageInput"
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleProfileImageChange}
+          />
           <h2 className="text-xl font-bold mb-1">{nickname}</h2>
           <p className="text-gray-600 mb-4">Frontend Developer</p>
 
           <div className="flex space-x-3">
-            {githubUrl && (
+            {githubLink && (
               <Link
-                href={githubUrl}
+                href={githubLink}
                 target="_blank"
                 className="text-gray-700 hover:text-gray-900"
               >
@@ -150,9 +297,9 @@ export default function MyPage() {
                 </svg>
               </Link>
             )}
-            {instagramUrl && (
+            {instagramLink && (
               <Link
-                href={instagramUrl}
+                href={instagramLink}
                 target="_blank"
                 className="text-gray-700 hover:text-gray-900"
               >
@@ -170,9 +317,9 @@ export default function MyPage() {
                 </svg>
               </Link>
             )}
-            {twitterUrl && (
+            {twitterLink && (
               <Link
-                href={twitterUrl}
+                href={twitterLink}
                 target="_blank"
                 className="text-gray-700 hover:text-gray-900"
               >
@@ -199,10 +346,42 @@ export default function MyPage() {
           <h3 className="text-xl font-bold mb-4">블로그 제목</h3>
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
             <div className="flex justify-between items-center">
-              <p className="text-gray-900 font-bold">{blogTitle}</p>
-              <button className="text-rose-400 text-sm hover:text-rose-500">
-                수정
-              </button>
+              {isEditingBlogTitle ? (
+                <div className="flex-1 flex gap-2">
+                  <input
+                    type="text"
+                    value={tempBlogTitle}
+                    onChange={(e) => setTempBlogTitle(e.target.value)}
+                    className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-rose-300"
+                    placeholder="새로운 블로그 제목"
+                  />
+                  <button
+                    onClick={handleUpdateBlogTitle}
+                    className="px-3 py-1 bg-rose-400 text-white rounded hover:bg-rose-500"
+                  >
+                    저장
+                  </button>
+                  <button
+                    onClick={() => setIsEditingBlogTitle(false)}
+                    className="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                  >
+                    취소
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <p className="text-gray-900 font-bold">{blogTitle}</p>
+                  <button
+                    onClick={() => {
+                      setTempBlogTitle(blogTitle);
+                      setIsEditingBlogTitle(true);
+                    }}
+                    className="text-rose-400 text-sm hover:text-rose-500"
+                  >
+                    수정
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -230,8 +409,8 @@ export default function MyPage() {
                 <input
                   type="text"
                   placeholder="GitHub 프로필 URL"
-                  value={githubUrl}
-                  onChange={(e) => setGithubUrl(e.target.value)}
+                  value={githubLink}
+                  onChange={(e) => setGithubLink(e.target.value)}
                   className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-rose-300"
                 />
               </div>
@@ -251,8 +430,8 @@ export default function MyPage() {
                 <input
                   type="text"
                   placeholder="Instagram 프로필 URL"
-                  value={instagramUrl}
-                  onChange={(e) => setInstagramUrl(e.target.value)}
+                  value={instagramLink}
+                  onChange={(e) => setInstagramLink(e.target.value)}
                   className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-rose-300"
                 />
               </div>
@@ -268,13 +447,19 @@ export default function MyPage() {
                 <input
                   type="text"
                   placeholder="Twitter 프로필 URL"
-                  value={twitterUrl}
-                  onChange={(e) => setTwitterUrl(e.target.value)}
+                  value={twitterLink}
+                  onChange={(e) => setTwitterLink(e.target.value)}
                   className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-rose-300"
                 />
               </div>
             </div>
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-end mt-4 gap-2">
+              <Link
+                href="/users/change/password"
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition flex items-center"
+              >
+                비밀번호 변경
+              </Link>
               <button
                 type="submit"
                 className="px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
