@@ -32,10 +32,6 @@ public class DataLoader implements CommandLineRunner {
     private String adminPassword;
     @Override
     public void run(String... args) throws Exception {
-        if(!roleService.existByName(RoleType.ADMIN)){
-            User join = userService.join("admin@fivelogs.com", adminPassword, "admin", "");
-            roleService.createUserRole(join, RoleType.ADMIN);
-        }
 
         if(userService.countUsers() == 0){
 
@@ -45,8 +41,12 @@ public class DataLoader implements CommandLineRunner {
                 String nickname = "joinUser_" + i;
                 userCommandService.joinAndCreateBlog ( email, password, nickname, "");
             }
-
             log.info ("✅ 테스트 사용자 10명 등록 완료");
+
+            if(!roleService.existByName(RoleType.ADMIN)){
+                User join = userService.join("admin@fivelogs.com", adminPassword, "admin", "");
+                roleService.createUserRole(join, RoleType.ADMIN);
+            }
 
             for (int i = 0; i < 15; i++) {
                 for (int j = 1; j < 11; j++) {
