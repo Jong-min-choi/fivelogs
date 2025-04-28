@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 public class BoardDetailDto {
 
+    Long userId;
     Long boardId;
     String blogTitle;
     String boardTitle;
@@ -27,12 +28,12 @@ public class BoardDetailDto {
     Long views;
     List<String> hashtags;
     String nickName;
-    String profileImageLink;
+    String profileImageUrl;
     String myIntroduce;
-    boolean deleted;
 
-    public static BoardDetailDto from (Board board, List<String> hashtagNameList){
+    public static BoardDetailDto from (Board board, List<String> hashtagNameList, String viewPath){
         return BoardDetailDto.builder()
+                .userId(board.getUser().getId())
                 .boardId(board.getId())
                 .blogTitle(board.getBlog().getTitle())
                 .boardTitle(board.getTitle())
@@ -41,7 +42,7 @@ public class BoardDetailDto {
                 .hashtags(hashtagNameList)
                 .nickName(board.getUser().getNickname())
                 .myIntroduce(board.getUser().getIntroduce())
-                .profileImageLink(null)
+                .profileImageUrl(viewPath)
                 .createdDateTime(board.getCreatedDate())
                 .updatedDateTime(board.getUpdatedDate())
                 .build();

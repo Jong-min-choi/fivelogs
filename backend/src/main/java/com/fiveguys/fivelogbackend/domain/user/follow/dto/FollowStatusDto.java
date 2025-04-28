@@ -5,10 +5,9 @@ import lombok.Getter;
 
 @Getter
 public class FollowStatusDto {
-    @JsonProperty("isFollowing")
-    boolean isFollowing;
+    boolean following;
 
     public FollowStatusDto(boolean isFollowing) {
-        this.isFollowing = isFollowing;
+        this.following = isFollowing;
     }
 }

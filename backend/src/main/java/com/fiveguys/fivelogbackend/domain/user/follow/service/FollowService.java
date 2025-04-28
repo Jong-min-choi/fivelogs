@@ -1,5 +1,7 @@
 package com.fiveguys.fivelogbackend.domain.user.follow.service;
 
+import com.fiveguys.fivelogbackend.domain.image.service.ImageService;
+import com.fiveguys.fivelogbackend.domain.user.follow.dto.FollowDto;
 import com.fiveguys.fivelogbackend.domain.user.follow.entity.Follow;
 import com.fiveguys.fivelogbackend.domain.user.follow.repository.FollowRepository;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.MeUserResponseDto;
@@ -18,6 +20,7 @@ import java.util.List;
 public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
+    private final ImageService imageService;
 
     // 팔로워 팔로잉 조회
     @Transactional
@@ -43,35 +46,47 @@ public class FollowService {
     }
 
     // 이건 내가 상대 프로필 들어갔을때 팔로우했냐 안했냐 뜨게하기위해
+    public boolean followStatusByNickname(Long loginUserId, String followNickname) {
+        // 저장된게 없으면 팔로우 할수있게 띄우기
+        User user = userRepository.findByNickname(followNickname).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 nickname 입니다."));
+        return followRepository.existsByFollowIdAndFollowedId (loginUserId, user.getId()); // 저장된게 있으면 false = 팔로우한 상태로 띄우기
+    }
+
     public boolean followStatus(Long loginUserId, Long followId) {
         // 저장된게 없으면 팔로우 할수있게 띄우기
-        return followRepository.findByFollowIdAndFollowedId(loginUserId, followId).isPresent(); // 저장된게 있으면 false = 팔로우한 상태로 띄우기
+        return followRepository.existsByFollowIdAndFollowedId (loginUserId, followId); // 저장된게 있으면 false = 팔로우한 상태로 띄우기
     }
 
     // 팔로워 목록을 보기위해
     @Transactional(readOnly = true)
-    public List<MeUserResponseDto> blogFollowedList(Long blogUserId) {
-        return followRepository.findByFollowedId(blogUserId)
+    public List<FollowDto> blogFollowedList(String nickname) {
+        return followRepository.findByFollowedNicknameWithImage (nickname)
                 .stream()
                 .map(follow -> {
                     User follower = follow.getFollow(); // 나를 팔로우한 사람
-                    return MeUserResponseDto.builder()
+                    return FollowDto.builder()
+                            .id(follower.getId())
                             .email(follower.getEmail())
                             .nickname(follower.getNickname())
+                            .introduce(follower.getIntroduce())
+                            .profileImageUrl(imageService.getImageProfileUrl(follower.getProfileImage()))
                             .build();
                 })
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<MeUserResponseDto> blogFollowingList(Long blogUserId) {
-        return followRepository.findByFollowId(blogUserId)
+    public List<FollowDto> blogFollowingList(String nickname) {
+        return followRepository.findByFollowNicknameWithImage(nickname)
                 .stream()
                 .map(follow -> {
                     User followed = follow.getFollowed(); // 내가 팔로우한 사람
-                    return MeUserResponseDto.builder()
+                    return FollowDto.builder()
+                            .id(followed.getId())
                             .email(followed.getEmail())
                             .nickname(followed.getNickname())
+                            .introduce(followed.getIntroduce())
+                            .profileImageUrl(imageService.getImageProfileUrl(followed.getProfileImage()))
                             .build();
                 })
                 .toList();
