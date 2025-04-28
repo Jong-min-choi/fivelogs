@@ -6,16 +6,10 @@ import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.blog.blog.repository.BlogRepository;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.*;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
-import com.fiveguys.fivelogbackend.domain.blog.board.entity.BoardStatus;
 import com.fiveguys.fivelogbackend.domain.blog.board.repository.BoardRepository;
-import com.fiveguys.fivelogbackend.domain.blog.hashtag.HashtagUtil;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.entity.Hashtag;
-import com.fiveguys.fivelogbackend.domain.blog.hashtag.entity.Tagging;
-import com.fiveguys.fivelogbackend.domain.blog.hashtag.repository.HashTagRepository;
-import com.fiveguys.fivelogbackend.domain.blog.hashtag.repository.TaggingRepository;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.service.HashTagService;
 import com.fiveguys.fivelogbackend.domain.blog.hashtag.service.TaggingService;
-import com.fiveguys.fivelogbackend.domain.image.config.ImageProperties;
 import com.fiveguys.fivelogbackend.domain.image.entity.Image;
 import com.fiveguys.fivelogbackend.domain.image.service.ImageService;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
@@ -28,11 +22,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -251,4 +247,13 @@ public class BoardService {
                 .map(BoardSearchResponseDto::fromEntity)
                 .toList();
     }
+
+    @Transactional(readOnly = true)
+    public Page<BoardSearchResponseDto> searchByKeyword(String keyword, Pageable pageable) {
+        Page<Board> boardPage = boardRepository.searchByTitleOrHashtag(keyword, pageable);
+
+        return boardPage.map(BoardSearchResponseDto::fromEntity);
+    }
+
+
 }
