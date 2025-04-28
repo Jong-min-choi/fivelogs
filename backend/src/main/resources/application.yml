@@ -80,5 +80,3 @@ image:
     use_s3: ${profile.use_s3}
     view_url: ${profile.view_url} # 이미지를 보는용, s3는 버킷 저장소 url
 
-admin:
-  password: 1234
