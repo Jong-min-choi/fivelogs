@@ -73,11 +73,14 @@ public class ImageService {
             File newFile = new File(destinationDir, serverFileName);
             file.transferTo(newFile);
 
-            User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id입니다."));
-            //기존 이미지 삭제
+            User user = userService.findByIdWithProfileImage(userId);
             Image profileImage = user.getProfileImage();
-            File preFile = new File(System.getProperty("user.dir"), profileImage.getPath());
-            deleteFile(preFile);
+            //기존 이미지 삭제
+            if(!Objects.isNull(profileImage)){
+                File preFile = new File(System.getProperty("user.dir"), profileImage.getPath());
+                deleteFile(preFile);
+            }
+
             //이미지 저장
             Image savedImage = saveImage(originalName, serverFileName, savedPath, user);
 
@@ -118,9 +121,11 @@ public class ImageService {
 
             s3Service.uploadFile(savedPath,file.getInputStream(),file.getSize(), file.getContentType());
 
-            User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id입니다."));
+            User user = userService.findByIdWithProfileImage(userId);
             Image preProfileImage = user.getProfileImage();
-            s3Service.deleteFile(preProfileImage.getPath());
+            if(!Objects.isNull(preProfileImage)){
+                s3Service.deleteFile(preProfileImage.getPath());
+            }
             Image savedImage = saveImage(originalName, serverFileName, savedPath, user);
 
 
