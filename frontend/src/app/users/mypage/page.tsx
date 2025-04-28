@@ -27,6 +27,8 @@ export default function MyPage() {
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [introduction, setIntroduction] = useState("소개글이 없습니다.");
   const [blogTitle, setBlogTitle] = useState("블로그 제목이 없습니다.");
+  const [isEditingBlogTitle, setIsEditingBlogTitle] = useState(false);
+  const [tempBlogTitle, setTempBlogTitle] = useState("");
   const [email, setEmail] = useState("");
   const [githubLink, setGithubLink] = useState("");
   const [instagramLink, setInstagramLink] = useState("");
@@ -180,6 +182,46 @@ export default function MyPage() {
     }
   };
 
+  // 블로그 제목 수정 함수
+  const handleUpdateBlogTitle = async () => {
+    if (!tempBlogTitle.trim()) {
+      alert("블로그 제목을 입력해주세요.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${nickname}`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: tempBlogTitle,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("블로그 제목 수정 실패");
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        setBlogTitle(tempBlogTitle);
+        setIsEditingBlogTitle(false);
+        alert("블로그 제목이 수정되었습니다.");
+      } else {
+        throw new Error(data.message || "블로그 제목 수정 실패");
+      }
+    } catch (err: any) {
+      console.error("블로그 제목 수정 중 오류:", err);
+      alert(err.message || "블로그 제목 수정 중 오류가 발생했습니다.");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-96">
@@ -304,10 +346,42 @@ export default function MyPage() {
           <h3 className="text-xl font-bold mb-4">블로그 제목</h3>
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
             <div className="flex justify-between items-center">
-              <p className="text-gray-900 font-bold">{blogTitle}</p>
-              <button className="text-rose-400 text-sm hover:text-rose-500">
-                수정
-              </button>
+              {isEditingBlogTitle ? (
+                <div className="flex-1 flex gap-2">
+                  <input
+                    type="text"
+                    value={tempBlogTitle}
+                    onChange={(e) => setTempBlogTitle(e.target.value)}
+                    className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-rose-300"
+                    placeholder="새로운 블로그 제목"
+                  />
+                  <button
+                    onClick={handleUpdateBlogTitle}
+                    className="px-3 py-1 bg-rose-400 text-white rounded hover:bg-rose-500"
+                  >
+                    저장
+                  </button>
+                  <button
+                    onClick={() => setIsEditingBlogTitle(false)}
+                    className="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                  >
+                    취소
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <p className="text-gray-900 font-bold">{blogTitle}</p>
+                  <button
+                    onClick={() => {
+                      setTempBlogTitle(blogTitle);
+                      setIsEditingBlogTitle(true);
+                    }}
+                    className="text-rose-400 text-sm hover:text-rose-500"
+                  >
+                    수정
+                  </button>
+                </>
+              )}
             </div>
           </div>
 

@@ -4,6 +4,8 @@ import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -18,6 +20,6 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
 
     public Optional<Blog> findByTitle(String userId);
 
-
-
+    @Query("SELECT b FROM Blog b WHERE b.user.nickname = :nickname")
+    Optional<Blog> findByUserNickname(@Param("nickname") String nickname);
 }

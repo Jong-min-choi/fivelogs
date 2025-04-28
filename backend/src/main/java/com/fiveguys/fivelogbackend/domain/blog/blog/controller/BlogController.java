@@ -1,5 +1,8 @@
 package com.fiveguys.fivelogbackend.domain.blog.blog.controller;
 
+import com.fiveguys.fivelogbackend.domain.blog.blog.dto.BlogResponseDto;
+import com.fiveguys.fivelogbackend.domain.blog.blog.dto.BlogUpdateRequestDto;
+import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
 import com.fiveguys.fivelogbackend.domain.blog.blog.service.BlogService;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardPageResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
@@ -9,6 +12,7 @@ import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -62,6 +66,12 @@ public class BlogController {
         return ResponseEntity.ok(ApiResponse.success(pageBoardDto, "게시판 페이징 성공"));
     }
 
+    @PutMapping("/{userNickname}")
+    public ResponseEntity<ApiResponse<BlogResponseDto>> updateBlog(
+            @PathVariable String userNickname,
+            @RequestBody @Valid BlogUpdateRequestDto dto) {
 
-
+        BlogResponseDto updatedBlog = blogService.updateBlog(userNickname, dto);
+        return ResponseEntity.ok(ApiResponse.success(updatedBlog, "블로그 수정을 성공"));
+    }
 }
