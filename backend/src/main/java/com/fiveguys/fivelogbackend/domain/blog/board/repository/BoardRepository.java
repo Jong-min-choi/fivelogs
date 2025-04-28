@@ -1,6 +1,5 @@
 package com.fiveguys.fivelogbackend.domain.blog.board.repository;
 
-import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardHashtagDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
@@ -53,5 +51,15 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
         AND b.status = 'PUBLIC'
     """)
     Page<Board> searchByTitle(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("""
+    SELECT DISTINCT b FROM Board b
+    JOIN b.taggings t
+    JOIN t.hashtag h
+    WHERE (LOWER(h.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        OR LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%')))
+    AND b.status = 'PUBLIC'
+""")
+    Page<Board> searchByTitleOrHashtag(@Param("keyword") String keyword, Pageable pageable);
 
 }

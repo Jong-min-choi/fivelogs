@@ -8,12 +8,13 @@ import { useGlobalLoginUser } from "@/stores/auth/loginUser";
 export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
-  const { isLogin, loginUser, logoutAndHome, isLoginUserPending } = useGlobalLoginUser();
+  const { isLogin, loginUser, logoutAndHome, isLoginUserPending } =
+    useGlobalLoginUser();
   // console.log(loginUser);
   // console.log(isLogin);
 
   const handleSearchClick = () => {
-    router.push('/search');
+    router.push("/search");
   };
 
   const toggleDropdown = () => {
@@ -27,8 +28,15 @@ export default function Header() {
   return (
     <header className="flex justify-between items-center mb-8">
       <div className="flex items-center gap-2">
-        <Image src="/next.svg" alt="Five Guys 로고" width={30} height={30} />
-        <span className="text-rose-500 font-bold">마이페이지</span>
+        <Link href="/">
+          <Image
+            src="/logo2.png"
+            alt="Five Guys 로고"
+            width={100}
+            height={100}
+            className="cursor-pointer"
+          />
+        </Link>
       </div>
       <div className="flex gap-4 items-center">
         <button
