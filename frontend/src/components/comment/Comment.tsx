@@ -45,14 +45,17 @@ export default function Comment({ comment: initialComment, boardId, onRefresh, o
 
   const refreshComment = async () => {
     try {
-      const res = await fetch(`http://localhost:8090/api/comments/boards/${boardId}/${comment.id}`, {
+      const res = await fetch(`http://localhost:8090/api/comments/${comment.id}/replies`, {
         credentials: "include",
       });
       if (!res.ok) throw new Error("댓글 정보 가져오기 실패");
 
       const json = await res.json();
       if (json.success) {
-        setComment(json.data);
+        setComment(prevComment => ({
+          ...prevComment,
+          replies: json.data
+        }));
       }
     } catch (err) {
       console.error("❌ 댓글 정보 가져오기 실패:", err);
