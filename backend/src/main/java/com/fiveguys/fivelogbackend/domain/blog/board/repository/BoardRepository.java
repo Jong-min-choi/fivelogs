@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findByIdAndUserId(Long boardId, Long User);
@@ -52,14 +53,29 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     """)
     Page<Board> searchByTitle(@Param("keyword") String keyword, Pageable pageable);
 
-    @Query("""
-    SELECT DISTINCT b FROM Board b
-    JOIN b.taggings t
-    JOIN t.hashtag h
-    WHERE (LOWER(h.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
-        OR LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%')))
-    AND b.status = 'PUBLIC'
-""")
-    Page<Board> searchByTitleOrHashtag(@Param("keyword") String keyword, Pageable pageable);
+//    @Query("""
+//    SELECT DISTINCT b FROM Board b
+//    JOIN b.taggings t
+//    JOIN t.hashtag h
+//    WHERE (LOWER(h.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+//        OR LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%')))
+//    AND b.status = 'PUBLIC'
+//""")
+//    Page<Board> searchByTitleOrHashtag(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("SELECT b FROM Board b " +
+            "JOIN FETCH b.user u " +
+            "LEFT JOIN b.taggings t " +
+            "LEFT JOIN t.hashtag h " +
+            "WHERE b.status = 'PUBLIC' " +
+            "AND (b.title LIKE %:title% " +
+            "OR h.name IN :hashtags) " +
+            "AND (:lastId = 0 OR b.id < :lastId) " +  // lastId가 0이면 조건 무시, 0이 아니면 ID가 큰 것만 조회
+            "ORDER BY b.id DESC ")  // ID가 증가하는 순서대로 정렬
+    Page<Board> searchByTitleOrHashtagPaging(
+            @Param("title") String title,
+            @Param("hashtags") Set<String> hashtags,
+            @Param("lastId") Long lastId,  // 마지막 ID
+            Pageable pageable);
 
 }

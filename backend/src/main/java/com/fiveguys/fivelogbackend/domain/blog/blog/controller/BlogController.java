@@ -46,7 +46,6 @@ public class BlogController {
         BoardPageResponseDto pageBoardDto =
                 boardService.getBoardMainPageResponseDtoList(pagedBoards);
 
-
         log.info("BoardMainPageResponseDto : {}", pageBoardDto.getBoardDtoList().size());
         return ResponseEntity.ok(ApiResponse.success(pageBoardDto, "게시판 페이징 성공"));
     }
