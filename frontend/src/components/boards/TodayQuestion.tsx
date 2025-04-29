@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import LoadingSpinner from "../common/LoadingSpinner";
+import { useGlobalLoginUser } from "@/stores/auth/loginUser";
 
 type ChatContent = {
   question: string;
@@ -19,7 +21,8 @@ export default function TodayQuestion({ questions }: Props) {
   const [attendanceSuccess, setAttendanceSuccess] = useState<boolean | null>(
     null
   );
-
+  const router = useRouter();
+  const { isLogin, loginUser } = useGlobalLoginUser();
   const handleOptionSelect = (questionIndex: number, optionIndex: number) => {
     setSelectedAnswers((prev) => ({
       ...prev,
@@ -59,6 +62,9 @@ export default function TodayQuestion({ questions }: Props) {
         );
         if (res.ok) {
           setAttendanceSuccess(true);
+          // 출석 성공 시 이동
+          alert("정답입니다!. 출석체크 완료!");
+          router.push(`/${loginUser.nickname}?showAttendance=true`);
         } else {
           setAttendanceSuccess(false);
         }
@@ -116,10 +122,12 @@ export default function TodayQuestion({ questions }: Props) {
       <div className="flex flex-col items-center mt-8 space-y-2">
         <button
           onClick={handleSubmitAll}
-          disabled={Object.keys(selectedAnswers).length < questions.length}
+          disabled={
+            !isLogin || Object.keys(selectedAnswers).length < questions.length
+          }
           className={`px-6 py-3 rounded-md text-lg font-semibold
             ${
-              Object.keys(selectedAnswers).length < questions.length
+              !isLogin || Object.keys(selectedAnswers).length < questions.length
                 ? "bg-gray-300 cursor-not-allowed"
                 : "bg-rose-500 text-white hover:bg-rose-600"
             }`}

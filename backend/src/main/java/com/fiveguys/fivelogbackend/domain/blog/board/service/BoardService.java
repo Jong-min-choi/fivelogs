@@ -20,10 +20,10 @@ import com.fiveguys.fivelogbackend.global.rq.Rq;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -90,12 +90,26 @@ public class BoardService {
     }
 
     @Transactional // 전체 조회, 블로그 주인 용
-    public Page<Board> getBoardsAllWithNickname(String nickname,Pageable pageable) {
-        return boardRepository.findAllWithUserByNickname(nickname, pageable);
+    public Page<Board> getBoardsByNicknameAndOptionalTag(String nickname, String tag, Pageable pageable) {
+        Page<Board> pagedBoard;
+        if(StringUtils.hasText(tag)){
+            pagedBoard = boardRepository.findByNicknameAndTagName(nickname, tag, pageable);
+        } else {
+            pagedBoard = boardRepository.findAllWithUserByNickname(nickname, pageable);
+        }
+
+        return pagedBoard;
     }
-    @Transactional // 전체 조회, 블로그 주인 용
-    public Page<Board> getPublicBoardsAllWithNickname(String nickname,Pageable pageable) {
-        return boardRepository.findAllPublicWithUserByNickname(nickname, pageable);
+    @Transactional // public 조회 손님용
+    public Page<Board> getPublicBoardsAllWithNickname(String nickname,String tag,Pageable pageable) {
+        Page<Board> pagedBoard;
+        if(StringUtils.hasText(tag)){
+            pagedBoard = boardRepository.findPublicBoardsByNicknameAndTagName(nickname, tag, pageable);
+        } else {
+            pagedBoard = boardRepository.findAllPublicWithUserByNickname(nickname, pageable);
+        }
+
+        return pagedBoard;
     }
 
 

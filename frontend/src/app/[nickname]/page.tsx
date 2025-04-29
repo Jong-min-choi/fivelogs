@@ -124,32 +124,6 @@ export default function MyBoardPage() {
     }
   };
 
-  // 필터링된 게시글 데이터
-  const filteredBoardData =
-    selectedTag && selectedTag !== ""
-      ? boardData.filter((board) =>
-          board.hashtags?.some(
-            (tag) => tag.replace(/^#/, "") === selectedTag.replace(/^#/, "")
-          )
-        )
-      : boardData;
-
-  // tag가 있을 때는 클라이언트에서 페이지네이션 정보 재계산
-  const filteredPageInfo: PageDto | null = (() => {
-    if (!selectedTag || !pageInfo) return pageInfo;
-    const totalElements = filteredBoardData.length;
-    const totalPages = Math.ceil(totalElements / boardsPerPage);
-    return {
-      ...pageInfo,
-      totalElements,
-      totalPages,
-      page: currentPage,
-      size: boardsPerPage,
-      isFirst: currentPage === 1,
-      isLast: currentPage === totalPages || totalPages === 0,
-    };
-  })();
-
   // 페이지 변경 핸들러
   const handlePageChange = (page: number) => {
     console.log("페이지 변경:", page);
@@ -292,13 +266,13 @@ export default function MyBoardPage() {
               </div>
             )}
             {/* 블로그 게시글 목록 */}
-            {filteredBoardData.length === 0 && !loading ? (
+            {boardData.length === 0 && !loading ? (
               <div className="text-center p-10 bg-gray-50 rounded-lg">
                 <p className="text-gray-500">게시글이 없습니다.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                {filteredBoardData.map((board) => (
+                {boardData.map((board) => (
                   <div key={board.id} className="border rounded-lg shadow-sm">
                     <div className="p-5">
                       <div className="flex items-center text-sm text-gray-500 mb-2">
@@ -360,11 +334,8 @@ export default function MyBoardPage() {
               </div>
             )}
             {/* 페이지네이션 */}
-            {filteredPageInfo && (
-              <Pagination
-                pageInfo={filteredPageInfo}
-                onPageChange={handlePageChange}
-              />
+            {pageInfo && (
+              <Pagination pageInfo={pageInfo} onPageChange={handlePageChange} />
             )}
           </>
         )}
