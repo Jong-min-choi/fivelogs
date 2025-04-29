@@ -91,6 +91,9 @@ public class UserCommandService {
                 .followingCount(followCount)
                 .followerCount(followedCount)
                 .profileImageUrl(imageService.getImageProfileUrl(owner.getProfileImage()))
+                .githubLink(owner.getSnsLink().getGithubLink())
+                .instagramLink(owner.getSnsLink().getInstagramLink())
+                .twitterLink(owner.getSnsLink().getTwitterLink())
                 .build();
     }
 
