@@ -30,19 +30,13 @@ export default function LatestBoards({
             className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition"
           >
             <div className="p-4 flex flex-col h-full">
-              <div className="flex items-center justify-between text-sm text-gray-500 mb-2">
-                <span>{board.created}</span>
-                <span className="flex items-center">
-                  조회 {board.views.toLocaleString()}
-                </span>
-              </div>
               <h2 className="text-lg font-bold mb-2">{board.title}</h2>
               <p className="text-gray-600 mb-4">
                 {board.content.length > 100
                   ? board.content.substring(0, 100) + "..."
                   : board.content}
               </p>
-              <div className="mt-auto">
+              <div className="mt-auto flex flex-col h-full">
                 <div className="flex flex-wrap gap-1 mb-3">
                   {board.hashtags &&
                     board.hashtags.map((tag, idx) => (
@@ -54,12 +48,25 @@ export default function LatestBoards({
                       </span>
                     ))}
                 </div>
-                <Link
-                  href={`/${board.nickname}/${board.id}`}
-                  className="text-rose-500 flex items-center group"
-                >
-                  자세히 보기
-                </Link>
+                <div className="flex justify-between items-end mt-auto">
+                  <div className="flex flex-col items-start">
+                    <span className="text-xs text-gray-400 mb-1">
+                      {new Date(board.created).toLocaleDateString()}
+                      {" by "}
+                      <span className="font-bold text-gray-600">
+                        {board.nickname}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <Link
+                      href={`/${board.nickname}/${board.id}`}
+                      className="text-rose-500 flex items-center group text-sm"
+                    >
+                      자세히 보기
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

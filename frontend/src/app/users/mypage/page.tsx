@@ -38,6 +38,8 @@ export default function MyPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isEditingIntroduction, setIsEditingIntroduction] = useState(false);
+  const [tempIntroduction, setTempIntroduction] = useState("");
 
   useEffect(() => {
     fetchMyPageData();
@@ -82,8 +84,6 @@ export default function MyPage() {
           !!myPageData.instagramLink ||
           !!myPageData.twitterLink;
         setHasSNSLinks(snsExists);
-
-
       } else {
         throw new Error(
           data.message || "마이페이지 데이터를 불러오는데 실패했습니다."
@@ -158,18 +158,20 @@ export default function MyPage() {
           }),
         }
       );
-    
+
       if (!response.ok) {
         throw new Error(`수정 실패: ${response.status}`);
       }
-  
+
       const data = (await response.json()) as ApiResponse<MyPageDto>;
       console.log("수정 완료 응답:", data);
-      
+
       if (data.success) {
-        alert( hasSNSLinks
-          ? "SNS 링크가 성공적으로 수정되었습니다."
-          : "SNS 링크가 성공적으로 추가되었습니다.");
+        alert(
+          hasSNSLinks
+            ? "SNS 링크가 성공적으로 수정되었습니다."
+            : "SNS 링크가 성공적으로 추가되었습니다."
+        );
         // 최신 상태 반영
         fetchMyPageData();
       } else {
@@ -192,7 +194,7 @@ export default function MyPage() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${nickname}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${nickname}/title`,
         {
           method: "PUT",
           credentials: "include",
@@ -220,6 +222,43 @@ export default function MyPage() {
     } catch (err: any) {
       console.error("블로그 제목 수정 중 오류:", err);
       alert(err.message || "블로그 제목 수정 중 오류가 발생했습니다.");
+    }
+  };
+
+  // 자기소개 수정 함수
+  const handleUpdateIntroduction = async () => {
+    if (!tempIntroduction.trim()) {
+      alert("자기소개를 입력해주세요.");
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me/mypage/introduce`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            introduce: tempIntroduction,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("자기소개 수정 실패");
+      }
+      const data = await response.json();
+      if (data.success) {
+        setIntroduction(tempIntroduction);
+        setIsEditingIntroduction(false);
+        alert("자기소개가 수정되었습니다.");
+      } else {
+        throw new Error(data.message || "자기소개 수정 실패");
+      }
+    } catch (err: any) {
+      console.error("자기소개 수정 중 오류:", err);
+      alert(err.message || "자기소개 수정 중 오류가 발생했습니다.");
     }
   };
 
@@ -290,7 +329,44 @@ export default function MyPage() {
         <div className="md:w-2/3 md:pl-8">
           <h3 className="text-xl font-bold mb-4">자기소개</h3>
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
-            <p className="text-gray-700">{introduction}</p>
+            <div className="flex justify-between items-center">
+              {isEditingIntroduction ? (
+                <div className="flex-1 flex gap-2">
+                  <input
+                    type="text"
+                    value={tempIntroduction}
+                    onChange={(e) => setTempIntroduction(e.target.value)}
+                    className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-rose-300"
+                    placeholder="새로운 자기소개"
+                  />
+                  <button
+                    onClick={handleUpdateIntroduction}
+                    className="px-3 py-1 bg-rose-400 text-white rounded hover:bg-rose-500"
+                  >
+                    저장
+                  </button>
+                  <button
+                    onClick={() => setIsEditingIntroduction(false)}
+                    className="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                  >
+                    취소
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <p className="text-gray-700">{introduction}</p>
+                  <button
+                    onClick={() => {
+                      setTempIntroduction(introduction);
+                      setIsEditingIntroduction(true);
+                    }}
+                    className="text-rose-400 text-sm hover:text-rose-500"
+                  >
+                    수정
+                  </button>
+                </>
+              )}
+            </div>
           </div>
 
           <h3 className="text-xl font-bold mb-4">블로그 제목</h3>
@@ -414,7 +490,7 @@ export default function MyPage() {
                 type="submit"
                 className="px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
               >
-                회원정보 수정
+                SNS 링크 수정
               </button>
             </div>
           </form>

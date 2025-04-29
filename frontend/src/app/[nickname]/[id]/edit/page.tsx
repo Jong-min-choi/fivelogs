@@ -18,22 +18,29 @@ export default function EditPage() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}`, {
-          credentials: 'include'
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}`,
+          {
+            credentials: "include",
+          }
+        );
         if (!response.ok) {
-          throw new Error('게시글을 불러오는데 실패했습니다.');
+          throw new Error("게시글을 불러오는데 실패했습니다.");
         }
         const data = await response.json();
         if (data.success) {
           setTitle(data.data.boardTitle);
           setContent(data.data.content);
           setStatus(data.data.status || "PUBLIC");
-          setHashtags(data.data.hashtags && Array.isArray(data.data.hashtags) ? data.data.hashtags : []);
+          setHashtags(
+            data.data.hashtags && Array.isArray(data.data.hashtags)
+              ? data.data.hashtags
+              : []
+          );
         }
       } catch (error) {
-        console.error('게시글 불러오기 오류:', error);
-        alert('게시글을 불러오는데 실패했습니다.');
+        console.error("게시글 불러오기 오류:", error);
+        alert("게시글을 불러오는데 실패했습니다.");
       } finally {
         setLoading(false);
       }
@@ -50,44 +57,49 @@ export default function EditPage() {
       // 해시태그 전처리: 중복 제거 및 정규화
       const processedHashtags = Array.from(
         new Set(
-          hashtags.map(tag => {
+          hashtags.map((tag) => {
             let normalizedTag = tag.trim().toLowerCase();
-            if (!normalizedTag.startsWith('#')) {
-              normalizedTag = `#${normalizedTag}`;
+            if (!normalizedTag.startsWith("#")) {
+              normalizedTag = `${normalizedTag}`;
             }
-            return normalizedTag.replace(/\s+/g, '');
+            return normalizedTag.replace(/\s+/g, "");
           })
         )
-      ).filter(tag => tag.length > 1);
+      );
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}/edit`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          title: title.trim(),
-          content: content.trim(),
-          status: status,
-          hashtags: processedHashtags
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}/edit`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            title: title.trim(),
+            content: content.trim(),
+            status: status,
+            hashtags: processedHashtags,
+          }),
+        }
+      );
 
       const data = await response.json();
-      
+
       if (!response.ok) {
-        throw new Error(data.message || '게시글 수정에 실패했습니다.');
+        throw new Error(data.message || "게시글 수정에 실패했습니다.");
       }
 
       if (data.success) {
         router.back();
       } else {
-        throw new Error(data.message || '게시글 수정에 실패했습니다.');
+        throw new Error(data.message || "게시글 수정에 실패했습니다.");
       }
     } catch (error) {
-      console.error('수정 오류:', error);
-      alert(error instanceof Error ? error.message : '게시글 수정에 실패했습니다.');
+      console.error("수정 오류:", error);
+      alert(
+        error instanceof Error ? error.message : "게시글 수정에 실패했습니다."
+      );
     }
   };
 
@@ -99,35 +111,37 @@ export default function EditPage() {
     if (hashtagInput.trim()) {
       // 해시태그 정규화
       let newTag = hashtagInput.trim().toLowerCase();
-      newTag = newTag.startsWith('#') ? newTag.slice(1) : newTag; // # 제거
-      newTag = newTag.replace(/\s+/g, '');
+      newTag = newTag.startsWith("#") ? newTag.slice(1) : newTag; // # 제거
+      newTag = newTag.replace(/\s+/g, "");
 
       // 빈 해시태그 체크
       if (newTag.length === 0) {
-        alert('유효한 해시태그를 입력해주세요.');
-        setHashtagInput('');
+        alert("유효한 해시태그를 입력해주세요.");
+        setHashtagInput("");
         return;
       }
 
       // 중복 체크
       if (!hashtags.includes(newTag)) {
-        setHashtags(prev => [...prev, newTag]);
+        setHashtags((prev) => [...prev, newTag]);
       } else {
-        alert('이미 존재하는 해시태그입니다.');
+        alert("이미 존재하는 해시태그입니다.");
       }
-      setHashtagInput('');
+      setHashtagInput("");
     }
   };
 
-  const handleHashtagInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+  const handleHashtagInputKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (e.key === "Enter") {
       e.preventDefault();
       handleAddHashtag();
     }
   };
 
   const removeHashtag = (tagToRemove: string) => {
-    setHashtags(prev => prev.filter(tag => tag !== tagToRemove));
+    setHashtags((prev) => prev.filter((tag) => tag !== tagToRemove));
   };
 
   if (loading) {
@@ -200,7 +214,10 @@ export default function EditPage() {
           </div>
 
           <div className="mb-6">
-            <label htmlFor="hashtags" className="block mb-2 text-sm font-medium">
+            <label
+              htmlFor="hashtags"
+              className="block mb-2 text-sm font-medium"
+            >
               해시태그
             </label>
             <div className="flex flex-wrap items-center gap-2 mb-2">

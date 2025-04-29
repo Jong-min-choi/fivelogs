@@ -52,7 +52,7 @@ public class BlogController {
         return ResponseEntity.ok(ApiResponse.success(pageBoardDto, "게시판 페이징 성공"));
     }
 
-    @PutMapping("/{userNickname}")
+    @PutMapping("/{userNickname}/title")
     public ResponseEntity<ApiResponse<BlogResponseDto>> updateBlog(
             @PathVariable String userNickname,
             @RequestBody @Valid BlogUpdateRequestDto dto) {
