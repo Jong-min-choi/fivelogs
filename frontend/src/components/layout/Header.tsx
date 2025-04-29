@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useGlobalLoginUser } from "@/stores/auth/loginUser";
 
-export default function Header() {
+export default function Header({ hideDropdownMenus = false }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
   const { isLogin, loginUser, logoutAndHome, isLoginUserPending } =
@@ -100,24 +100,28 @@ export default function Header() {
                 >
                   마이 페이지
                 </Link>
-                <Link
-                  href={`/${loginUser.nickname}`}
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  마이 블로그
-                </Link>
-                <Link
-                  href="/write"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  글쓰기
-                </Link>
-                <Link
-                  href={`/${loginUser.nickname}?showAttendance=true`}
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  출석부
-                </Link>
+                {!hideDropdownMenus && (
+                  <>
+                    <Link
+                      href={`/${loginUser.nickname}`}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      마이 블로그
+                    </Link>
+                    <Link
+                      href="/write"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      글쓰기
+                    </Link>
+                    <Link
+                      href={`/${loginUser.nickname}?showAttendance=true`}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      출석부
+                    </Link>
+                  </>
+                )}
                 <hr className="my-1" />
                 <button
                   onClick={logoutAndHome}

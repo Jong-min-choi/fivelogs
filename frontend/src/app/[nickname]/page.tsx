@@ -15,6 +15,7 @@ import LoadingSpinner from "@/components/common/LoadingSpinner";
 import AttendanceCalendar from "@/components/attendance/AttendanceCalendar";
 import { useGlobalLoginUser } from "@/stores/auth/loginUser";
 import SocialLinks from "@/components/SocialLinks";
+import removeMarkdown from "remove-markdown";
 
 export default function MyBoardPage() {
   const params = useParams();
@@ -321,7 +322,7 @@ export default function MyBoardPage() {
                         )}
                       </h2>
                       <p className="text-gray-600 mb-4 line-clamp-2">
-                        {board.content.replace(/<[^>]*>/g, "")}
+                        {removeMarkdown(board.content)}
                       </p>
                       {board.hashtags && board.hashtags.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-4">

@@ -1,6 +1,7 @@
 import { Board, PageDto } from "@/types/board";
 import Pagination from "../common/Pagination";
 import Link from "next/link";
+import removeMarkdown from "remove-markdown";
 
 type Props = {
   boards: Board[];
@@ -32,9 +33,11 @@ export default function LatestBoards({
             <div className="p-4 flex flex-col h-full">
               <h2 className="text-lg font-bold mb-2">{board.title}</h2>
               <p className="text-gray-600 mb-4">
-                {board.content.length > 100
-                  ? board.content.substring(0, 100) + "..."
-                  : board.content}
+                {removeMarkdown(
+                  board.content.length > 100
+                    ? board.content.substring(0, 100) + "..."
+                    : board.content
+                )}
               </p>
               <div className="mt-auto flex flex-col h-full">
                 <div className="flex flex-wrap gap-1 mb-3">

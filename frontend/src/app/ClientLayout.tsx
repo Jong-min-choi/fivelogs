@@ -5,12 +5,17 @@ import React from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { LoginUserContext, useLoginUser } from "@/stores/auth/loginUser";
+import { usePathname } from "next/navigation";
 
 type LayoutProps = {
   children: React.ReactNode;
 };
 
 export default function ClientLayout({ children }: LayoutProps) {
+  const pathname = usePathname();
+  // admin 경로 여부
+  const isAdminPage = pathname.startsWith("/admin");
+
   const fetchUser = useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me`, {
       method: "GET",
@@ -52,7 +57,7 @@ export default function ClientLayout({ children }: LayoutProps) {
   return (
     <LoginUserContext.Provider value={loginUserContextValue}>
       <main className="container mx-auto px-2 py-8">
-        <Header />
+        <Header hideDropdownMenus={isAdminPage} />
         {children}
         <Footer />
       </main>
