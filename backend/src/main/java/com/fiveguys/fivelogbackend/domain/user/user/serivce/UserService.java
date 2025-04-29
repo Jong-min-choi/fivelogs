@@ -231,7 +231,12 @@ public class UserService {
         return userRepository.findAllByProfileImageId(imageId);
     }
 
-
-
+    @Transactional
+    public String updateIntroduce(Long userId, String introduce){
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 userId 입니다."));
+        if(StringUtils.hasText(introduce)) user.setIntroduce(introduce);
+        else throw new NullPointerException("introduce가 비어있습니다.");
+        return introduce;
+    }
 
 }
