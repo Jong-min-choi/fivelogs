@@ -35,11 +35,44 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.status = 'PUBLIC'")
     Page<Board> findAllPublicWithUser(Pageable pageable);
 
+    //블로그 주인, 블로그 게시판 전제 초회
     @Query("SELECT b FROM Board b JOIN FETCH b.user where b.user.nickname = :nickname")
     Page<Board> findAllWithUserByNickname(@Param("nickname")String nickname,Pageable pageable);
 
+    @Query("""
+    SELECT DISTINCT b 
+    FROM Board b
+    JOIN FETCH b.user u
+    JOIN b.taggings t
+    JOIN t.hashtag h
+    WHERE u.nickname = :nickname
+      AND h.name = :tagName
+    """)
+    Page<Board> findByNicknameAndTagName(
+            @Param("nickname") String nickname,
+            @Param("tagName") String tagName,
+            Pageable pageable
+    );
+
+
+
     @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.user.nickname = :nickname AND b.status = 'PUBLIC'")
     Page<Board> findAllPublicWithUserByNickname(@Param("nickname") String nickname, Pageable pageable);
+
+    @Query("""
+    SELECT DISTINCT b FROM Board b
+    JOIN FETCH b.user u
+    JOIN b.taggings t
+    JOIN t.hashtag h
+    WHERE u.nickname = :nickname
+      AND b.status = 'PUBLIC'
+      AND h.name = :tagName
+    """)
+    Page<Board> findPublicBoardsByNicknameAndTagName(
+            @Param("nickname") String nickname,
+            @Param("tagName") String tagName,
+            Pageable pageable
+    );
 
     Optional<Board>  findFirstByIdLessThanAndUser_NicknameOrderByIdDesc(Long id, String nickname);
 

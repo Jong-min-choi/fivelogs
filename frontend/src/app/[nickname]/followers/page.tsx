@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useGlobalLoginUser } from "@/stores/auth/loginUser";
+import Link from "next/link";
 
 type FollowerDto = {
   email: string;
@@ -87,22 +88,26 @@ export default function FollowersPage() {
         <ul className="space-y-6 mt-6">
           {followers.map((user) => (
             <li key={user.nickname} className="flex items-center gap-4">
-              {user.profileImageUrl ? (
-                <img
-                  src={user.profileImageUrl}
-                  alt={user.nickname}
-                  className="w-12 h-12 rounded-full object-cover border"
-                />
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-xl font-bold text-gray-600 border">
-                  {getInitial(user.nickname)}
-                </div>
-              )}
+              <Link href={`/${user.nickname}`}>
+                {user.profileImageUrl ? (
+                  <img
+                    src={user.profileImageUrl}
+                    alt={user.nickname}
+                    className="w-12 h-12 rounded-full object-cover border cursor-pointer"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-xl font-bold text-gray-600 border cursor-pointer">
+                    {getInitial(user.nickname)}
+                  </div>
+                )}
+              </Link>
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-gray-900">
-                  {user.nickname}{" "}
-                  <span className="text-gray-500">{user.email}</span>
-                </div>
+                <Link href={`/${user.nickname}`}>
+                  <div className="font-semibold text-gray-900 cursor-pointer">
+                    {user.nickname}{" "}
+                    <span className="text-gray-500">{user.email}</span>
+                  </div>
+                </Link>
                 <div className="text-gray-500 text-sm truncate">
                   {user.introduce}
                 </div>
@@ -142,7 +147,6 @@ export default function FollowersPage() {
                       return;
                     }
                     try {
-                      console.log(`${user.id} user id`);
                       const res = await fetch(
                         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/follow/${user.id}`,
                         {
