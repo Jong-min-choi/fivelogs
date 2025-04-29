@@ -93,30 +93,45 @@ export default function Header({ hideDropdownMenus = false }) {
             </div>
 
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200">
-                <Link
-                  href="/users/mypage"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  마이 페이지
-                </Link>
+              <div
+                className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200"
+                tabIndex={0}
+                onBlur={() => setIsDropdownOpen(false)}
+              >
                 {!hideDropdownMenus && (
                   <>
                     <Link
+                      href="/"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      메인 페이지
+                    </Link>
+                    <Link
+                      href="/users/mypage"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      마이 페이지
+                    </Link>
+                    <Link
                       href={`/${loginUser.nickname}`}
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsDropdownOpen(false)}
                     >
                       마이 블로그
                     </Link>
                     <Link
                       href="/write"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsDropdownOpen(false)}
                     >
                       글쓰기
                     </Link>
                     <Link
                       href={`/${loginUser.nickname}?showAttendance=true`}
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsDropdownOpen(false)}
                     >
                       출석부
                     </Link>
@@ -124,7 +139,10 @@ export default function Header({ hideDropdownMenus = false }) {
                 )}
                 <hr className="my-1" />
                 <button
-                  onClick={logoutAndHome}
+                  onClick={() => {
+                    setIsDropdownOpen(false);
+                    logoutAndHome();
+                  }}
                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   로그아웃

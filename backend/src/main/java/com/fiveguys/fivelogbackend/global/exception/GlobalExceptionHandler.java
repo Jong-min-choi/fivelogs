@@ -15,27 +15,30 @@ import java.util.Map;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<String>> handleIllegalArgumentException(IllegalArgumentException e){
-        log.error ("Error : {}", e);
+        log.error("IllegalArgumentException: ", e);  // 스택트레이스 포함
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.fail("Error : "+ e.getMessage()));
+                .body(ApiResponse.fail("Error: " + e.getMessage()));
     }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<String>> handleRuntimeException(RuntimeException e){
-        log.error ("Error : {}", e);
+        log.error("RuntimeException: ", e);  // 스택트레이스 포함
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.fail("Error : "+ e.getMessage()));
+                .body(ApiResponse.fail("Error: " + e.getMessage()));
     }
-    //validation error
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationException(MethodArgumentNotValidException e){
         Map<String, String> errors = new HashMap<>();
         e.getBindingResult().getFieldErrors().forEach(
                 error -> errors.put(error.getField(), error.getDefaultMessage())
         );
-        log.error ("Error : {}", errors);
+        log.error("Validation errors: {}", errors);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.fail(JwtUt.json.toString(errors)));
+
     }
 }

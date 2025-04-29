@@ -18,10 +18,10 @@ export default function AttendanceCalendar() {
   const [loading, setLoading] = useState(false);
   const { isLogin } = useGlobalLoginUser();
 
-  // 현재 날짜 기준으로 달력 범위 설정
+  // 현재 연도 기준으로 달력 범위 설정
   const now = new Date();
-  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  const firstDay = new Date(now.getFullYear(), 0, 1); // 1월 1일
+  const lastDay = new Date(now.getFullYear(), 11, 31); // 12월 31일
 
   useEffect(() => {
     if (!isLogin) return;
@@ -67,11 +67,8 @@ export default function AttendanceCalendar() {
         tileClassName={tileClassName}
         tileContent={tileContent}
         locale="ko-KR"
-        activeStartDate={firstDay} // 현재 달의 첫날로 시작
         minDate={firstDay}
         maxDate={lastDay}
-        prevLabel={null}
-        nextLabel={null}
         prev2Label={null}
         next2Label={null}
         navigationLabel={({ date }) =>

@@ -6,10 +6,8 @@ import com.fiveguys.fivelogbackend.domain.blog.blog.service.BlogService;
 import com.fiveguys.fivelogbackend.domain.blog.board.dto.BoardPageResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import com.fiveguys.fivelogbackend.domain.blog.board.service.BoardService;
-import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
 import com.fiveguys.fivelogbackend.global.rq.Rq;
-import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,15 +32,15 @@ public class BlogController {
 
 
     @GetMapping("/{nickname}")
-    public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBlogMainInfo(@PageableDefault(size=10, sort = "createdDate",direction = Sort.Direction.DESC) Pageable pageable,
+    public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBlogMainInfo(@PageableDefault(size=10,page = 0, sort = "createdDate",direction = Sort.Direction.DESC) Pageable pageable,
+                                                                             @RequestParam(required = false) String tag,
                                                                            @PathVariable(name = "nickname") String nickname){
-
         Page<Board> pagedBoards;
         log.info("nickname {}", nickname);
         if(!Objects.isNull(rq.getActor()) && rq.getActor().getNickname().equals(nickname)){
-            pagedBoards = boardService.getBoardsAllWithNickname(nickname,pageable);
+            pagedBoards = boardService.getBoardsByNicknameAndOptionalTag(nickname,tag,pageable);
         } else {
-            pagedBoards = boardService.getPublicBoardsAllWithNickname(nickname,pageable);
+            pagedBoards = boardService.getPublicBoardsAllWithNickname(nickname,tag,pageable);
         }
 
         BoardPageResponseDto pageBoardDto =
