@@ -37,7 +37,7 @@ export default function MyBoardPage() {
   const [ownerInfo, setOwnerInfo] = useState<BlogOwnerDto | null>(null);
   const [hashtags, setHashtags] = useState<HashtagCountDto[]>([]);
   const [showAttendance, setShowAttendance] = useState(
-    searchParams.get("showAttendance") || false 
+    searchParams.get("showAttendance") || false
   );
   const boardsPerPage = 10; // 한 페이지에 10개 게시글 표시
 
@@ -64,13 +64,11 @@ export default function MyBoardPage() {
       } catch (err) {
         setIsFollowing(false);
       }
-    };  
+    };
     // 둘 다 호출
     fetchFollowStatus();
   }, [nickname]);
 
-
-  
   // 팔로우/언팔로우 버튼 클릭 핸들러
 
   const handleFollowToggle = async () => {
@@ -198,10 +196,13 @@ export default function MyBoardPage() {
       }/api/blogs/${encodeURIComponent(
         nickname
       )}?page=${page}&size=${boardsPerPage}`;
+
       if (tag) {
         url += `&tag=${encodeURIComponent(tag)}`;
       }
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`서버 응답 오류: ${response.status}`);
@@ -248,7 +249,7 @@ export default function MyBoardPage() {
       console.error("해시태그 API 요청 중 오류 발생:", err);
     }
   };
- 
+
   useEffect(() => {
     fetchBlogData(currentPage, selectedTag);
     fetchBlogOwnerInfo();
@@ -306,7 +307,19 @@ export default function MyBoardPage() {
                         <span className="mx-2">•</span>
                         <span>조회 {board.views}</span>
                       </div>
-                      <h2 className="text-lg font-bold mb-2">{board.title}</h2>
+                      {/* 게시글 제목 + 자물쇠 */}
+                      <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
+                        {board.title}
+                        {board.boardStatus === "PRIVATE" ? (
+                          <span title="비공개" className="ml-1 text-base">
+                            🔒
+                          </span>
+                        ) : (
+                          <span title="공개" className="ml-1 text-base">
+                            🔓
+                          </span>
+                        )}
+                      </h2>
                       <p className="text-gray-600 mb-4 line-clamp-2">
                         {board.content.replace(/<[^>]*>/g, "")}
                       </p>
@@ -387,16 +400,16 @@ export default function MyBoardPage() {
               </p>
             </div>
           </div>
-          
+
           {/* SNS 링크 버튼 */}
           {ownerInfo?.githubLink && (
-          <div className="flex justify-end gap-2">
-            <SocialLinks
-              githubLink={ownerInfo.githubLink}
-              instagramLink={ownerInfo.instagramLink}
-              twitterLink={ownerInfo.twitterLink}
-            />
-          </div>
+            <div className="flex justify-end gap-2">
+              <SocialLinks
+                githubLink={ownerInfo.githubLink}
+                instagramLink={ownerInfo.instagramLink}
+                twitterLink={ownerInfo.twitterLink}
+              />
+            </div>
           )}
 
           {/* 팔로우/언팔로우 버튼: 블로그 주인이 아닐 때만 노출 */}

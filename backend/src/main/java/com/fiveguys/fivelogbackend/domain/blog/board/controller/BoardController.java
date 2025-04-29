@@ -65,7 +65,7 @@ public class BoardController {
     @GetMapping
     @Operation(summary = "홈 페이지 게시글 조회")
     public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBoards(@PageableDefault(size=12, sort = "createdDate",direction = Sort.Direction.DESC) Pageable pageable){
-        Page<Board> pagedBoards = boardService.getBoardsAllWithUser(pageable);
+        Page<Board> pagedBoards = boardService.getPublicBoardsAllWithUser(pageable);
 
 //        log.info("pagedBoards {}", pagedBoards.getContent().size());
         for (Board board : pagedBoards) {
@@ -78,6 +78,7 @@ public class BoardController {
     }
 
     @GetMapping("/{boardId}")
+    @Operation(summary = "상세 페이지 조회")
     public ResponseEntity<ApiResponse<BoardDetailDto>> getBlogWithBoards(
             @PathVariable("boardId")  Long boardId ){
 

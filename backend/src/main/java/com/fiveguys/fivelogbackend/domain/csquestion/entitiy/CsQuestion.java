@@ -29,6 +29,4 @@ public class CsQuestion extends BaseEntity {
     @Column(nullable = false)
     String answer;
 
-
-
 }

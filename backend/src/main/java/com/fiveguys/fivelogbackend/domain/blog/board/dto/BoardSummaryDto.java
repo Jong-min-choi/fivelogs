@@ -2,6 +2,7 @@ package com.fiveguys.fivelogbackend.domain.blog.board.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
+import com.fiveguys.fivelogbackend.domain.blog.board.entity.BoardStatus;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.SNSLinks;
 import lombok.*;
 
@@ -30,6 +31,9 @@ public class BoardSummaryDto {
     String instagramLink;
     String twitterLink;
 
+    BoardStatus boardStatus;
+
+
     public static BoardSummaryDto from(Board board, List<String> hashtagNames) {
         SNSLinks snsLink = board.getUser().getSnsLink();
 
@@ -42,6 +46,7 @@ public class BoardSummaryDto {
                 .githubLink(snsLink != null ? snsLink.getGithubLink() : null)
                 .instagramLink(snsLink != null ? snsLink.getInstagramLink() : null)
                 .twitterLink(snsLink != null ? snsLink.getTwitterLink() : null)
+                .boardStatus(board.getStatus())
                 .hashtags(hashtagNames)
                 .created(board.getCreatedDate())
                 .updated(board.getUpdatedDate())
