@@ -2,6 +2,7 @@ package com.fiveguys.fivelogbackend.domain.blog.board.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
+import com.fiveguys.fivelogbackend.domain.user.user.entity.SNSLinks;
 import lombok.*;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +35,9 @@ public class BoardDetailDto {
     String instagramLink;
     String twitterLink;
 
-    public static BoardDetailDto from (Board board, List<String> hashtagNameList, String viewPath){
+    public static BoardDetailDto from(Board board, List<String> hashtagNameList, String viewPath) {
+        SNSLinks snsLink = board.getUser().getSnsLink();
+
         return BoardDetailDto.builder()
                 .userId(board.getUser().getId())
                 .boardId(board.getId())
@@ -48,9 +51,9 @@ public class BoardDetailDto {
                 .profileImageUrl(viewPath)
                 .createdDateTime(board.getCreatedDate())
                 .updatedDateTime(board.getUpdatedDate())
-                .githubLink(board.getUser().getSnsLink().getGithubLink())
-                .instagramLink(board.getUser().getSnsLink().getInstagramLink())
-                .twitterLink(board.getUser().getSnsLink().getTwitterLink())
+                .githubLink(snsLink != null ? snsLink.getGithubLink() : null)
+                .instagramLink(snsLink != null ? snsLink.getInstagramLink() : null)
+                .twitterLink(snsLink != null ? snsLink.getTwitterLink() : null)
                 .build();
     }
 
