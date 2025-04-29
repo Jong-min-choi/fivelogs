@@ -27,12 +27,16 @@ public class EmailController {
     @PostMapping("/join/send")
     public ResponseEntity<ApiResponse<String>> sendCodeByJoin(@RequestBody UserEmailDto userEmailDto) {
         String email = userEmailDto.getEmail();
+        log.info("your email1 {}", email);
         if(userService.emailExists(email)) {
             return ResponseEntity
                     .badRequest()
                     .body(ApiResponse.fail("이미 사용 중인 이메일입니다."));
         }
+        log.info("your email2 {}", email);
         emailService.sendVerificationEmail(email);
+        log.info("your email3 {}", email);
+
         return ResponseEntity.ok(ApiResponse.success(null, "이메일 전송 성공"));
     }
 //    비밀번호 찾기용 send
