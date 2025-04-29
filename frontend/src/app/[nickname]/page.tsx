@@ -14,6 +14,7 @@ import Pagination from "@/components/common/Pagination";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import AttendanceCalendar from "@/components/attendance/AttendanceCalendar";
 import { useGlobalLoginUser } from "@/stores/auth/loginUser";
+import SocialLinks from "@/components/SocialLinks";
 
 export default function MyBoardPage() {
   const params = useParams();
@@ -36,7 +37,7 @@ export default function MyBoardPage() {
   const [ownerInfo, setOwnerInfo] = useState<BlogOwnerDto | null>(null);
   const [hashtags, setHashtags] = useState<HashtagCountDto[]>([]);
   const [showAttendance, setShowAttendance] = useState(
-    searchParams.get("showAttendance") || false
+    searchParams.get("showAttendance") || false 
   );
   const boardsPerPage = 10; // 한 페이지에 10개 게시글 표시
 
@@ -63,10 +64,13 @@ export default function MyBoardPage() {
       } catch (err) {
         setIsFollowing(false);
       }
-    };
+    };  
+    // 둘 다 호출
     fetchFollowStatus();
   }, [nickname]);
 
+
+  
   // 팔로우/언팔로우 버튼 클릭 핸들러
 
   const handleFollowToggle = async () => {
@@ -244,7 +248,7 @@ export default function MyBoardPage() {
       console.error("해시태그 API 요청 중 오류 발생:", err);
     }
   };
-
+ 
   useEffect(() => {
     fetchBlogData(currentPage, selectedTag);
     fetchBlogOwnerInfo();
@@ -383,6 +387,17 @@ export default function MyBoardPage() {
               </p>
             </div>
           </div>
+          
+          {/* SNS 링크 버튼 */}
+          {ownerInfo?.githubLink && (
+          <div className="flex justify-end gap-2">
+            <SocialLinks
+              githubLink={ownerInfo.githubLink}
+              instagramLink={ownerInfo.instagramLink}
+              twitterLink={ownerInfo.twitterLink}
+            />
+          </div>
+          )}
 
           {/* 팔로우/언팔로우 버튼: 블로그 주인이 아닐 때만 노출 */}
           {!isOwner && (
