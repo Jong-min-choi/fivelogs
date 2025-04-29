@@ -2,6 +2,7 @@ package com.fiveguys.fivelogbackend.domain.blog.board.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
+import com.fiveguys.fivelogbackend.domain.user.user.entity.SNSLinks;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -29,20 +30,23 @@ public class BoardSummaryDto {
     String instagramLink;
     String twitterLink;
 
-    public static BoardSummaryDto from(Board board, List<String> hashtagNames){
+    public static BoardSummaryDto from(Board board, List<String> hashtagNames) {
+        SNSLinks snsLink = board.getUser().getSnsLink();
+
         return BoardSummaryDto.builder()
                 .id(board.getId())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .views(board.getViews())
                 .nickname(board.getUser().getNickname())
-                .githubLink(board.getUser().getSnsLink().getGithubLink())
-                .instagramLink(board.getUser().getSnsLink().getInstagramLink())
-                .twitterLink(board.getUser().getSnsLink().getTwitterLink())
+                .githubLink(snsLink != null ? snsLink.getGithubLink() : null)
+                .instagramLink(snsLink != null ? snsLink.getInstagramLink() : null)
+                .twitterLink(snsLink != null ? snsLink.getTwitterLink() : null)
                 .hashtags(hashtagNames)
                 .created(board.getCreatedDate())
                 .updated(board.getUpdatedDate())
                 .build();
     }
+
 
 }
