@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Embeddable
 public class SNSLinks {
-    private String githubLink = "";
-    private String instagramLink = "";
-    private String twitterLink = "";
+    private String githubLink;
+    private String instagramLink;
+    private String twitterLink;
 }

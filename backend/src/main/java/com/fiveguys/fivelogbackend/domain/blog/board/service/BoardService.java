@@ -25,10 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -81,14 +78,26 @@ public class BoardService {
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
         return null;
     }
-    @Transactional
-
+    @Transactional // 모든 게시판 조회 용
     public Page<Board> getBoardsAllWithUser(Pageable pageable) {
         return boardRepository.findAllWithUser(pageable);
     }
+
+    @Transactional
+    public Page<Board> getPublicBoardsAllWithUser(Pageable pageable){
+        return boardRepository.findAllPublicWithUser(pageable);
+
+    }
+
+    @Transactional // 전체 조회, 블로그 주인 용
     public Page<Board> getBoardsAllWithNickname(String nickname,Pageable pageable) {
         return boardRepository.findAllWithUserByNickname(nickname, pageable);
     }
+    @Transactional // 전체 조회, 블로그 주인 용
+    public Page<Board> getPublicBoardsAllWithNickname(String nickname,Pageable pageable) {
+        return boardRepository.findAllPublicWithUserByNickname(nickname, pageable);
+    }
+
 
     // 앞에 자동으로 #붙이고 중복제거 GPT가 만들어줬어요ㅎ
 
@@ -108,7 +117,7 @@ public class BoardService {
         return new BoardPageResponseDto(boardSummaryDtoList, unitPageInit);
     }
 
-    private List<BoardSummaryDto> getBoardSummaryDtos(List<Board> boards) {
+    public List<BoardSummaryDto> getBoardSummaryDtos(List<Board> boards) {
         List<Long> boardIds = boards.stream().map(Board::getId).toList();
 
         // boardId -> [해시태그들] 맵
@@ -240,19 +249,24 @@ public class BoardService {
 //        board.setStatus(BoardStatus.PRIVATE); // 비공개 처리
     }
 
-    public List<BoardSearchResponseDto> searchBoardsByTitle(String keyword, int page, int size) {
-        Page<Board> boards = boardRepository.searchByTitle(keyword, PageRequest.of(page, size));
+//    public List<BoardSearchResponseDto> searchBoardsByTitle(String keyword, int page, int size) {
+//        Page<Board> boards = boardRepository.searchByTitle(keyword, PageRequest.of(page, size));
+//
+//        return boards.stream()
+//                .map(BoardSearchResponseDto::fromEntity)
+//                .toList();
+//    }
 
-        return boards.stream()
-                .map(BoardSearchResponseDto::fromEntity)
-                .toList();
-    }
+//    @Transactional(readOnly = true)
+//    public Page<BoardSearchResponseDto> searchByKeyword(String keyword, Pageable pageable) {
+//        Page<Board> boardPage = boardRepository.searchByTitleOrHashtag(keyword, pageable);
+//
+//        return boardPage.map(BoardSearchResponseDto::fromEntity);
+//    }
 
     @Transactional(readOnly = true)
-    public Page<BoardSearchResponseDto> searchByKeyword(String keyword, Pageable pageable) {
-        Page<Board> boardPage = boardRepository.searchByTitleOrHashtag(keyword, pageable);
-
-        return boardPage.map(BoardSearchResponseDto::fromEntity);
+    public Page<Board> searchByTitleOrHashtagPaging(String title, Set<String> hashtags, Long lastId, Pageable pageable) {
+        return boardRepository.searchByTitleOrHashtagPaging(title, hashtags, lastId, pageable);
     }
 
 

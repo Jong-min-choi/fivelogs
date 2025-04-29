@@ -1,5 +1,7 @@
 package com.fiveguys.fivelogbackend.domain.user.user.dto;
 
+import com.fiveguys.fivelogbackend.domain.user.user.entity.SNSLinks;
+import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import lombok.*;
 
 @Getter
@@ -16,4 +18,7 @@ public class BlogOwnerDto {
     private Long followingCount;
     private Long followerCount;
     private String profileImageUrl;
+    private String githubLink;
+    private String instagramLink;
+    private String twitterLink;
 }

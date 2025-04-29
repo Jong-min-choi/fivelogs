@@ -51,6 +51,7 @@ export default function CommentReaction({
         throw new Error("리액션 처리 중 오류가 발생했습니다.");
       }
 
+
       const json = await res.json();
       if (json.success) {
         const newState = {
@@ -73,6 +74,7 @@ export default function CommentReaction({
     }
   };
 
+
   return (
     <div className="flex items-center gap-1">
       <button
@@ -80,9 +82,11 @@ export default function CommentReaction({
           reactionState.likedByMe === true ? "text-rose-500 bg-rose-50" : ""
         }`}
         onClick={() => handleReaction(true)}
+        
         title={!isLogin ? "로그인이 필요합니다" : "좋아요"}
       >
-        <span>{reactionState.likedByMe === true ? "💖" : "👍"}</span>
+       
+        {reactionState.likedByMe === true ? <span>👍</span> : <span>👍</span>}
         {reactionState.likeCount > 0 && (
           <span className="text-xs font-medium">{reactionState.likeCount}</span>
         )}

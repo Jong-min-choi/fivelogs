@@ -1,9 +1,13 @@
 import { PageDto } from "./board";
 
 export interface BlogOwnerDto {
-  // 아직 미완성이므로 빈 인터페이스로 정의
   id: number;
-  nickname?: string;
+  nickname: string;
+  introduction: string;
+  profileImage: string;
+  githubLink?: string;
+  instagramLink?: string;
+  twitterLink?: string;
   introduce?: string;
   profileImageLink?: string;
   myIntroduce?: string;
@@ -24,6 +28,7 @@ export interface BoardSummaryDto {
   created: string;
   updated: string;
   nickname: string;
+  boardStatus: string;
 }
 
 export interface BoardPageResponseDto {
@@ -45,4 +50,10 @@ export interface ApiResponse<T> {
 export interface HashtagCountDto {
   name: string;
   count: number;
+}
+
+export interface SNSLinkResponseDto {
+  githubLink: string;
+  instagramLink: string;
+  twitterLink: string;
 }

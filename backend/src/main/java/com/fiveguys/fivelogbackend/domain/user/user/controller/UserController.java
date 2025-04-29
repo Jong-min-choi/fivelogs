@@ -57,11 +57,11 @@ public class UserController {
 
     //유저삭제
     @DeleteMapping("/logout")
-    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal SecurityUser securityUser) {
+    public ResponseEntity<ApiResponse<Void>> deleteUser() {
         rq.deleteCookie("accessToken");
         rq.deleteCookie("refreshToken");
 //        userService.deleteUser();
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "로그아웃 성공"));
     }
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<MeUserResponseDto>> getMe() {
@@ -100,6 +100,12 @@ public class UserController {
         SNSLinkResponseDto responseDto = userService.updateSNSLink(dto);
         return ResponseEntity.ok(ApiResponse.success(responseDto, "SNS 링크가 저장되었습니다"));
     }
+    @PutMapping("/me/mypage/introduce")
+    public ResponseEntity<ApiResponse<String>> changeIntroduce(@RequestBody @Valid IntroduceUpdateRequest introduceUpdateRequest){
+        User actor = rq.getActor();
+        String updatedIntroduce = userService.updateIntroduce(actor.getId(), introduceUpdateRequest.getIntroduce());
+        return ResponseEntity.ok(ApiResponse.success(updatedIntroduce, "introduce 업데이트 성공"));
+    }
     @GetMapping("/nickname/{nickname}/email")
     public ResponseEntity<ApiResponse<UserEmailDto>> getEmail(@PathVariable("nickname") String nickname ){
         User user = userService.findByNickname(nickname).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 nickname 입니다."));
@@ -127,5 +133,7 @@ public class UserController {
         userService.changePassword(actor.getEmail(), currentPassword,newPassword);
         return ResponseEntity.ok(ApiResponse.success(null,"비밀번호 변경 성공"));
     }
+
+
 
 }

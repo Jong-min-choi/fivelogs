@@ -12,6 +12,7 @@ import com.fiveguys.fivelogbackend.domain.user.follow.repository.FollowRepositor
 import com.fiveguys.fivelogbackend.domain.user.role.entity.RoleType;
 import com.fiveguys.fivelogbackend.domain.user.role.service.RoleService;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.*;
+import com.fiveguys.fivelogbackend.domain.user.user.entity.SNSLinks;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.UserStatus;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
@@ -81,6 +82,7 @@ public class UserCommandService {
 
         long followCount = followRepository.countByFollowId(owner.getId());
         long followedCount = followRepository.countByFollowedId(owner.getId());
+        SNSLinks snsLink = owner.getSnsLink();
 
         return BlogOwnerDto.builder()
                 .id(owner.getId())
@@ -91,6 +93,9 @@ public class UserCommandService {
                 .followingCount(followCount)
                 .followerCount(followedCount)
                 .profileImageUrl(imageService.getImageProfileUrl(owner.getProfileImage()))
+                .githubLink(snsLink != null ? snsLink.getGithubLink() : null)
+                .instagramLink(snsLink != null ? snsLink.getInstagramLink() : null)
+                .twitterLink(snsLink != null ? snsLink.getTwitterLink() : null)
                 .build();
     }
 

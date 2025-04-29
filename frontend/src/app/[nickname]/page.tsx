@@ -14,6 +14,8 @@ import Pagination from "@/components/common/Pagination";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import AttendanceCalendar from "@/components/attendance/AttendanceCalendar";
 import { useGlobalLoginUser } from "@/stores/auth/loginUser";
+import SocialLinks from "@/components/SocialLinks";
+import removeMarkdown from "remove-markdown";
 
 export default function MyBoardPage() {
   const params = useParams();
@@ -64,6 +66,7 @@ export default function MyBoardPage() {
         setIsFollowing(false);
       }
     };
+    // 둘 다 호출
     fetchFollowStatus();
   }, [nickname]);
 
@@ -194,10 +197,13 @@ export default function MyBoardPage() {
       }/api/blogs/${encodeURIComponent(
         nickname
       )}?page=${page}&size=${boardsPerPage}`;
+
       if (tag) {
         url += `&tag=${encodeURIComponent(tag)}`;
       }
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`서버 응답 오류: ${response.status}`);
@@ -302,9 +308,21 @@ export default function MyBoardPage() {
                         <span className="mx-2">•</span>
                         <span>조회 {board.views}</span>
                       </div>
-                      <h2 className="text-lg font-bold mb-2">{board.title}</h2>
+                      {/* 게시글 제목 + 자물쇠 */}
+                      <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
+                        {board.title}
+                        {board.boardStatus === "PRIVATE" ? (
+                          <span title="비공개" className="ml-1 text-base">
+                            🔒
+                          </span>
+                        ) : (
+                          <span title="공개" className="ml-1 text-base">
+                            🔓
+                          </span>
+                        )}
+                      </h2>
                       <p className="text-gray-600 mb-4 line-clamp-2">
-                        {board.content.replace(/<[^>]*>/g, "")}
+                        {removeMarkdown(board.content)}
                       </p>
                       {board.hashtags && board.hashtags.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-4">
@@ -383,6 +401,17 @@ export default function MyBoardPage() {
               </p>
             </div>
           </div>
+
+          {/* SNS 링크 버튼 */}
+          {ownerInfo?.githubLink && (
+            <div className="flex justify-end gap-2">
+              <SocialLinks
+                githubLink={ownerInfo.githubLink}
+                instagramLink={ownerInfo.instagramLink}
+                twitterLink={ownerInfo.twitterLink}
+              />
+            </div>
+          )}
 
           {/* 팔로우/언팔로우 버튼: 블로그 주인이 아닐 때만 노출 */}
           {!isOwner && (
