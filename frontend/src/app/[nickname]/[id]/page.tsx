@@ -25,6 +25,7 @@ interface BoardDetailDto {
   githubLink?: string;
   instagramLink?: string;
   twitterLink?: string;
+  boardStatus: String;
 }
 
 // 이전/다음 게시글 정보 타입 정의
@@ -187,6 +188,15 @@ export default function BoardDetail() {
   useEffect(() => {
     if (loginUser && board) {
       setIsMyBoard(loginUser.nickname === board.nickName);
+
+      // 비공개 게시글 접근 제한
+      if (
+        board.boardStatus === "PRIVATE" &&
+        loginUser.nickname !== board.nickName
+      ) {
+        alert("비공개 게시판입니다.");
+        window.location.replace("/");
+      }
     }
   }, [loginUser, board]);
 
@@ -447,8 +457,17 @@ export default function BoardDetail() {
           )}
 
           {/* 게시글 제목 */}
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">
+          <h1 className="text-3xl font-bold text-gray-800 mb-4 flex items-center gap-2">
             {board.boardTitle}
+            {board.boardStatus === "PRIVATE" ? (
+              <span title="비공개" className="ml-2 text-lg">
+                🔒
+              </span>
+            ) : (
+              <span title="공개" className="ml-2 text-lg">
+                🔓
+              </span>
+            )}
           </h1>
 
           {/* 해시태그 */}

@@ -28,6 +28,7 @@ export interface BoardSummaryDto {
   created: string;
   updated: string;
   nickname: string;
+  boardStatus: string;
 }
 
 export interface BoardPageResponseDto {

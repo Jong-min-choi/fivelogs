@@ -57,11 +57,11 @@ public class UserController {
 
     //유저삭제
     @DeleteMapping("/logout")
-    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal SecurityUser securityUser) {
+    public ResponseEntity<ApiResponse<Void>> deleteUser() {
         rq.deleteCookie("accessToken");
         rq.deleteCookie("refreshToken");
 //        userService.deleteUser();
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "로그아웃 성공"));
     }
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<MeUserResponseDto>> getMe() {

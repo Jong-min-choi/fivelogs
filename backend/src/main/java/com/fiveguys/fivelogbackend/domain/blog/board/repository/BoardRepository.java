@@ -30,11 +30,16 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findWithUserAndProfileImageById(@Param("boardId") Long boardId);
 
     @Query("SELECT b FROM Board b JOIN FETCH b.user")
-    Page<Board> findAllWithUser(Pageable pageable);
+    Page<Board> findAllWithUser(Pageable pageable); //모두 가져오기, PUBLIC PRIVATE 구부없이
+
+    @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.status = 'PUBLIC'")
+    Page<Board> findAllPublicWithUser(Pageable pageable);
 
     @Query("SELECT b FROM Board b JOIN FETCH b.user where b.user.nickname = :nickname")
     Page<Board> findAllWithUserByNickname(@Param("nickname")String nickname,Pageable pageable);
 
+    @Query("SELECT b FROM Board b JOIN FETCH b.user WHERE b.user.nickname = :nickname AND b.status = 'PUBLIC'")
+    Page<Board> findAllPublicWithUserByNickname(@Param("nickname") String nickname, Pageable pageable);
 
     Optional<Board>  findFirstByIdLessThanAndUser_NicknameOrderByIdDesc(Long id, String nickname);
 

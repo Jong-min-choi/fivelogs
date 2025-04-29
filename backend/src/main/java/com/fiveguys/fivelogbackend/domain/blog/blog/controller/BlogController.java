@@ -8,6 +8,7 @@ import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
 import com.fiveguys.fivelogbackend.domain.blog.board.service.BoardService;
 import com.fiveguys.fivelogbackend.domain.user.user.serivce.UserService;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
+import com.fiveguys.fivelogbackend.global.rq.Rq;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/blogs")
@@ -26,22 +29,21 @@ import org.springframework.web.bind.annotation.*;
 public class BlogController {
     private final BlogService blogService;
     private final BoardService boardService;
-    private final UserService userService;
+    private final Rq rq;
 
-
-
-    @Operation(summary = "사용자 목록 조회", description = "사용자 목록을 페이지 단위로 조회합니다.") // 스웨거
-    @GetMapping("/users")
-    public ResponseEntity<Page<Board>> getBoards(@PageableDefault(page = 1, size = 10) Pageable pageable) {
-        Page<Board> boards = boardService.getBoardsAllWithUser(pageable);
-        return ResponseEntity.ok(boards);
-    }
 
 
     @GetMapping("/{nickname}")
     public ResponseEntity<ApiResponse<BoardPageResponseDto>> getBlogMainInfo(@PageableDefault(size=10, sort = "createdDate",direction = Sort.Direction.DESC) Pageable pageable,
                                                                            @PathVariable(name = "nickname") String nickname){
-        Page<Board> pagedBoards = boardService.getBoardsAllWithNickname(nickname,pageable);
+
+        Page<Board> pagedBoards;
+        log.info("nickname {}", nickname);
+        if(!Objects.isNull(rq.getActor()) && rq.getActor().getNickname().equals(nickname)){
+            pagedBoards = boardService.getBoardsAllWithNickname(nickname,pageable);
+        } else {
+            pagedBoards = boardService.getPublicBoardsAllWithNickname(nickname,pageable);
+        }
 
         BoardPageResponseDto pageBoardDto =
                 boardService.getBoardMainPageResponseDtoList(pagedBoards);
