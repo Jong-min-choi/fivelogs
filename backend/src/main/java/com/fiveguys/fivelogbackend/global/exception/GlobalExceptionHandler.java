@@ -17,13 +17,13 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<String>> handleIllegalArgumentException(IllegalArgumentException e){
-        log.error ("Error : {}", e.getMessage());
+        log.error ("Error : {}", e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.fail("Error : "+ e.getMessage()));
     }
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<String>> handleRuntimeException(RuntimeException e){
-        log.error ("Error : {}", e.getMessage());
+        log.error ("Error : {}", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.fail("Error : "+ e.getMessage()));
     }
