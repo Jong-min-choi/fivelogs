@@ -27,12 +27,14 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final String[] permitURL = {
              "/api/users/login", "/api/users/join",
-            "/api/boards/*/views"
+            "/api/boards/*/views", "/api/email/join/send", "/api/email/password/send",
+            "/api/email/verify"
     };
     //GET 요청 예외 검사 링크
     private final String[] requestGetExceptionURL = {
             "/api/users/me", "/api/attendance", "/api/users/me/mypage",
             "/api/followStatus/**", "/api/users/nickname/*/email",
+            "/api/admin/**"
     };
 
     record AuthTokens(String refreshToken, String accessToken) {

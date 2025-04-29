@@ -2,30 +2,29 @@ package com.fiveguys.fivelogbackend.domain.user.user.serivce;
 
 import com.fiveguys.fivelogbackend.domain.image.config.ImageProperties;
 import com.fiveguys.fivelogbackend.domain.image.service.ImageService;
-import com.fiveguys.fivelogbackend.domain.user.user.dto.MeUserResponseDto;
+import com.fiveguys.fivelogbackend.domain.user.user.dto.*;
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentRequestDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.dto.CommentResponseDto;
 import com.fiveguys.fivelogbackend.domain.blog.comment.entity.Comment;
-import com.fiveguys.fivelogbackend.domain.user.user.dto.MyPageDto;
-import com.fiveguys.fivelogbackend.domain.user.user.dto.SNSLinkRequestDto;
-import com.fiveguys.fivelogbackend.domain.user.user.dto.SNSLinkResponseDto;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.SNSLinks;
 
-import com.fiveguys.fivelogbackend.domain.user.user.dto.ChangePasswordDto;
-import com.fiveguys.fivelogbackend.domain.user.user.dto.ResetPasswordDto;
-
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
+import com.fiveguys.fivelogbackend.domain.user.user.entity.UserStatus;
 import com.fiveguys.fivelogbackend.domain.user.user.repository.UserRepository;
 import com.fiveguys.fivelogbackend.global.rq.Rq;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jmx.access.InvalidInvocationException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import software.amazon.awssdk.core.pagination.sync.PaginatedResponsesIterator;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -72,6 +71,7 @@ public class UserService {
                 .nickname(nickname)
                 .provider(provider)
                 .refreshToken(UUID.randomUUID().toString())
+                .userStatus(UserStatus.NORMAL)
                 .build();
 
         return userRepository.save(user);
@@ -147,6 +147,9 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
+            if(user.getUserStatus() == UserStatus.BANNED) {
+                throw new AccessDeniedException("정지된 회원입니다."); // 403 에러 발생
+            }
             if (passwordEncoder.matches(password, user.getPassword())) {
                 return rq.makeAuthCookie(user);
             }
@@ -227,6 +230,8 @@ public class UserService {
     public List<User> findAllByProfileImageId(Long imageId){
         return userRepository.findAllByProfileImageId(imageId);
     }
+
+
 
 
 }

@@ -14,8 +14,6 @@ export type PageDto = {
   endPage: number;
   currentPage: number;
   totalPage: number;
-  first: boolean;
-  last: boolean;
 };
 
 export type BoardResponseData = {

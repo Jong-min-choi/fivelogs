@@ -9,18 +9,24 @@ import com.fiveguys.fivelogbackend.domain.image.config.ImageProperties;
 import com.fiveguys.fivelogbackend.domain.image.entity.Image;
 import com.fiveguys.fivelogbackend.domain.image.service.ImageService;
 import com.fiveguys.fivelogbackend.domain.user.follow.repository.FollowRepository;
+import com.fiveguys.fivelogbackend.domain.user.role.entity.RoleType;
 import com.fiveguys.fivelogbackend.domain.user.role.service.RoleService;
 import com.fiveguys.fivelogbackend.domain.user.user.dto.*;
 import com.fiveguys.fivelogbackend.domain.user.user.entity.User;
+import com.fiveguys.fivelogbackend.domain.user.user.entity.UserStatus;
 import com.fiveguys.fivelogbackend.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jmx.access.InvalidInvocationException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -47,7 +53,7 @@ public class UserCommandService {
             User user = userService.join (email, password,  nickname, provider);
             userService.modify(user, nickname);
             //권한 주기
-            roleService.createUserRole(user);
+            roleService.createUserRole(user, RoleType.USER);
             //블로그 가입
             blogService.createBlog(user);
             return user;
@@ -124,6 +130,20 @@ public class UserCommandService {
                 .nickname(user.getNickname())
                 .profileImageUrl(imageService.getImageProfileUrl(user.getProfileImage()))
                 .build();
+    }
+
+
+    @Transactional
+    public UserStatus changeUserStatus(Long userId, UserStatus userStatus){
+        List<RoleType> userRoleType = roleService.getUserRoleType(userId);
+        for (RoleType roleType : userRoleType) {
+            if(roleType == RoleType.ADMIN) throw new AccessDeniedException("관리자는 정지할 수 없습니다."); // 403 에러 발생
+
+        }
+        User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 userId 입니다."));
+        user.setUserStatus(userStatus);
+
+        return userStatus;
     }
 
 }
