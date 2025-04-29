@@ -65,7 +65,7 @@ export default function EditPage() {
             return normalizedTag.replace(/\s+/g, "");
           })
         )
-      ).filter((tag) => tag.length > 1);
+      );
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/boards/${boardId}/edit`,
