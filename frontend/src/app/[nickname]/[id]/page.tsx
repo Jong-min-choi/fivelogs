@@ -7,6 +7,9 @@ import CommentList from "@/components/comment/CommentList";
 import { useGlobalLoginUser } from "@/stores/auth/loginUser";
 import Image from "next/image";
 import SocialLinks from "@/components/SocialLinks";
+import ReactMarkdown from "react-markdown";
+import { MarkdownComponents } from "@/components/MarkdownComponents"; // 경로에 맞게 조정
+import remarkGfm from "remark-gfm";
 
 // BoardDetailDto 타입 정의
 interface BoardDetailDto {
@@ -566,10 +569,14 @@ export default function BoardDetail() {
       </div>
 
       {/* 블로그 콘텐츠 */}
-      <div
-        className="prose prose-slate max-w-none mb-60"
-        dangerouslySetInnerHTML={{ __html: board.content }}
-      ></div>
+      <div className="prose prose-slate max-w-none mb-60">
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={MarkdownComponents}
+        >
+          {board.content}
+        </ReactMarkdown>
+      </div>
 
       {/* 작성자 프로필 영역 */}
       <div className="bg-gray-50 p-6 rounded-lg mb-8 border">
