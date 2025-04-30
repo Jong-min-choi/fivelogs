@@ -99,7 +99,7 @@ export default function Comment({
     setShowReplyForm(false);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/${comment.id}/replies`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/${comment.id}/replies`,
         {
           credentials: "include",
         }
@@ -124,7 +124,7 @@ export default function Comment({
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/${boardId}/${comment.id}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/boards/${boardId}/${comment.id}`,
         {
           method: "PUT",
           headers: {
@@ -158,7 +158,7 @@ export default function Comment({
   const handleDelete = async () => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/${boardId}/${comment.id}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/boards/${boardId}/${comment.id}`,
         {
           method: "DELETE",
           credentials: "include",
