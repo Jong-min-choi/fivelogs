@@ -41,7 +41,7 @@ export default function Header({ hideDropdownMenus = false }) {
       <div className="flex gap-4 items-center">
         <button
           onClick={handleSearchClick}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
           title="검색"
         >
           <svg

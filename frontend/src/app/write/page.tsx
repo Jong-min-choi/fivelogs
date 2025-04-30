@@ -201,7 +201,7 @@ export default function WritePage() {
               <button
                 type="button"
                 onClick={handleAddHashtag}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition"
+                className="cursor-pointer px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition"
               >
                 추가
               </button>
@@ -212,14 +212,14 @@ export default function WritePage() {
             <Link href="/">
               <button
                 type="button"
-                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition"
+                className="cursor-pointer px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition"
               >
                 취소
               </button>
             </Link>
             <button
               type="submit"
-              className="px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
+              className="cursor-pointer px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
               disabled={isLoading}
             >
               {isLoading ? "게시 중..." : "게시하기"}

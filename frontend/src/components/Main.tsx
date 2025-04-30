@@ -154,7 +154,7 @@ export default function Boards({ initialBoards = [] }: BoardsProps) {
       <h1 className="text-2xl font-bold mb-6">개발 게시글</h1>
       <div className="flex mb-6 border-b">
         <button
-          className={`py-2 px-4 font-medium ${
+          className={`py-2 px-4 font-medium cursor-pointer ${
             viewType === "latest"
               ? "border-b-2 border-rose-500 text-rose-500"
               : "text-gray-500 hover:text-gray-800"
@@ -164,7 +164,7 @@ export default function Boards({ initialBoards = [] }: BoardsProps) {
           최신
         </button>
         <button
-          className={`py-2 px-4 font-medium ${
+          className={`py-2 px-4 font-medium cursor-pointer ${
             viewType === "trending"
               ? "border-b-2 border-rose-500 text-rose-500"
               : "text-gray-500 hover:text-gray-800"
@@ -174,7 +174,7 @@ export default function Boards({ initialBoards = [] }: BoardsProps) {
           트렌딩
         </button>
         <button
-          className={`py-2 px-4 font-medium ${
+          className={`py-2 px-4 font-medium cursor-pointer ${
             viewType === "todayQuestion"
               ? "border-b-2 border-rose-500 text-rose-500"
               : "text-gray-500 hover:text-gray-800"

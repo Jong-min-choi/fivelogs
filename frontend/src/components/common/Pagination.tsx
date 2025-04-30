@@ -37,7 +37,7 @@ export default function Pagination({
         {currentPage > 1 && (
           <button
             onClick={() => onPageChange(1)}
-            className="border border-gray-300 px-3 py-1 rounded-l-md focus:outline-none hover:bg-gray-50"
+            className="border border-gray-300 px-3 py-1 rounded-l-md focus:outline-none hover:bg-gray-50 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +60,7 @@ export default function Pagination({
         {startPage > 1 && (
           <button
             onClick={() => onPageChange(startPage - 1)}
-            className="border border-gray-300 px-3 py-1 focus:outline-none hover:bg-gray-50"
+            className="border border-gray-300 px-3 py-1 focus:outline-none hover:bg-gray-50 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +90,7 @@ export default function Pagination({
                   ? "bg-rose-500 text-white"
                   : "border border-gray-300 hover:bg-gray-50"
               }
-              px-3 py-1 focus:outline-none
+              px-3 py-1 focus:outline-none cursor-pointer
             `}
           >
             {page}
@@ -101,7 +101,7 @@ export default function Pagination({
         {endPage < totalPages && (
           <button
             onClick={() => onPageChange(endPage + 1)}
-            className="border border-gray-300 px-3 py-1 focus:outline-none hover:bg-gray-50"
+            className="border border-gray-300 px-3 py-1 focus:outline-none hover:bg-gray-50 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

@@ -120,7 +120,7 @@ export default function CommentList({ boardId }: CommentListProps) {
         <div className="flex items-center gap-4">
           <button
             onClick={() => setShowComments(!showComments)}
-            className="text-sm px-3 py-1 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2"
+            className="cursor-pointer text-sm px-3 py-1 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2"
           >
             <span>{showComments ? "댓글 숨기기" : "댓글 보기"}</span>
             {totalCommentCount > 0 && (
@@ -132,10 +132,10 @@ export default function CommentList({ boardId }: CommentListProps) {
 
           {/* 정렬 옵션 */}
           {showComments && (
-            <div className="flex items-center gap-2 text-sm">
+            <div className=" flex items-center gap-2 text-sm">
               <button
                 onClick={() => handleSortChange("createdDate,desc")}
-                className={`px-2 py-1 rounded-full transition-colors ${
+                className={`cursor-pointer px-2 py-1 rounded-full transition-colors ${
                   sortBy === "createdDate,desc"
                     ? "text-rose-500 bg-rose-50"
                     : "text-gray-500 hover:bg-gray-50"
@@ -145,7 +145,7 @@ export default function CommentList({ boardId }: CommentListProps) {
               </button>
               <button
                 onClick={() => handleSortChange("createdDate,asc")}
-                className={`px-2 py-1 rounded-full transition-colors ${
+                className={`cursor-pointer px-2 py-1 rounded-full transition-colors ${
                   sortBy === "createdDate,asc"
                     ? "text-rose-500 bg-rose-50"
                     : "text-gray-500 hover:bg-gray-50"
@@ -155,7 +155,7 @@ export default function CommentList({ boardId }: CommentListProps) {
               </button>
               <button
                 onClick={() => handleSortChange("likeCount,desc")}
-                className={`px-2 py-1 rounded-full transition-colors ${
+                className={`cursor-pointer px-2 py-1 rounded-full transition-colors ${
                   sortBy === "likeCount,desc"
                     ? "text-rose-500 bg-rose-50"
                     : "text-gray-500 hover:bg-gray-50"
