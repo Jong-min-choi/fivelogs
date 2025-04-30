@@ -16,8 +16,9 @@ export default function WritePage() {
   const router = useRouter();
 
   const handleAddHashtag = () => {
-    if (hashtagInput.trim() && !hashtags.includes(hashtagInput.trim())) {
-      setHashtags([...hashtags, hashtagInput.trim()]);
+    const cleanTag = hashtagInput.trim().replace(/^#/, ""); // 앞의 # 제거
+    if (cleanTag && !hashtags.includes(cleanTag)) {
+      setHashtags([...hashtags, cleanTag]);
       setHashtagInput("");
     }
   };
@@ -190,7 +191,9 @@ export default function WritePage() {
                 type="text"
                 id="hashtags"
                 value={hashtagInput}
-                onChange={(e) => setHashtagInput(e.target.value)}
+                onChange={(e) =>
+                  setHashtagInput(e.target.value.replace(/^#/, ""))
+                } // 입력 시 # 자동 제거
                 onKeyDown={handleHashtagKeyDown}
                 className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-rose-300"
                 placeholder="해시태그 입력 후 Enter 또는 추가 버튼을 클릭하세요"

@@ -486,6 +486,12 @@ export default function MyPage() {
               >
                 비밀번호 변경
               </Link>
+              <Link
+                href="/users/leave"
+                className="px-4 py-2 bg-red-400 text-white rounded hover:bg-red-500 transition flex items-center"
+              >
+                회원탈퇴
+              </Link>
               <button
                 type="submit"
                 className="px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"

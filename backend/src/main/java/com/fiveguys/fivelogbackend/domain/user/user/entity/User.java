@@ -1,7 +1,13 @@
 package com.fiveguys.fivelogbackend.domain.user.user.entity;
 
+import com.fiveguys.fivelogbackend.domain.blog.blog.entity.Blog;
+import com.fiveguys.fivelogbackend.domain.blog.board.entity.Board;
+import com.fiveguys.fivelogbackend.domain.blog.comment.entity.Comment;
+import com.fiveguys.fivelogbackend.domain.blog.comment.entity.LikeComment;
+import com.fiveguys.fivelogbackend.domain.user.attendance.entity.Attendance;
 import com.fiveguys.fivelogbackend.domain.user.follow.entity.Follow;
 import com.fiveguys.fivelogbackend.domain.image.entity.Image;
+import com.fiveguys.fivelogbackend.domain.user.role.entity.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,6 +43,7 @@ public class User {
             @AttributeOverride(name = "twitterLink", column = @Column(name = "twitter_link"))
     })
     private SNSLinks snsLink;
+
     @Column(length = 255)
     String refreshToken;
     @Column(length = 20)
@@ -54,6 +61,25 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
     private UserStatus userStatus;
+
+    @OneToOne(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private Blog blog;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private List<LikeComment> commentReactions;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private List<Board> boards;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private List<Attendance> attendances;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private List<Role> roles;
+
 
 //    public boolean isAdmin() {
 //        return "admin".equals(email);

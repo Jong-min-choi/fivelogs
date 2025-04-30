@@ -9,7 +9,11 @@ interface CommentReactionProps {
   likeCount: number;
   dislikeCount: number;
   likedByMe: boolean | null;
-  onReactionUpdate: (likeCount: number, dislikeCount: number, likedByMe: boolean | null) => void;
+  onReactionUpdate: (
+    likeCount: number,
+    dislikeCount: number,
+    likedByMe: boolean | null
+  ) => void;
 }
 
 export default function CommentReaction({
@@ -24,7 +28,7 @@ export default function CommentReaction({
   const [reactionState, setReactionState] = useState({
     likeCount: initialLikeCount,
     dislikeCount: initialDislikeCount,
-    likedByMe: initialLikedByMe
+    likedByMe: initialLikedByMe,
   });
 
   const handleReaction = async (isLike: boolean) => {
@@ -32,32 +36,31 @@ export default function CommentReaction({
       alert("로그인이 필요한 기능입니다.");
       return;
     }
-  
+
     try {
       const res = await fetch(
-        `http://localhost:8090/api/comments/boards/${boardId}/${commentId}/reaction`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/boards/${boardId}/${commentId}/reaction`,
         {
           method: "POST",
           headers: {
-            "Accept": "application/json",
+            Accept: "application/json",
             "Content-Type": "application/json",
           },
           credentials: "include",
-          body: JSON.stringify({ isLike })
+          body: JSON.stringify({ isLike }),
         }
       );
-  
+
       if (!res.ok) {
         throw new Error("리액션 처리 중 오류가 발생했습니다.");
       }
-
 
       const json = await res.json();
       if (json.success) {
         const newState = {
           likeCount: json.data.likeCount,
           dislikeCount: json.data.dislikeCount,
-          likedByMe: json.data.likedByMe
+          likedByMe: json.data.likedByMe,
         };
         setReactionState(newState);
         onReactionUpdate(
@@ -70,10 +73,13 @@ export default function CommentReaction({
       }
     } catch (err) {
       console.error("❌ 리액션 실패:", err);
-      alert(err instanceof Error ? err.message : "리액션 처리 중 오류가 발생했습니다.");
+      alert(
+        err instanceof Error
+          ? err.message
+          : "리액션 처리 중 오류가 발생했습니다."
+      );
     }
   };
-
 
   return (
     <div className="flex items-center gap-1">
@@ -82,10 +88,8 @@ export default function CommentReaction({
           reactionState.likedByMe === true ? "text-rose-500 bg-rose-50" : ""
         }`}
         onClick={() => handleReaction(true)}
-        
         title={!isLogin ? "로그인이 필요합니다" : "좋아요"}
       >
-       
         {reactionState.likedByMe === true ? <span>👍</span> : <span>👍</span>}
         {reactionState.likeCount > 0 && (
           <span className="text-xs font-medium">{reactionState.likeCount}</span>
@@ -101,9 +105,11 @@ export default function CommentReaction({
       >
         <span>{reactionState.likedByMe === false ? "👎" : "👎"}</span>
         {reactionState.dislikeCount > 0 && (
-          <span className="text-xs font-medium">{reactionState.dislikeCount}</span>
+          <span className="text-xs font-medium">
+            {reactionState.dislikeCount}
+          </span>
         )}
       </button>
     </div>
   );
-} 
+}

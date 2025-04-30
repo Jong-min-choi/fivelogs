@@ -55,7 +55,6 @@ public class UserController {
     }
 
 
-    //유저삭제
     @DeleteMapping("/logout")
     public ResponseEntity<ApiResponse<Void>> deleteUser() {
         rq.deleteCookie("accessToken");
@@ -134,6 +133,11 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(null,"비밀번호 변경 성공"));
     }
 
-
+    @DeleteMapping("/me")
+    public ResponseEntity<ApiResponse<Void>> leaveUser(@RequestBody PasswordRequestDto passwordRequestDto){
+        User actor = rq.getActor();
+        userService.deleteUser(actor.getId(), passwordRequestDto.getPassword());
+        return ResponseEntity.ok(ApiResponse.success(null, "회원탈퇴 성공"));
+    }
 
 }

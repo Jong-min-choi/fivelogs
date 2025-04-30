@@ -7,7 +7,10 @@ interface MainCommentFormProps {
   onSuccess: () => void;
 }
 
-export default function MainCommentForm({ boardId, onSuccess }: MainCommentFormProps) {
+export default function MainCommentForm({
+  boardId,
+  onSuccess,
+}: MainCommentFormProps) {
   const handleSubmit = async (comment: string) => {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/boards/${boardId}`,
@@ -44,4 +47,4 @@ export default function MainCommentForm({ boardId, onSuccess }: MainCommentFormP
       submitButtonText="댓글 작성"
     />
   );
-} 
+}

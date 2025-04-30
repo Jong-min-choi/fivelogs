@@ -175,26 +175,6 @@ export default function FindPasswordPage() {
           </Link>
         </div>
       </div>
-
-      <div className="flex justify-center mt-4">
-        <Link href="/" className="inline-block mx-auto">
-          <Image
-            src="/next.svg"
-            alt="Five Guys Logo"
-            width={120}
-            height={80}
-            className="object-contain"
-          />
-        </Link>
-      </div>
-
-      <div className="text-center text-sm text-gray-500 mt-4 mb-8">
-        개발자들의 지식과 경험을 공유하는 공간
-      </div>
-
-      <div className="text-center text-xs text-gray-400 mt-8">
-        © 2024 FIVE Log. All rights reserved.
-      </div>
     </>
   );
 }

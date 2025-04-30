@@ -12,7 +12,7 @@ interface CommentInputProps {
 export default function CommentInput({
   placeholder = "댓글을 작성해주세요.",
   onSubmit,
-  submitButtonText = "댓글 작성"
+  submitButtonText = "댓글 작성",
 }: CommentInputProps) {
   const [comment, setComment] = useState("");
   const { isLogin } = useGlobalLoginUser();
@@ -44,9 +44,7 @@ export default function CommentInput({
       <textarea
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        placeholder={
-          isLogin ? placeholder : "로그인이 필요한 기능입니다."
-        }
+        placeholder={isLogin ? placeholder : "로그인이 필요한 기능입니다."}
         disabled={!isLogin}
         className="w-full p-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
         rows={3}
@@ -66,4 +64,4 @@ export default function CommentInput({
       </div>
     </form>
   );
-} 
+}

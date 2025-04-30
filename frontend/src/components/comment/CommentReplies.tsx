@@ -18,7 +18,7 @@ export default function CommentReplies({
   onRefresh,
   onDelete,
   onReplyCountChange,
-  forceShowReplies = false
+  forceShowReplies = false,
 }: CommentRepliesProps) {
   const [showReplies, setShowReplies] = useState(false);
   const [replies, setReplies] = useState<CommentType[]>([]);
@@ -34,21 +34,25 @@ export default function CommentReplies({
 
   const fetchReplies = useCallback(async () => {
     if (!showReplies && !forceShowReplies) return; // 답글이 보이지 않는 상태면 fetch하지 않음
-    
+
     setLoadingReplies(true);
     try {
-      const res = await fetch(`http://localhost:8090/api/comments/${commentId}/replies`, {
-        method: "GET",
-        credentials: "include",
-      });
-      
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/${commentId}/replies`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
       if (!res.ok) throw new Error("대댓글 불러오기 실패");
 
       const json = await res.json();
       const fetchedReplies = json.data || [];
       // 오래된 순으로 정렬 (오래된 댓글이 위로, 새로운 댓글이 아래로)
-      const sortedReplies = fetchedReplies.sort((a: CommentType, b: CommentType) => 
-        new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
+      const sortedReplies = fetchedReplies.sort(
+        (a: CommentType, b: CommentType) =>
+          new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
       );
       setReplies(sortedReplies);
       setTotalReplies(fetchedReplies.length);
@@ -73,11 +77,14 @@ export default function CommentReplies({
   useEffect(() => {
     const fetchInitialReplyCount = async () => {
       try {
-        const res = await fetch(`http://localhost:8090/api/comments/${commentId}/replies`, {
-          method: "GET",
-          credentials: "include",
-        });
-        
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/${commentId}/replies`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+
         if (!res.ok) throw new Error("대댓글 수 불러오기 실패");
 
         const json = await res.json();
@@ -100,7 +107,9 @@ export default function CommentReplies({
         className="text-xs text-gray-400 mt-2 hover:text-gray-600 transition-colors"
         onClick={handleToggleReplies}
       >
-        {(showReplies || forceShowReplies) ? "대댓글 숨기기" : `대댓글 ${totalReplies}개 보기`}
+        {showReplies || forceShowReplies
+          ? "대댓글 숨기기"
+          : `대댓글 ${totalReplies}개 보기`}
       </button>
 
       {(showReplies || forceShowReplies) && (
@@ -124,4 +133,4 @@ export default function CommentReplies({
       )}
     </>
   );
-} 
+}

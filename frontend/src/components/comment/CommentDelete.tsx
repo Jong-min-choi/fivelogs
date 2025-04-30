@@ -16,4 +16,4 @@ export default function CommentDelete({ onDelete }: CommentDeleteProps) {
       삭제
     </button>
   );
-} 
+}

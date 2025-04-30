@@ -152,12 +152,12 @@ export default function Header({ hideDropdownMenus = false }) {
           </div>
         ) : (
           <>
-            <button className="bg-rose-500 text-white px-4 py-1 rounded-md hover:bg-rose-600 transition">
+            <button className="bg-rose-500 text-white px-4 py-2 rounded-md hover:bg-rose-600 transition">
               <Link href="/users/login" className="text-white">
                 로그인
               </Link>
             </button>
-            <button className="bg-green-500 text-white font-bold px-4 py-2 rounded-md hover:bg-green-600 transition">
+            <button className="bg-green-500 text-white font-bold px-4 py-2.5 rounded-md hover:bg-green-600 transition">
               <Link
                 href="/users/join"
                 className="block text-sm hover:text-gray-100"
