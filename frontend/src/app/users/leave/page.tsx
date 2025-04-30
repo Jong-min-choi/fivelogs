@@ -59,11 +59,15 @@ export default function LeavePage() {
           </li>
           <li className="flex items-start">
             <span className="mr-2">•</span>
-            <p>작성하신 게시물과 댓글은 삭제되지 않습니다.</p>
+            <p>작성하신 게시물과 댓글은 삭제됩니다.</p>
           </li>
           <li className="flex items-start">
             <span className="mr-2">•</span>
             <p>탈퇴 후 동일한 아이디로 재가입이 가능합니다.</p>
+          </li>
+          <li className="flex items-start">
+            <span className="mr-2">•</span>
+            <p>소셜 회원이라면 패스워드에 소셜이름을 기입하세요. ex) KAKAO</p>
           </li>
         </ul>
 

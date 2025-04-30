@@ -79,21 +79,24 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long id, String password) {
-        if(!StringUtils.hasText(password)){
-            throw new IllegalArgumentException("비밀번호를 입력하세요.");
-        }
         Optional<User> userOptional = userRepository.findById(id);
         if (!userOptional.isPresent())
             throw new IllegalArgumentException("존재하지 않는 ID 입니다.");
         User user = userOptional.get();
+
+        if(user.getProvider().equals(password)){
+            userRepository.deleteById(id);
+            return;
+        }
+        if(!StringUtils.hasText(password)){
+            throw new IllegalArgumentException("비밀번호를 입력하세요.");
+        }
         String encodedPassword = user.getPassword();
         if(passwordEncoder.matches(password, encodedPassword)){
             userRepository.deleteById(id);
         }else{
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-
-
     }
 
     public Optional<User> findByEmail(String email) {
