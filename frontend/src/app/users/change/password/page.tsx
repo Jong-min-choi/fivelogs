@@ -53,7 +53,7 @@ export default function ChangePasswordPage() {
           </li>
           <li className="flex items-start">
             <span className="mr-2">•</span>
-            <p>소셜 회원은 비밀번호 변경이 안 됩니다.</p>
+            <p>소셜 회원은 비밀번호 변경할 수 없습니다.</p>
           </li>
         </ul>
         <form onSubmit={handleSubmit}>
