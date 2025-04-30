@@ -84,7 +84,7 @@ export default function CommentReaction({
   return (
     <div className="flex items-center gap-1">
       <button
-        className={`flex items-center gap-1 px-2 py-1 rounded-full hover:bg-rose-50 hover:text-rose-500 transition-colors ${
+        className={`cursor-pointer flex items-center gap-1 px-2 py-1 rounded-full hover:bg-rose-50 hover:text-rose-500 transition-colors ${
           reactionState.likedByMe === true ? "text-rose-500 bg-rose-50" : ""
         }`}
         onClick={() => handleReaction(true)}
@@ -97,7 +97,7 @@ export default function CommentReaction({
       </button>
 
       <button
-        className={`flex items-center gap-1 px-2 py-1 rounded-full hover:bg-blue-50 hover:text-blue-500 transition-colors ${
+        className={`cursor-pointer flex items-center gap-1 px-2 py-1 rounded-full hover:bg-blue-50 hover:text-blue-500 transition-colors ${
           reactionState.likedByMe === false ? "text-blue-500 bg-blue-50" : ""
         }`}
         onClick={() => handleReaction(false)}

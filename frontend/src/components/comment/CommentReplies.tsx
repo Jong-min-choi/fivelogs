@@ -110,7 +110,7 @@ export default function CommentReplies({
   return (
     <>
       <button
-        className="text-xs text-gray-400 mt-2 hover:text-gray-600 transition-colors"
+        className="cursor-pointer text-xs text-gray-400 mt-2 hover:text-gray-600 transition-colors"
         onClick={handleToggleReplies}
       >
         {showRepliesState || forceShowReplies

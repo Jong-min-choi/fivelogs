@@ -53,7 +53,7 @@ export default function CommentInput({
         <button
           type="submit"
           disabled={!isLogin || !comment.trim()}
-          className={`px-4 py-2 rounded-lg text-white text-sm transition-colors ${
+          className={`cursor-pointer px-4 py-2 rounded-lg text-white text-sm transition-colors ${
             isLogin && comment.trim()
               ? "bg-rose-500 hover:bg-rose-600"
               : "bg-gray-300 cursor-not-allowed"

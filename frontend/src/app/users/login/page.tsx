@@ -122,7 +122,7 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className="w-full py-3 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
+            className="cursor-pointer w-full py-3 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
             disabled={isLoading}
           >
             {isLoading ? "로그인 중..." : "로그인"}
@@ -137,7 +137,7 @@ export default function LoginPage() {
 
         <button
           type="button"
-          className="w-full py-3 bg-yellow-300 text-gray-800 rounded flex items-center justify-center font-medium hover:bg-yellow-200 transition"
+          className="cursor-pointer w-full py-3 bg-yellow-300 text-gray-800 rounded flex items-center justify-center font-medium hover:bg-yellow-200 transition"
         >
           <span className="mr-2">
             <svg viewBox="0 0 24 24" width="20" height="20">

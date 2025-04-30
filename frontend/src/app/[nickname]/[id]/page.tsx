@@ -393,7 +393,7 @@ export default function BoardDetail() {
                 followId &&
                 (isFollowing ? (
                   <button
-                    className="border border-rose-400 text-rose-500 px-5 py-1.5 rounded-full font-semibold hover:bg-rose-50 transition ml-2"
+                    className="border border-rose-400 text-rose-500 cursor-pointer px-5 py-1.5 rounded-full font-semibold hover:bg-rose-50 transition ml-2"
                     type="button"
                     onClick={handleUnfollow}
                   >
@@ -401,7 +401,7 @@ export default function BoardDetail() {
                   </button>
                 ) : (
                   <button
-                    className="border border-emerald-500 text-emerald-600 px-5 py-1.5 rounded-full font-semibold hover:bg-emerald-50 transition ml-2"
+                    className="border border-emerald-500 text-emerald-600 cursor-pointer px-5 py-1.5 rounded-full font-semibold hover:bg-emerald-50 transition ml-2"
                     type="button"
                     onClick={handleFollow}
                   >
@@ -502,7 +502,7 @@ export default function BoardDetail() {
       >
         <button
           onClick={() => handleShare("twitter")}
-          className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-400 flex items-center justify-center transition-all"
+          className="cursor-pointer w-10 h-10 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-400 flex items-center justify-center transition-all"
           title="Twitter에 공유"
         >
           <svg
@@ -518,7 +518,7 @@ export default function BoardDetail() {
         </button>
         <button
           onClick={() => handleShare("facebook")}
-          className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-all"
+          className="cursor-pointer w-10 h-10 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-center transition-all"
           title="Facebook에 공유"
         >
           <svg
@@ -534,7 +534,7 @@ export default function BoardDetail() {
         </button>
         <button
           onClick={() => handleShare("instagram")}
-          className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 hover:bg-pink-50 hover:text-pink-500 flex items-center justify-center transition-all"
+          className="cursor-pointer w-10 h-10 rounded-full bg-gray-100 text-gray-600 hover:bg-pink-50 hover:text-pink-500 flex items-center justify-center transition-all"
           title="Instagram에 공유"
         >
           <svg
@@ -550,7 +550,7 @@ export default function BoardDetail() {
         </button>
         <button
           onClick={() => handleShare("link")}
-          className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center transition-all"
+          className="cursor-pointer w-10 h-10 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center transition-all"
           title="링크 복사"
         >
           <svg

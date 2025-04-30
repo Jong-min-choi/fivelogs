@@ -298,7 +298,7 @@ export default function MyPage() {
             )}
           </div>
           <button
-            className="text-rose-400 text-sm mb-4"
+            className="cursor-pointer text-rose-400 text-sm mb-4"
             onClick={() =>
               document.getElementById("profileImageInput")?.click()
             }
@@ -341,13 +341,13 @@ export default function MyPage() {
                   />
                   <button
                     onClick={handleUpdateIntroduction}
-                    className="px-3 py-1 bg-rose-400 text-white rounded hover:bg-rose-500"
+                    className="cursor-pointer px-3 py-1 bg-rose-400 text-white rounded hover:bg-rose-500"
                   >
                     저장
                   </button>
                   <button
                     onClick={() => setIsEditingIntroduction(false)}
-                    className="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                    className="cursor-pointer px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
                   >
                     취소
                   </button>
@@ -360,7 +360,7 @@ export default function MyPage() {
                       setTempIntroduction(introduction);
                       setIsEditingIntroduction(true);
                     }}
-                    className="text-rose-400 text-sm hover:text-rose-500"
+                    className="cursor-pointer text-rose-400 text-sm hover:text-rose-500"
                   >
                     수정
                   </button>
@@ -383,13 +383,13 @@ export default function MyPage() {
                   />
                   <button
                     onClick={handleUpdateBlogTitle}
-                    className="px-3 py-1 bg-rose-400 text-white rounded hover:bg-rose-500"
+                    className="cursor-pointer px-3 py-1 bg-rose-400 text-white rounded hover:bg-rose-500"
                   >
                     저장
                   </button>
                   <button
                     onClick={() => setIsEditingBlogTitle(false)}
-                    className="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                    className="cursor-pointer px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
                   >
                     취소
                   </button>
@@ -402,7 +402,7 @@ export default function MyPage() {
                       setTempBlogTitle(blogTitle);
                       setIsEditingBlogTitle(true);
                     }}
-                    className="text-rose-400 text-sm hover:text-rose-500"
+                    className="cursor-pointer text-rose-400 text-sm hover:text-rose-500"
                   >
                     수정
                   </button>
@@ -494,7 +494,7 @@ export default function MyPage() {
               </Link>
               <button
                 type="submit"
-                className="px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
+                className="cursor-pointer px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
               >
                 SNS 링크 수정
               </button>
