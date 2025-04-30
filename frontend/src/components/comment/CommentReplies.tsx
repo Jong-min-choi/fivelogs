@@ -9,6 +9,8 @@ interface CommentRepliesProps {
   onRefresh: () => void;
   onDelete: (commentId: number) => void;
   onReplyCountChange: (count: number) => void;
+  showReplies?: boolean;
+  onShowRepliesChange?: (show: boolean) => void;
   forceShowReplies?: boolean;
 }
 
@@ -18,9 +20,11 @@ export default function CommentReplies({
   onRefresh,
   onDelete,
   onReplyCountChange,
+  showReplies = false,
+  onShowRepliesChange,
   forceShowReplies = false,
 }: CommentRepliesProps) {
-  const [showReplies, setShowReplies] = useState(false);
+  const [showRepliesState, setShowRepliesState] = useState(showReplies);
   const [replies, setReplies] = useState<CommentType[]>([]);
   const [loadingReplies, setLoadingReplies] = useState(false);
   const [totalReplies, setTotalReplies] = useState(0);
@@ -28,12 +32,12 @@ export default function CommentReplies({
   // forceShowReplies가 true일 때 대댓글 목록 표시
   useEffect(() => {
     if (forceShowReplies) {
-      setShowReplies(true);
+      setShowRepliesState(true);
     }
   }, [forceShowReplies]);
 
   const fetchReplies = useCallback(async () => {
-    if (!showReplies && !forceShowReplies) return; // 답글이 보이지 않는 상태면 fetch하지 않음
+    if (!showRepliesState && !forceShowReplies) return; // 답글이 보이지 않는 상태면 fetch하지 않음
 
     setLoadingReplies(true);
     try {
@@ -62,7 +66,7 @@ export default function CommentReplies({
     } finally {
       setLoadingReplies(false);
     }
-  }, [commentId, onReplyCountChange, showReplies, forceShowReplies]);
+  }, [commentId, onReplyCountChange, showRepliesState, forceShowReplies]);
 
   // 답글이 보이는 상태일 때만 갱신
   useEffect(() => {
@@ -70,7 +74,9 @@ export default function CommentReplies({
   }, [fetchReplies]);
 
   const handleToggleReplies = () => {
-    setShowReplies((prev) => !prev);
+    const newState = !showRepliesState;
+    setShowRepliesState(newState);
+    onShowRepliesChange?.(newState);
   };
 
   // 초기 답글 수 확인
@@ -104,15 +110,15 @@ export default function CommentReplies({
   return (
     <>
       <button
-        className="text-xs text-gray-400 mt-2 hover:text-gray-600 transition-colors"
+        className="cursor-pointer text-xs text-gray-400 mt-2 hover:text-gray-600 transition-colors"
         onClick={handleToggleReplies}
       >
-        {showReplies || forceShowReplies
+        {showRepliesState || forceShowReplies
           ? "대댓글 숨기기"
           : `대댓글 ${totalReplies}개 보기`}
       </button>
 
-      {(showReplies || forceShowReplies) && (
+      {(showRepliesState || forceShowReplies) && (
         <div className="pl-4 mt-2">
           {loadingReplies ? (
             <p className="text-xs text-gray-400">대댓글 불러오는 중...</p>

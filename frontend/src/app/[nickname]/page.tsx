@@ -388,7 +388,7 @@ export default function MyBoardPage() {
           {!isOwner && (
             <button
               disabled={!ownerInfo}
-              className={`w-full ${
+              className={`cursor-pointer w-full ${
                 isFollowing
                   ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   : "bg-emerald-50 text-emerald-600 border border-emerald-500 hover:bg-emerald-100"
@@ -508,7 +508,7 @@ export default function MyBoardPage() {
           {/* 출석부 버튼 */}
 
           <button
-            className="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded mt-6 mb-4 transition"
+            className="cursor-pointer w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded mt-6 mb-4 transition"
             onClick={() => setShowAttendance((prev) => !prev)}
           >
             {showAttendance ? "게시글 보기" : "출석부"}

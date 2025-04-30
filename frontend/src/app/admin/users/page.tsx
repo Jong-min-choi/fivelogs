@@ -122,7 +122,7 @@ export default function AdminPage() {
                   <td>{user.roleType === "ADMIN" ? "관리자" : "일반"}</td>
                   <td>
                     <button
-                      className={`px-3 py-1 rounded font-bold ${
+                      className={`cursor-pointer px-3 py-1 rounded font-bold ${
                         user.userStatus === "NORMAL"
                           ? "bg-rose-100 text-rose-600 hover:bg-rose-200"
                           : "bg-emerald-100 text-emerald-600 hover:bg-emerald-200"

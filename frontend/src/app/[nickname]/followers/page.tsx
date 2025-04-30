@@ -77,7 +77,9 @@ export default function FollowersPage() {
   return (
     <div className="max-w-2xl mx-auto py-10">
       <h2 className="text-3xl font-bold mb-6">
-        <span className="ml-2 text-gray-800">{blogUserNickname} </span>
+        <Link href={`/${blogUserNickname}`}>
+          <span className="ml-2 text-gray-800">{blogUserNickname} </span>
+        </Link>
         <span className="text-sm ml-2 text-gray-800">
           {">"} {followers.length}명이 팔로워
         </span>

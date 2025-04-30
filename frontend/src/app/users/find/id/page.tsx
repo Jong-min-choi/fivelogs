@@ -57,7 +57,7 @@ export default function FindIdPage() {
 
           <button
             type="submit"
-            className="w-full py-3  bg-rose-400 text-white rounded hover:bg-rose-500 transition mb-4"
+            className="cursor-pointer w-full py-3  bg-rose-400 text-white rounded hover:bg-rose-500 transition mb-4"
           >
             아이디 찾기
           </button>

@@ -251,7 +251,7 @@ export default function EditPage() {
               <button
                 type="button"
                 onClick={handleAddHashtag}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition"
+                className="cursor-pointer px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition"
               >
                 추가
               </button>
@@ -262,38 +262,18 @@ export default function EditPage() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition"
+              className="cursor-pointer px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition"
             >
               취소
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
+              className="cursor-pointer px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
             >
               수정하기
             </button>
           </div>
         </form>
-      </div>
-
-      <div className="flex justify-center mt-4">
-        <Link href="/" className="inline-block mx-auto">
-          <Image
-            src="/next.svg"
-            alt="Five Guys Logo"
-            width={120}
-            height={80}
-            className="object-contain"
-          />
-        </Link>
-      </div>
-
-      <div className="text-center text-sm text-gray-500 mt-4 mb-8">
-        개발자들의 지식과 경험을 공유하는 공간
-      </div>
-
-      <div className="text-center text-xs text-gray-400 mt-8">
-        © 2024 FIVE Log. All rights reserved.
       </div>
     </>
   );

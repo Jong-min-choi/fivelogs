@@ -125,7 +125,7 @@ export default function TodayQuestion({ questions }: Props) {
           disabled={
             !isLogin || Object.keys(selectedAnswers).length < questions.length
           }
-          className={`px-6 py-3 rounded-md text-lg font-semibold
+          className={`cursor-pointer px-6 py-3 rounded-md text-lg font-semibold
             ${
               !isLogin || Object.keys(selectedAnswers).length < questions.length
                 ? "bg-gray-300 cursor-not-allowed"

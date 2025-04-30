@@ -41,7 +41,7 @@ export default function Comment({
   const [isEditing, setIsEditing] = useState(false);
   const [replyCount, setReplyCount] = useState(0);
   const [repliesKey, setRepliesKey] = useState(0);
-  const [keepRepliesVisible, setKeepRepliesVisible] = useState(false);
+  const [showReplies, setShowReplies] = useState(false);
   const { isLogin, loginUser } = useGlobalLoginUser();
 
   useEffect(() => {
@@ -90,16 +90,18 @@ export default function Comment({
       alert("로그인이 필요한 기능입니다.");
       return;
     }
-    setShowReplyForm(!showReplyForm);
-    setKeepRepliesVisible(true);
-    setRepliesKey((prev) => prev + 1);
+    setShowReplyForm((prev) => !prev);
+    if (!showReplyForm) {
+      setRepliesKey((prev) => prev + 1);
+    }
   };
 
   const handleReplySuccess = async () => {
     setShowReplyForm(false);
+    setShowReplies(true);
     try {
       const res = await fetch(
-        `http://localhost:8090/api/comments/${comment.id}/replies`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/${comment.id}/replies`,
         {
           credentials: "include",
         }
@@ -107,9 +109,14 @@ export default function Comment({
       if (!res.ok) throw new Error("대댓글 수 불러오기 실패");
 
       const json = await res.json();
-      setReplyCount(json.data.length || 0);
-      setRepliesKey((prev) => prev + 1);
-      await refreshComment(); // 댓글 정보 새로고침
+      if (json.success) {
+        setComment((prevComment) => ({
+          ...prevComment,
+          replies: json.data,
+        }));
+        setReplyCount(json.data.length || 0);
+        setRepliesKey((prev) => prev + 1);
+      }
     } catch (err) {
       console.error("❌ 대댓글 수 불러오기 실패:", err);
     }
@@ -124,7 +131,7 @@ export default function Comment({
 
     try {
       const res = await fetch(
-        `http://localhost:8090/api/comments/boards/${boardId}/${comment.id}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/boards/${boardId}/${comment.id}`,
         {
           method: "PUT",
           headers: {
@@ -158,7 +165,7 @@ export default function Comment({
   const handleDelete = async () => {
     try {
       const res = await fetch(
-        `http://localhost:8090/api/comments/boards/${boardId}/${comment.id}`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/boards/${boardId}/${comment.id}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -167,17 +174,20 @@ export default function Comment({
 
       if (!res.ok) throw new Error("댓글 삭제 실패");
 
-      setComment((prevComment) => ({
-        ...prevComment,
-        deleted: true,
-        comment: "삭제된 댓글입니다.",
-        nickname: "삭제된 사용자",
-      }));
+      const json = await res.json();
+      if (json.success) {
+        setComment((prevComment) => ({
+          ...prevComment,
+          deleted: true,
+          comment: "삭제된 댓글입니다.",
+          nickname: "삭제된 사용자",
+        }));
 
-      onDelete(comment.id);
+        onDelete(comment.id);
+      }
     } catch (err) {
       console.error("❌ 댓글 삭제 실패:", err);
-      throw new Error("댓글 삭제에 실패했습니다.");
+      alert("댓글 삭제에 실패했습니다.");
     }
   };
 
@@ -200,7 +210,8 @@ export default function Comment({
             onRefresh={onRefresh}
             onDelete={onDelete}
             onReplyCountChange={setReplyCount}
-            forceShowReplies={keepRepliesVisible}
+            showReplies={showReplies}
+            onShowRepliesChange={setShowReplies}
           />
         </div>
       ) : (
@@ -218,7 +229,7 @@ export default function Comment({
                 {isMyComment && (
                   <div className="relative group">
                     <button
-                      className="p-1 hover:bg-gray-100 rounded-full"
+                      className="cursor-pointer p-1 hover:bg-gray-100 rounded-full"
                       title="더보기"
                     >
                       <span className="text-gray-400 hover:text-gray-600">
@@ -228,7 +239,7 @@ export default function Comment({
                     <div className="absolute right-0 mt-1 w-24 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
                       <button
                         onClick={() => setIsEditing(true)}
-                        className="w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50 rounded-t-lg"
+                        className="cursor-pointer w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-50 rounded-t-lg"
                       >
                         수정
                       </button>
@@ -252,7 +263,7 @@ export default function Comment({
               />
 
               <button
-                className="flex items-center gap-1 px-2 py-1 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+                className="cursor-pointer flex items-center gap-1 px-2 py-1 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
                 onClick={handleReplyClick}
                 title={!isLogin ? "로그인이 필요합니다" : "답글 달기"}
               >
@@ -268,7 +279,8 @@ export default function Comment({
             onRefresh={onRefresh}
             onDelete={onDelete}
             onReplyCountChange={setReplyCount}
-            forceShowReplies={keepRepliesVisible}
+            showReplies={showReplies}
+            onShowRepliesChange={setShowReplies}
           />
 
           {showReplyForm && (
