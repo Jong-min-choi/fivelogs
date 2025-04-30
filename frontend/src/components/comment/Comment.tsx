@@ -41,7 +41,7 @@ export default function Comment({
   const [isEditing, setIsEditing] = useState(false);
   const [replyCount, setReplyCount] = useState(0);
   const [repliesKey, setRepliesKey] = useState(0);
-  const [keepRepliesVisible, setKeepRepliesVisible] = useState(false);
+  const [showReplies, setShowReplies] = useState(false);
   const { isLogin, loginUser } = useGlobalLoginUser();
 
   useEffect(() => {
@@ -90,13 +90,15 @@ export default function Comment({
       alert("로그인이 필요한 기능입니다.");
       return;
     }
-    setShowReplyForm(!showReplyForm);
-    setKeepRepliesVisible(true);
-    setRepliesKey((prev) => prev + 1);
+    setShowReplyForm(prev => !prev);
+    if (!showReplyForm) {
+      setRepliesKey((prev) => prev + 1);
+    }
   };
 
   const handleReplySuccess = async () => {
     setShowReplyForm(false);
+    setShowReplies(true);
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/${comment.id}/replies`,
@@ -107,9 +109,14 @@ export default function Comment({
       if (!res.ok) throw new Error("대댓글 수 불러오기 실패");
 
       const json = await res.json();
-      setReplyCount(json.data.length || 0);
-      setRepliesKey((prev) => prev + 1);
-      await refreshComment(); // 댓글 정보 새로고침
+      if (json.success) {
+        setComment(prevComment => ({
+          ...prevComment,
+          replies: json.data
+        }));
+        setReplyCount(json.data.length || 0);
+        setRepliesKey((prev) => prev + 1);
+      }
     } catch (err) {
       console.error("❌ 대댓글 수 불러오기 실패:", err);
     }
@@ -121,7 +128,7 @@ export default function Comment({
       alert("삭제된 댓글이여서 수정할 수 없습니다.");
       return;
     }
-
+  
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/boards/${boardId}/${comment.id}`,
@@ -136,16 +143,16 @@ export default function Comment({
           }),
         }
       );
-
+      
       if (!res.ok) throw new Error("댓글 수정 실패");
-
+     
       const json = await res.json();
-
+     
       if (json.success) {
-        setComment((prevComment) => ({
+        setComment(prevComment => ({
           ...prevComment,
           comment: editedComment,
-          updatedDate: new Date().toISOString(),
+          updatedDate: new Date().toISOString()
         }));
         setIsEditing(false);
       }
@@ -167,17 +174,20 @@ export default function Comment({
 
       if (!res.ok) throw new Error("댓글 삭제 실패");
 
-      setComment((prevComment) => ({
-        ...prevComment,
-        deleted: true,
-        comment: "삭제된 댓글입니다.",
-        nickname: "삭제된 사용자",
-      }));
-
-      onDelete(comment.id);
+      const json = await res.json();
+      if (json.success) {
+        setComment(prevComment => ({
+          ...prevComment,
+          deleted: true,
+          comment: "삭제된 댓글입니다.",
+          nickname: "삭제된 사용자"
+        }));
+        
+        onDelete(comment.id);
+      }
     } catch (err) {
       console.error("❌ 댓글 삭제 실패:", err);
-      throw new Error("댓글 삭제에 실패했습니다.");
+      alert("댓글 삭제에 실패했습니다.");
     }
   };
 
@@ -200,7 +210,8 @@ export default function Comment({
             onRefresh={onRefresh}
             onDelete={onDelete}
             onReplyCountChange={setReplyCount}
-            forceShowReplies={keepRepliesVisible}
+            showReplies={showReplies}
+            onShowRepliesChange={setShowReplies}
           />
         </div>
       ) : (
@@ -268,7 +279,8 @@ export default function Comment({
             onRefresh={onRefresh}
             onDelete={onDelete}
             onReplyCountChange={setReplyCount}
-            forceShowReplies={keepRepliesVisible}
+            showReplies={showReplies}
+            onShowRepliesChange={setShowReplies}
           />
 
           {showReplyForm && (
