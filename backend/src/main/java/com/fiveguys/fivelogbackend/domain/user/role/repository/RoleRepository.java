@@ -22,10 +22,24 @@ public interface RoleRepository extends JpaRepository<Role,Long> {
 
     @Query("SELECT new com.fiveguys.fivelogbackend.domain.user.user.dto.AdminUserResponseDto(u.id, u.email, u.nickname, u.snsLink, u.provider, u.userStatus, r.name) " +
             "FROM Role r JOIN r.user u "
-           ) // 예시로 'ROLE_ADMIN'을 가진 사용자만 조회하는 경우
-    Page<AdminUserResponseDto> findAdminUsers(Pageable pageable);
+           )
+    Page<AdminUserResponseDto> findUsers(Pageable pageable);
 
     @Query("SELECT r.name FROM Role r WHERE r.user.id = :userId")
     List<RoleType> findRoleTypesByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT new com.fiveguys.fivelogbackend.domain.user.user.dto.AdminUserResponseDto(" +
+            "u.id, u.email, u.nickname, u.snsLink, u.provider, u.userStatus, r.name) " +
+            "FROM Role r JOIN r.user u " +
+            "WHERE " +
+            "(:type = 'id' AND CAST(u.id AS string) LIKE %:keyword%) OR " +
+            "(:type = 'email' AND u.email LIKE %:keyword%) OR " +
+            "(:type = 'nickname' AND u.nickname LIKE %:keyword%)")
+    Page<AdminUserResponseDto> searchUsers(
+            @Param("type") String type,
+            @Param("keyword") String keyword,
+
+            Pageable pageable
+    );
 
 }
