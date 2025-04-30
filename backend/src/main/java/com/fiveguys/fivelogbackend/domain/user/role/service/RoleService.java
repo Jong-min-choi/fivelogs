@@ -40,7 +40,14 @@ public class RoleService {
 
     @Transactional(readOnly = true)
     public AdminUserPageResponseDto getPagedUserInfo (Pageable pageable){
-        Page<AdminUserResponseDto> pagedUsers = roleRepository.findAdminUsers(pageable);
+        Page<AdminUserResponseDto> pagedUsers = roleRepository.findUsers(pageable);
+        PageDto unitPageDto = PageUt.get10unitPageDto(pagedUsers.getNumber(), pagedUsers.getTotalPages());
+        return new AdminUserPageResponseDto(pagedUsers.getContent(), unitPageDto);
+    }
+
+    @Transactional(readOnly = true)
+    public AdminUserPageResponseDto usersSearch(String type, String keyword, Pageable pageable){
+        Page<AdminUserResponseDto> pagedUsers = roleRepository.searchUsers(type,keyword, pageable);
         PageDto unitPageDto = PageUt.get10unitPageDto(pagedUsers.getNumber(), pagedUsers.getTotalPages());
         return new AdminUserPageResponseDto(pagedUsers.getContent(), unitPageDto);
     }

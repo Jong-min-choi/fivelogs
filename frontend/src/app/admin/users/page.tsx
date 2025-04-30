@@ -24,13 +24,30 @@ export default function AdminPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [pageInfo, setPageInfo] = useState<PageDto | null>(null);
   const [loading, setLoading] = useState(true);
-  const size = 10;
+  const [searchType, setSearchType] = useState<"id" | "email" | "nickname">(
+    "id"
+  );
+  const [keyword, setKeyword] = useState("");
+  const size = 20;
+
   // 회원 목록 조회
-  const fetchUsers = async (page = 1) => {
+  const fetchUsers = async (page = 1, type = searchType, key = keyword) => {
     setLoading(true);
     try {
+      const params = new URLSearchParams({
+        page: String(page),
+        size: String(size),
+      });
+      if (key) {
+        params.append("type", type);
+        params.append("keyword", key);
+      }
+
+      console.log(key);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/admin/users?page=${page}&size=10`,
+        `${
+          process.env.NEXT_PUBLIC_API_BASE_URL
+        }/api/admin/users/search?${params.toString()}`,
         { credentials: "include" }
       );
       const data = await res.json();
@@ -79,14 +96,47 @@ export default function AdminPage() {
     }
   };
 
+  // 검색 폼 제출
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchUsers(1, searchType, keyword);
+  };
+
   // 페이지 변경 핸들러
   const handlePageChange = (page: number) => {
-    fetchUsers(page);
+    fetchUsers(page, searchType, keyword);
   };
 
   return (
     <div className="max-w-4xl mx-auto py-10">
       <h1 className="text-2xl font-bold mb-6">관리자 - 회원 관리</h1>
+      {/* 검색창 추가 */}
+      <form onSubmit={handleSearch} className="flex gap-2 mb-6">
+        <select
+          value={searchType}
+          onChange={(e) =>
+            setSearchType(e.target.value as "id" | "email" | "nickname")
+          }
+          className="border rounded px-2 py-1"
+        >
+          <option value="id">ID</option>
+          <option value="email">이메일</option>
+          <option value="nickname">닉네임</option>
+        </select>
+        <input
+          type="text"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          className="border rounded px-2 py-1 flex-1"
+          placeholder="검색어를 입력하세요"
+        />
+        <button
+          type="submit"
+          className="cursor-pointer bg-rose-500 text-white px-4 py-1 rounded hover:bg-rose-600"
+        >
+          검색
+        </button>
+      </form>
       {loading ? (
         <div className="text-center text-gray-400 py-10">로딩 중...</div>
       ) : (
