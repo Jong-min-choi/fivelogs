@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
+import removeMarkdown from "remove-markdown";
 
 type SearchResult = {
   id: number;
@@ -188,7 +189,9 @@ export default function Page() {
                   {item.title}
                 </div>
                 <div className="text-gray-600 mb-2 cursor-pointer">
-                  {item.content}
+                  {removeMarkdown(item.content).length > 100
+                    ? removeMarkdown(item.content).slice(0, 100) + "..."
+                    : removeMarkdown(item.content)}
                 </div>
               </Link>
               <div className="flex gap-2 mb-2">

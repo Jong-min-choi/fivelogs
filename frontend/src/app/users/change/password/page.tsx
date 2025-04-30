@@ -46,7 +46,16 @@ export default function ChangePasswordPage() {
     <>
       <div className="max-w-md mx-auto my-8 p-6 bg-white rounded-lg shadow-sm">
         <h1 className="text-2xl font-bold text-center mb-8">비밀번호 재설정</h1>
-
+        <ul className="mb-6 pl-5 space-y-2">
+          <li className="flex items-start">
+            <span className="mr-2">•</span>
+            <p>비밀번호 변경 시시 유의사항</p>
+          </li>
+          <li className="flex items-start">
+            <span className="mr-2">•</span>
+            <p>소셜 회원은 비밀번호 변경할 수 없습니다.</p>
+          </li>
+        </ul>
         <form onSubmit={handleSubmit}>
           <div className="mb-6">
             <label
