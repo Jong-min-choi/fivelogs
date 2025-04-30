@@ -30,7 +30,12 @@ interface Props {
   onDelete: (commentId: number) => void;
 }
 
-export default function Comment({ comment: initialComment, boardId, onRefresh, onDelete }: Props) {
+export default function Comment({
+  comment: initialComment,
+  boardId,
+  onRefresh,
+  onDelete,
+}: Props) {
   const [comment, setComment] = useState<CommentType>(initialComment);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -45,16 +50,19 @@ export default function Comment({ comment: initialComment, boardId, onRefresh, o
 
   const refreshComment = async () => {
     try {
-      const res = await fetch(`http://localhost:8090/api/comments/${comment.id}/replies`, {
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/comments/${comment.id}/replies`,
+        {
+          credentials: "include",
+        }
+      );
       if (!res.ok) throw new Error("댓글 정보 가져오기 실패");
 
       const json = await res.json();
       if (json.success) {
-        setComment(prevComment => ({
+        setComment((prevComment) => ({
           ...prevComment,
-          replies: json.data
+          replies: json.data,
         }));
       }
     } catch (err) {
@@ -64,12 +72,16 @@ export default function Comment({ comment: initialComment, boardId, onRefresh, o
 
   const isMyComment = loginUser?.nickname === comment.nickname;
 
-  const handleReactionUpdate = (newLikeCount: number, newDislikeCount: number, newLikedByMe: boolean | null) => {
-    setComment(prevComment => ({
+  const handleReactionUpdate = (
+    newLikeCount: number,
+    newDislikeCount: number,
+    newLikedByMe: boolean | null
+  ) => {
+    setComment((prevComment) => ({
       ...prevComment,
       likeCount: newLikeCount,
       dislikeCount: newDislikeCount,
-      likedByMe: newLikedByMe
+      likedByMe: newLikedByMe,
     }));
   };
 
@@ -80,20 +92,23 @@ export default function Comment({ comment: initialComment, boardId, onRefresh, o
     }
     setShowReplyForm(!showReplyForm);
     setKeepRepliesVisible(true);
-    setRepliesKey(prev => prev + 1);
+    setRepliesKey((prev) => prev + 1);
   };
 
   const handleReplySuccess = async () => {
     setShowReplyForm(false);
     try {
-      const res = await fetch(`http://localhost:8090/api/comments/${comment.id}/replies`, {
-        credentials: "include",
-      });
+      const res = await fetch(
+        `http://localhost:8090/api/comments/${comment.id}/replies`,
+        {
+          credentials: "include",
+        }
+      );
       if (!res.ok) throw new Error("대댓글 수 불러오기 실패");
 
       const json = await res.json();
       setReplyCount(json.data.length || 0);
-      setRepliesKey(prev => prev + 1);
+      setRepliesKey((prev) => prev + 1);
       await refreshComment(); // 댓글 정보 새로고침
     } catch (err) {
       console.error("❌ 대댓글 수 불러오기 실패:", err);
@@ -106,9 +121,10 @@ export default function Comment({ comment: initialComment, boardId, onRefresh, o
       alert("삭제된 댓글이여서 수정할 수 없습니다.");
       return;
     }
-  
+
     try {
-      const res = await fetch(`http://localhost:8090/api/comments/boards/${boardId}/${comment.id}`,
+      const res = await fetch(
+        `http://localhost:8090/api/comments/boards/${boardId}/${comment.id}`,
         {
           method: "PUT",
           headers: {
@@ -120,16 +136,16 @@ export default function Comment({ comment: initialComment, boardId, onRefresh, o
           }),
         }
       );
-      
+
       if (!res.ok) throw new Error("댓글 수정 실패");
-     
+
       const json = await res.json();
-     
+
       if (json.success) {
-        setComment(prevComment => ({
+        setComment((prevComment) => ({
           ...prevComment,
           comment: editedComment,
-          updatedDate: new Date().toISOString()
+          updatedDate: new Date().toISOString(),
         }));
         setIsEditing(false);
       }
@@ -151,13 +167,13 @@ export default function Comment({ comment: initialComment, boardId, onRefresh, o
 
       if (!res.ok) throw new Error("댓글 삭제 실패");
 
-      setComment(prevComment => ({
+      setComment((prevComment) => ({
         ...prevComment,
         deleted: true,
         comment: "삭제된 댓글입니다.",
-        nickname: "삭제된 사용자"
+        nickname: "삭제된 사용자",
       }));
-      
+
       onDelete(comment.id);
     } catch (err) {
       console.error("❌ 댓글 삭제 실패:", err);
@@ -205,7 +221,9 @@ export default function Comment({ comment: initialComment, boardId, onRefresh, o
                       className="p-1 hover:bg-gray-100 rounded-full"
                       title="더보기"
                     >
-                      <span className="text-gray-400 hover:text-gray-600">⋮</span>
+                      <span className="text-gray-400 hover:text-gray-600">
+                        ⋮
+                      </span>
                     </button>
                     <div className="absolute right-0 mt-1 w-24 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
                       <button

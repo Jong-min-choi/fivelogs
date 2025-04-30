@@ -26,8 +26,6 @@ public class Comment {
     @Column(nullable = false)
     private LocalDateTime updatedDate;
 
-
-
     //좋아요 싫어요 추가
     @Column(nullable = false)
     private int likeCount = 0;

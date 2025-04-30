@@ -104,12 +104,13 @@ export default function EditPage() {
   };
 
   const handleHashtagInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setHashtagInput(e.target.value);
+    // 입력 시 첫 글자가 #이면 제거
+    setHashtagInput(e.target.value.replace(/^#/, ""));
   };
 
   const handleAddHashtag = () => {
     if (hashtagInput.trim()) {
-      // 해시태그 정규화
+      // 해시태그 정규화: 앞의 # 제거
       let newTag = hashtagInput.trim().toLowerCase();
       newTag = newTag.startsWith("#") ? newTag.slice(1) : newTag; // # 제거
       newTag = newTag.replace(/\s+/g, "");

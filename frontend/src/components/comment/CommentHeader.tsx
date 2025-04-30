@@ -9,9 +9,11 @@ export default function CommentHeader({
   nickname,
   createdDate,
   updatedDate,
-  deleted
+  deleted,
 }: CommentHeaderProps) {
-  const displayNickname = deleted ? "삭제된 사용자" : nickname || "알 수 없는 사용자";
+  const displayNickname = deleted
+    ? "삭제된 사용자"
+    : nickname || "알 수 없는 사용자";
 
   return (
     <div className="text-sm text-gray-500 mb-1">
@@ -23,4 +25,4 @@ export default function CommentHeader({
       )}
     </div>
   );
-} 
+}
