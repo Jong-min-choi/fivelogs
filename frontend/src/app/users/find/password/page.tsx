@@ -123,7 +123,7 @@ export default function FindPasswordPage() {
               <button
                 type="button"
                 onClick={handleSendAuthCode}
-                className="px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
+                className="cursor-pointer px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
               >
                 인증 요청
               </button>
@@ -150,7 +150,7 @@ export default function FindPasswordPage() {
               <button
                 type="button"
                 onClick={handleVerifyAuthCode}
-                className="px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
+                className="cursor-pointer px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
               >
                 코드 확인
               </button>
@@ -159,7 +159,7 @@ export default function FindPasswordPage() {
 
           <button
             type="submit"
-            className="w-full py-3 bg-rose-400 text-white rounded hover:bg-rose-500 transition mb-4"
+            className="cursor-pointer w-full py-3 bg-rose-400 text-white rounded hover:bg-rose-500 transition mb-4"
           >
             비밀번호 찾기
           </button>

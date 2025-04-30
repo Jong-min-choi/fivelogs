@@ -235,7 +235,7 @@ export default function JoinPage() {
               />
               <button
                 type="button"
-                className="px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition disabled:bg-gray-300"
+                className="cursor-pointer px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition disabled:bg-gray-300"
                 onClick={sendCode}
                 disabled={isLoading || !email || isEmailVerified}
               >
@@ -261,7 +261,7 @@ export default function JoinPage() {
                 />
                 <button
                   type="button"
-                  className="px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
+                  className="cursor-pointer px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition"
                   onClick={verifyCode}
                   disabled={isCodeVerifying || !code}
                 >
@@ -348,7 +348,7 @@ export default function JoinPage() {
               />
               <button
                 type="button"
-                className="px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition disabled:bg-gray-300"
+                className="cursor-pointer px-4 py-2 bg-rose-400 text-white rounded hover:bg-rose-500 transition disabled:bg-gray-300"
                 onClick={checkNicknameAvailability}
                 disabled={
                   isNicknameChecking || !nickname || isNicknameAvailable
@@ -378,7 +378,7 @@ export default function JoinPage() {
 
           <button
             type="submit"
-            className="w-full py-3 mt-4 bg-rose-400 text-white rounded hover:bg-rose-500 transition disabled:bg-gray-300"
+            className="cursor-pointer w-full py-3 mt-4 bg-rose-400 text-white rounded hover:bg-rose-500 transition disabled:bg-gray-300"
             disabled={isLoading || !isEmailVerified || !isNicknameAvailable}
           >
             {isLoading ? "처리 중..." : "회원가입"}

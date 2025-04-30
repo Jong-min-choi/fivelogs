@@ -104,7 +104,7 @@ export default function ChangePasswordPage() {
 
           <button
             type="submit"
-            className="w-full py-3 bg-rose-400 text-white rounded hover:bg-rose-500 transition mb-4"
+            className="cursor-pointer w-full py-3 bg-rose-400 text-white rounded hover:bg-rose-500 transition mb-4"
           >
             비밀번호 재설정
           </button>
