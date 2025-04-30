@@ -66,6 +66,8 @@ export default function TodayQuestion({ questions }: Props) {
           alert("정답입니다!. 출석체크 완료!");
           router.push(`/${loginUser.nickname}?showAttendance=true`);
         } else {
+          const errorData = await res.json();
+          alert(errorData.message || "에러가 발생했습니다.");
           setAttendanceSuccess(false);
         }
       } catch {
