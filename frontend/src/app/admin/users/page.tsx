@@ -132,7 +132,7 @@ export default function AdminPage() {
         />
         <button
           type="submit"
-          className="bg-rose-500 text-white px-4 py-1 rounded hover:bg-rose-600"
+          className="cursor-pointer bg-rose-500 text-white px-4 py-1 rounded hover:bg-rose-600"
         >
           검색
         </button>
