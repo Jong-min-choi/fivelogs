@@ -56,7 +56,7 @@ export default function CommentList({ boardId }: CommentListProps) {
       }
 
       const json: CommentResponse = await res.json();
-      
+
       if (json.success) {
         const processedComments = json.data.comments.map((comment) => ({
           ...comment,
@@ -202,7 +202,10 @@ export default function CommentList({ boardId }: CommentListProps) {
 
           {/* 댓글 작성 폼 - 하단에 배치 */}
           <div className="mt-8 pt-6 border-t">
-            <MainCommentForm boardId={boardId} onSuccess={handleCommentSuccess} />
+            <MainCommentForm
+              boardId={boardId}
+              onSuccess={handleCommentSuccess}
+            />
           </div>
         </div>
       )}

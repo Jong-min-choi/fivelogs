@@ -1,21 +1,46 @@
 "use client";
 import { useState } from "react";
-import Layout from "@/app/ClientLayout";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function LeavePage() {
   const [password, setPassword] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreeTerms) {
       alert("유의사항에 동의해주세요.");
       return;
     }
-    // 회원탈퇴 로직 구현
-    console.log("회원탈퇴 제출:", { password, agreeTerms });
+    if (!password) {
+      alert("비밀번호를 입력해주세요.");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/users/me`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ password }),
+        }
+      );
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.message || "회원탈퇴에 실패했습니다.");
+        setIsLoading(false);
+        return;
+      }
+      alert("회원탈퇴가 완료되었습니다.");
+      window.location.href = "/";
+    } catch (err) {
+      alert("회원탈퇴 요청 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -78,8 +103,9 @@ export default function LeavePage() {
           <button
             type="submit"
             className="w-full py-3 bg-red-500 text-white rounded hover:bg-red-600 transition mb-4"
+            disabled={!password || !agreeTerms || isLoading}
           >
-            회원탈퇴
+            {isLoading ? "처리중..." : "회원탈퇴"}
           </button>
 
           <div className="flex justify-center">
@@ -88,26 +114,6 @@ export default function LeavePage() {
             </Link>
           </div>
         </form>
-      </div>
-
-      <div className="flex justify-center mt-4">
-        <Link href="/" className="inline-block mx-auto">
-          <Image
-            src="/next.svg"
-            alt="Five Guys Logo"
-            width={120}
-            height={80}
-            className="object-contain"
-          />
-        </Link>
-      </div>
-
-      <div className="text-center text-sm text-gray-500 mt-4 mb-8">
-        개발자들의 지식과 경험을 공유하는 공간
-      </div>
-
-      <div className="text-center text-xs text-gray-400 mt-8">
-        © 2024 FIVE Log. All rights reserved.
       </div>
     </>
   );

@@ -6,7 +6,11 @@ interface CommentEditProps {
   onCancel: () => void;
 }
 
-export default function CommentEdit({ initialComment, onSave, onCancel }: CommentEditProps) {
+export default function CommentEdit({
+  initialComment,
+  onSave,
+  onCancel,
+}: CommentEditProps) {
   const [editedComment, setEditedComment] = useState(initialComment);
 
   return (
@@ -33,4 +37,4 @@ export default function CommentEdit({ initialComment, onSave, onCancel }: Commen
       </div>
     </div>
   );
-} 
+}

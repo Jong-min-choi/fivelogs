@@ -27,7 +27,7 @@ public class Blog extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
-    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "user_id")
     private User user; // 회원등록한 유저
 
