@@ -28,9 +28,17 @@ public class AdminController {
     private final UserCommandService userCommandService;
     private final RoleService roleService;
     //회원 조회
-    @GetMapping("/users")
-    public ResponseEntity<ApiResponse<AdminUserPageResponseDto>> getUsersInfo(@PageableDefault(size=30, sort = "id",direction = Sort.Direction.DESC) Pageable pageable) {
-        AdminUserPageResponseDto pagedUserInfo = roleService.getPagedUserInfo(pageable);
+    @GetMapping("/users/search")
+    public ResponseEntity<ApiResponse<AdminUserPageResponseDto>> getUsersInfo(@PageableDefault(size=20, sort = "id",direction = Sort.Direction.DESC) Pageable pageable,
+                                                                              @RequestParam(required = false) String type,
+                                                                              @RequestParam(required = false) String keyword) {
+        AdminUserPageResponseDto pagedUserInfo;
+        if(type != null &&  keyword != null){
+            pagedUserInfo = roleService.usersSearch(type, keyword, pageable);
+        } else{
+            pagedUserInfo = roleService.getPagedUserInfo(pageable);
+        }
+
         log.info("pagedUserInfo {}", pagedUserInfo);
         return ResponseEntity.ok(ApiResponse.success(pagedUserInfo, "회원 조회 성공"));
     }
