@@ -48,6 +48,11 @@ public class TaggingService {
         return taggingRepository.findHashtagCountsByNickname(nickname);
 
     }
+    @Transactional(readOnly = true)
+    public List<HashtagCountDto> getHashtagCountDtoListByPublicBoard(String nickname){
+        return taggingRepository.findHashtagCountsByNicknameAndPublicBoard(nickname);
+
+    }
 
     @Transactional
     public void updateHashtags(Board board, List<String> hashtagNames) {

@@ -34,7 +34,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     private final String[] requestGetExceptionURL = {
             "/api/users/me", "/api/attendances", "/api/users/me/mypage",
             "/api/followStatus/**", "/api/users/nickname/*/email",
-            "/api/admin/**", "/api/blogs/*"
+            "/api/admin/**", "/api/blogs/*", "/api/hashtags/*"
     };
 
     record AuthTokens(String refreshToken, String accessToken) {
