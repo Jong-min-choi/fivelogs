@@ -34,7 +34,7 @@ export default function TodayQuestion({ questions }: Props) {
     let allCorrect = true;
     questions.forEach((question, index) => {
       const selectedAnswer = selectedAnswers[index]?.toString();
-      const correctAnswer = (parseInt(question.answer) - 1).toString();
+      const correctAnswer = parseInt(question.answer).toString();
       const isCorrect = selectedAnswer === correctAnswer;
       setResults((prev) => ({
         ...prev,
