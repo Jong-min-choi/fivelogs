@@ -207,7 +207,9 @@ export default function MyBoardPage() {
       const url = `${
         process.env.NEXT_PUBLIC_API_BASE_URL
       }/api/hashtags/${encodeURIComponent(nickname)}`;
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`서버 응답 오류: ${response.status}`);

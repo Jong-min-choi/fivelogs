@@ -22,7 +22,14 @@ public interface TaggingRepository extends JpaRepository<Tagging, Long> {
             "FROM Tagging t WHERE t.board.user.nickname = :nickname " +
             "GROUP BY t.hashtag.name")
     List<HashtagCountDto> findHashtagCountsByNickname(@Param("nickname") String nickname);
-    //중복
+
+    @Query("SELECT new com.fiveguys.fivelogbackend.domain.blog.hashtag.dto.HashtagCountDto(t.hashtag.name, COUNT(t.board.id)) " +
+            "FROM Tagging t " +
+            "WHERE t.board.user.nickname = :nickname " +
+            "AND t.board.status = com.fiveguys.fivelogbackend.domain.blog.board.entity.BoardStatus.PUBLIC " +  // Board의 status가 PUBLIC인 조건 추가
+            "GROUP BY t.hashtag.name")
+    List<HashtagCountDto> findHashtagCountsByNicknameAndPublicBoard(@Param("nickname") String nickname);
+
 
     @Modifying
     @Transactional
