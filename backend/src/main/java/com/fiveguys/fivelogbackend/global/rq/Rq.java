@@ -96,7 +96,7 @@ public class Rq {
     public void deleteCookie(String name) {
         ResponseCookie cookie = ResponseCookie.from(name, null)
                 .path("/")
-                .domain("localhost")
+                .domain(cookieDomain)
                 .sameSite("Strict")
                 .secure(true)
                 .httpOnly(true)
