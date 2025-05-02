@@ -25,13 +25,13 @@ Five Log는 개발자들이 자유롭게 블로그를 작성하고, SNS 공유 �
 
 ---
 # 주요기능 
-
+<h2>유저</h2>
 <table>
   <thead>
     <tr>
       <th>회원가입</th>
       <th>로그인</th>
-      <th>비밀번호 찾기</th>
+      <th>회원 정보 수정</th>
     </tr>
   </thead>
   <tbody>
@@ -46,10 +46,17 @@ Five Log는 개발자들이 자유롭게 블로그를 작성하고, SNS 공유 �
         <img src="https://github.com/user-attachments/assets/4039e364-13b5-43bf-b7f5-33de41575a8a" width="100%" />
       </td>
     </tr>
+      </tbody>
+</table>
+<br />
+<br />
+<br />
+<h2>출석</h2>
+<table>
+  <thead>
     <tr>
-      <th>회원정보</th>
-      <th>비밀번호 수정</th>
-      <th>비고</th>
+      <th>출석 전</th>
+      <th>출석 후</th>
     </tr>
     <tr>
       <td>
@@ -58,7 +65,6 @@ Five Log는 개발자들이 자유롭게 블로그를 작성하고, SNS 공유 �
       <td>
         <img src="https://github.com/user-attachments/assets/4442a17b-414c-49a2-b4e6-001160952da9" width="100%" />
       </td>
-      <td></td>
     </tr>
   </tbody>
 </table>
