@@ -19,7 +19,7 @@ Five Log는 개발자들이 자유롭게 블로그를 작성하고, SNS 공유 �
 # 👥 팀원 소개
 |                    최종민                     |                  강준호                   |                   이호준                   |                    유광륜                    |                    강성민                    |
 |:------------------------------------------:|:--------------------------------------:|:---------------------------------------:|:-----------------------------------------:|:-----------------------------------------:|
-|     <img src="" alt="최종민" width="150">     |   <img src="" alt="강준호" width="150">   |   <img src="" alt="이호준" width="150">    |    <img src="" alt="유광륜" width="150">     |    <img src="" alt="강성민" width="150">     |
+|     <img src="" alt="최종민" width="150">     |   <img src="" alt="강준호" width="150">   |   <img src="" alt="이호준" width="150">    |    <img src="" alt="유광륜" width="150">     |    <img src="나" alt="강성민" width="150">     |
 |                     팀장                     |                  부팀장                   |                   팀원                    |                    팀원                     |                    팀원                     |
 | [GitHub](https://github.com/Jong-min-choi) | [GitHub](https://github.com/0320kangk) | [GitHub](https://github.com/dlghwns200) | [GitHub](https://github.com/yoogwangryun) | [GitHub](https://github.com/thatisbummer) |
 
