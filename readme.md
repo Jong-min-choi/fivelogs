@@ -51,6 +51,32 @@ Five Log는 개발자들이 자유롭게 블로그를 작성하고, SNS 공유 �
 <br />
 <br />
 <br />
+<h2>게시글</h2>
+<table>
+  <thead>
+    <tr>
+      <th>게시글 작성</th>
+      <th>게시글 수정</th>
+      <th>게시글 삭제</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <img src="https://github.com/user-attachments/assets/1401d91c-d9f4-4b2e-a6ea-2ea8a128ee51" width="100%" />
+      </td>
+      <td>
+        <img src="https://github.com/user-attachments/assets/4396d432-7ef1-4c8b-a694-d1eab4a18135" width="100%" />
+      </td>
+      <td>
+        <img src="https://github.com/user-attachments/assets/26f3cf0b-92b8-4fe2-b658-8b105fab5a39" width="100%" />
+      </td>
+    </tr>
+      </tbody>
+</table>
+<br />
+<br />
+<br />
 <h2>출석</h2>
 <table>
   <thead>
