@@ -19,11 +19,55 @@ Five Log는 개발자들이 자유롭게 블로그를 작성하고, SNS 공유 �
 # 👥 팀원 소개
 |                    최종민                     |                  강준호                   |                   이호준                   |                    유광륜                    |                    강성민                    |
 |:------------------------------------------:|:--------------------------------------:|:---------------------------------------:|:-----------------------------------------:|:-----------------------------------------:|
-|     <img src="https://github.com/user-attachments/assets/58ff82cd-5e66-4cfd-8574-6438559d9a62" alt="최종민" width="150">     |   <img src="https://github.com/user-attachments/assets/a279ba4e-a837-4849-a944-7efba2d479e6" alt="강준호" width="150">   |   <img src="https://github.com/user-attachments/assets/db7eb3e0-484b-4326-988f-c2a44113281a" alt="이호준" width="150">    |    <img src="" alt="유광륜" width="150">     |     <img src="https://github.com/user-attachments/assets/d49ff605-9684-4464-99b1-9e25fccce1ed" alt="강성민" width="150">    |
+|     <img src="https://github.com/user-attachments/assets/58ff82cd-5e66-4cfd-8574-6438559d9a62" alt="최종민" width="150">     |   <img src="https://github.com/user-attachments/assets/a279ba4e-a837-4849-a944-7efba2d479e6" alt="강준호" width="150">   |   <img src="https://github.com/user-attachments/assets/db7eb3e0-484b-4326-988f-c2a44113281a" alt="이호준" width="150">    |    <img src="https://github.com/user-attachments/assets/a551e951-eb54-4344-8063-8051a5013d14" alt="유광륜" width="150">     |     <img src="https://github.com/user-attachments/assets/d49ff605-9684-4464-99b1-9e25fccce1ed" alt="강성민" width="150">    |
 |                     팀장                     |                  부팀장                   |                   팀원                    |                    팀원                     |                    팀원                     |
 | [GitHub](https://github.com/Jong-min-choi) | [GitHub](https://github.com/0320kangk) | [GitHub](https://github.com/dlghwns200) | [GitHub](https://github.com/yoogwangryun) | [GitHub](https://github.com/thatisbummer) |
 
 ---
+# 주요기능 
+
+<table>
+  <thead>
+    <tr>
+      <th>회원가입</th>
+      <th>로그인</th>
+      <th>비밀번호 찾기</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <img src="https://github.com/user-attachments/assets/a44ddc02-944e-4338-a7b0-9080b1df1c6e" width="100%" />
+      </td>
+      <td>
+        <img src="https://github.com/user-attachments/assets/33908e28-519f-48e5-b5fd-b5201f474f6d" width="100%" />
+      </td>
+      <td>
+        <img src="https://github.com/user-attachments/assets/4039e364-13b5-43bf-b7f5-33de41575a8a" width="100%" />
+      </td>
+    </tr>
+    <tr>
+      <th>회원정보</th>
+      <th>비밀번호 수정</th>
+      <th>비고</th>
+    </tr>
+    <tr>
+      <td>
+        <img src="https://github.com/user-attachments/assets/ea19cf57-8cfb-4189-a867-fc4864b50cb9" width="100%" />
+      </td>
+      <td>
+        <img src="https://github.com/user-attachments/assets/4442a17b-414c-49a2-b4e6-001160952da9" width="100%" />
+      </td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+---
+
 
 # 🛠️ 기술 스택
 
