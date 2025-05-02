@@ -19,8 +19,8 @@ Five Log는 개발자들이 자유롭게 블로그를 작성하고, SNS 공유 �
 # 👥 팀원 소개
 |                    최종민                     |                  강준호                   |                   이호준                   |                    유광륜                    |                    강성민                    |
 |:------------------------------------------:|:--------------------------------------:|:---------------------------------------:|:-----------------------------------------:|:-----------------------------------------:|
-|     <img src="" alt="최종민" width="150">     |   <img src="https://github.com/user-attachments/assets/a279ba4e-a837-4849-a944-7efba2d479e6" alt="강준호" width="150">   |   <img src="https://github.com/user-attachments/assets/db7eb3e0-484b-4326-988f-c2a44113281a" alt="이호준" width="150">    |    <img src="" alt="유광륜" width="150">     |    <img src="![resized_image_150](https://github.com/user-attachments/assets/d700f72b-6db2-4c09-9e86-7927c47b0896)
-" alt="강성민" width="150">     |
+|     <img src="" alt="최종민" width="150">     |   <img src="https://github.com/user-attachments/assets/a279ba4e-a837-4849-a944-7efba2d479e6" alt="강준호" width="150">   |   <img src="https://github.com/user-attachments/assets/db7eb3e0-484b-4326-988f-c2a44113281a" alt="이호준" width="150">    |    <img src="" alt="유광륜" width="150">     |     <img src="![resized_image_150](https://github.com/user-attachments/assets/606cf95e-734a-47ba-a3c8-80c04e571e45)
+" alt="강성민" width="150">    |
 |                     팀장                     |                  부팀장                   |                   팀원                    |                    팀원                     |                    팀원                     |
 | [GitHub](https://github.com/Jong-min-choi) | [GitHub](https://github.com/0320kangk) | [GitHub](https://github.com/dlghwns200) | [GitHub](https://github.com/yoogwangryun) | [GitHub](https://github.com/thatisbummer) |
 
