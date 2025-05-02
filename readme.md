@@ -15,15 +15,13 @@
 Five Log는 개발자들이 자유롭게 블로그를 작성하고, SNS 공유 및 출석 체크를 통해 꾸준한 글쓰기를 유도하는 플랫폼입니다. 게시글 공개/비공개 설정, 해시태그 기반 검색, 팔로우 기능 등 다양한 기능을 제공합니다.
 
 ---
-
 # 👥 팀원 소개
 |                    최종민                     |                  강준호                   |                   이호준                   |                    유광륜                    |                    강성민                    |
 |:------------------------------------------:|:--------------------------------------:|:---------------------------------------:|:-----------------------------------------:|:-----------------------------------------:|
-
 |     <img src="" alt="최종민" width="150">     |   <img src="" alt="강준호" width="150">   |   <img src="" alt="이호준" width="150">    |    <img src="" alt="유광륜" width="150">     |    <img src="" alt="강성민" width="150">     |
-
 |                     팀장                     |                  부팀장                   |                   팀원                    |                    팀원                     |                    팀원                     |
 | [GitHub](https://github.com/Jong-min-choi) | [GitHub](https://github.com/0320kangk) | [GitHub](https://github.com/dlghwns200) | [GitHub](https://github.com/yoogwangryun) | [GitHub](https://github.com/thatisbummer) |
+
 
 
 
